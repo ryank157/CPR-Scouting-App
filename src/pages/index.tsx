@@ -27,7 +27,6 @@ const Home: NextPage = () => {
           Sign {session ? "Out" : "In"}
         </button>
       </main>
-      <div>test</div>
     </>
   );
 };
