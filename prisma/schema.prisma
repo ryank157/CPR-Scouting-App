@@ -2,15 +2,13 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
+  provider = "prisma-client-js"
 }
 
 datasource mysql {
-  url                  = env("DATABASE_URL")
-  shadowDatabaseUrl    = env("SHADOW_URL")
-  provider             = "mysql"
-  referentialIntegrity = "prisma"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_URL")
+  provider          = "mysql"
 }
 
 // Necessary for Next auth
@@ -56,4 +54,51 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Robot {
+  id        Int         @id @unique
+  name      String
+  events    Event[]
+  match     Match[]
+  alliances Alliances[]
+}
+
+model Event {
+  id        String      @id @default(cuid())
+  name      String
+  robots    Robot[]
+  matches   Match[]
+  alliances Alliances[]
+}
+
+model Match {
+  id             String       @id @default(cuid()) //Need to figure out how to get this to work
+  flag           String //Type of match: normal, replay, practice, etc.
+  event          Event        @relation(fields: [eventId], references: [id])
+  eventId        String
+  robot          Robot[]
+  robotMatchData robotMatch[]
+
+  @@index([eventId])
+}
+
+model robotMatch {
+  id             String @id @default(cuid())
+  match          Match  @relation(fields: [matchId], references: [id])
+  matchId        String
+  teleMadeHigh   Int
+  teleMissedHigh Int
+
+  @@index([matchId])
+}
+
+model Alliances {
+  id               String  @id @default(cuid())
+  event            Event   @relation(fields: [eventId], references: [id])
+  eventId          String
+  robots           Robot[]
+  alliancePosition Int
+
+  @@index([eventId])
 }
