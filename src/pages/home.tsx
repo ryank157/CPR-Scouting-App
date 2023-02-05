@@ -2,14 +2,13 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
-
 import { trpc } from "../utils/trpc";
-
-import Navbar from "src-components/Navbar";
+import Button from "src-components/button";
 
 const Home: NextPage = () => {
   const { data: session } = useSession();
   const { data: test } = trpc.tba.getTBAData.useQuery();
+
 
   return (
     <>
@@ -22,41 +21,29 @@ const Home: NextPage = () => {
       <div className="max-w-screen flex h-screen flex-col items-center ">
         {!session && (
           <>
-            <h1 className="mt-16 p-4 text-center text-6xl font-normal text-white">
+            <h1 className="mt-16 p-4 text-center text-6xl font-normal ">
               Welcome
             </h1>
             <div className="mb-16 flex flex-col flex-wrap items-center p-4 text-cpr-blue">
-              <button
-                className="text-l w-full rounded-md bg-white px-8 py-2 font-bold shadow-md"
-                onClick={() => signIn("discord")}
-              >
-                Discord Login
-              </button>
-              <button className="text-l mt-8 w-full rounded-md bg-white px-8 py-2 font-bold shadow-md">
-                Continue as Guest
-              </button>
+            <Button text="Discord Login" onClick={() => signIn('discord')}/>
+             
+              <Button text="Continue as Guest" className="mt-10"/>
             </div>
           </>
         )}
         {session && (
-          <div className="w-75 mb-16 flex h-screen flex-col flex-wrap items-center justify-between p-4 text-cpr-blue">
+          <div className="w-75 mb-16 flex h-screen flex-col flex-wrap items-stretch justify-between p-4  text-cpr-blue">
             <div className="w-full">
-              <button className="text-l mt-20 w-full rounded-md bg-white  py-2 font-bold shadow-md">
-                Match Schedule
-              </button>
-              <button className="text-l mt-10 w-full rounded-md bg-white  py-2 font-bold shadow-md">
-                Scoreboard
-              </button>
-              <button className="text-l mt-10 w-full rounded-md bg-white  py-2 font-bold shadow-md">
-                Start Scouting
-              </button>
+              <Link href="/schedule">
+              <Button text="Match Schedule" className="mt-10"/>                
+              </Link>
+              <Button text="Scoreboard" className="mt-10" />
+              <Link href="/matchScout">
+              <Button text="Start Scouting" className="mt-10"/>
+              </Link>
             </div>
-            <button
-              className="text-l mt-8 w-full justify-end rounded-md bg-white  py-2 font-bold shadow-md "
-              onClick={() => signOut()}
-            >
-              Logout
-            </button>
+            <Button text="Sign Out" onClick={() => signOut()}/>
+           
           </div>
         )}
       </div>
