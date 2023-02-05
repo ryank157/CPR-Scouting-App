@@ -1,15 +1,46 @@
 import { type NextPage } from "next";
-import { useState} from "react";
+import { useState, useEffect} from "react";
 import  type {Dispatch, SetStateAction } from "react";
 import Link from "next/link";
 import Button from "src-components/button";
 import Image from "next/image";
+import { start } from "repl";
+
 
 
 const MatchScout: NextPage = () => {
   
+  const [startTime, setStartTime] = useState(new Date().getTime());
+  const [matchTime, setMatchTime] = useState(new Date().getTime())
+  const [endTime, setEndTime] = useState(startTime + 138000)
+  const [adjustment, setAdjustment] = useState(0)
+  const [activeMatch, setActiveMatch] = useState(false)
+  
+  
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      
+        setMatchTime(startTime => startTime + 1000);
+      
+    }, 1000);
+  
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    setMatchTime(startTime); 
+    setEndTime(startTime + 138000)
+    setAdjustment(0)
+  }, [startTime])
+  
+  
+  const autoTime = (endTime - matchTime + adjustment - 123000)/1000
+  const teleTime = (endTime - matchTime + adjustment)/1000
+  
   const [cycleToggle, setCycleToggle] = useState(false)
   const [matchState, setMatchState] = useState<MatchState>('before')
+  
   const grid = Array(3)
   .fill(null)
   .map(() => Array(9).fill(null));
@@ -27,7 +58,12 @@ const MatchScout: NextPage = () => {
         <div className="">Before the Match Starts</div> 
         <div>Robot Position - Robot team Number</div>
         <div>Starting Location or no show</div>
-        {Nav(setMatchState, 'auto', 'Start Match')}
+        {!activeMatch && (
+          <button className="p-2 border border-cpr-blue"onClick={() => { setMatchState('auto'); setStartTime(new Date().getTime()); setActiveMatch(true)}}>Start Match</button>
+        )}
+        {activeMatch && (
+          <button className="p-2 border border-cpr-blue"onClick={() => { setMatchState('auto')}}>Continue Match</button>
+        )}
         
         </div>
         
@@ -37,7 +73,22 @@ const MatchScout: NextPage = () => {
           <div className="h-screen relative w-full">
             <div className="absolute top-4 left-4">{Nav(setMatchState, 'before', 'Back')}</div>
             <div className=" h-full flex flex-col p-4 items-center ">
-              <div className="text-4xl mb-5">Scouting Team: 3663</div>
+              <div className="flex justify-around items-center w-full mb-5">
+
+                <div className="text-4xl ">Auto: 3663</div>
+                <div className="flex">
+                {autoTime > 0 && (<div className="border px-2 py-1 cursor-pointer" onClick={() => setAdjustment( adjustment - 1000)}>-</div>)}
+                <div className="text-4xl mx-2">{
+                  
+                autoTime > 0 ? autoTime : 
+                autoTime > -3 ? 'Switching' :
+                autoTime <= -3 && autoTime >= -4 ? (setMatchState('tele'), 0) :
+                "Complete"
+                
+                }</div>
+                {autoTime > 0 && (<div className="border px-2 py-1 cursor-pointer" onClick={() => setAdjustment( adjustment + 1000)}>+</div>)}
+                </div>
+              </div>
               <div>               
                 <div className="grid grid-rows-3  grid-cols-9 bg-scoring-grid bg-cover bg-center bg-no-repeat w-[900px] h-[300px] p-1">
                   {grid.map((row, i) =>
@@ -61,7 +112,20 @@ const MatchScout: NextPage = () => {
         <div className="h-screen relative w-full">
             <div className="absolute top-4 left-4">{Nav(setMatchState, 'auto', 'Back')}</div>
             <div className=" h-full flex flex-col p-4 items-center ">
-              <div className="text-4xl mb-5">Scouting Team: 3663</div>
+              <div className="flex justify-around items-center w-full mb-5">
+
+                <div className="text-4xl">Tele: 3663</div>
+                <div className="flex">
+                <div className="border px-2 py-1 cursor-pointer" onClick={() =>  setAdjustment( adjustment - 1000)}>-</div>
+                <div className="text-4xl mx-2">{
+                teleTime > 120 ? 'In Auto' :
+                teleTime > 0 ? teleTime : "Complete"                
+                }</div>
+                <div className="border px-2 py-1 cursor-pointer" onClick={() =>  setAdjustment( adjustment + 1000)}>+</div>
+                </div>
+                
+              </div>
+              
               <div>               
                 <div className="grid grid-rows-3  grid-cols-9 bg-scoring-grid bg-cover bg-center bg-no-repeat w-[900px] h-[300px] p-1">
                   {grid.map((row, i) =>
