@@ -15,7 +15,7 @@ const MatchScout: NextPage = () => {
     return (
       
         <div className="border border-cpr-blue h-screen flex flex-col p-4 items-center justify-between">
-          <Link className='self-start'href="/home">
+          <Link className='self-start'href="/">
               <Button text="Home" className="mt-10"/>                
               </Link>
         <div className="">Before the Match Starts</div> 

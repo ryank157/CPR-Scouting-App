@@ -7,7 +7,7 @@ const Schedule: NextPage = () => {
 
   return (
     <>
-    <Link href="/home">Go Back</Link>
+    <Link href="/">Go Back</Link>
     <div className="">Schedule</div>
     </>
   );
