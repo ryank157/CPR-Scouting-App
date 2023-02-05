@@ -10,7 +10,9 @@ module.exports = {
         "cpr-blue": "rgb(0,11,113)",
       },
       backgroundImage: {
-        'scoring-grid': "url('/scoring-grid-cropped.png')"
+        'scoring-grid': "url('/scoring-grid-cropped.png')",
+        'red-start': "url('/red-start.png')",
+        'blue-start': "url('/blue-start.png')",
       }
     },
   },

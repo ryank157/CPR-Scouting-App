@@ -38,7 +38,7 @@ const MatchScout: NextPage = () => {
   const autoTime = (endTime - matchTime + adjustment - 123000)/1000
   const teleTime = (endTime - matchTime + adjustment)/1000
   
-  const [cycleToggle, setCycleToggle] = useState(false)
+  const [cycleToggle, setCycleToggle] = useState(true)
   const [matchState, setMatchState] = useState<MatchState>('before')
   
   const grid = Array(3)
@@ -51,13 +51,12 @@ const MatchScout: NextPage = () => {
     case 'before':
     return (
       
-        <div className="border border-cpr-blue h-screen flex flex-col p-4 items-center justify-between">
-          <Link className='self-start'href="/">
-              <Button text="Home" className="mt-10"/>                
-              </Link>
-        <div className="">Before the Match Starts</div> 
-        <div>Robot Position - Robot team Number</div>
-        <div>Starting Location or no show</div>
+        <div className="relative border border-cpr-blue h-screen flex flex-col p-4 items-center justify-between">
+          <Link className='absolute top-4 left-4'href="/">
+              <Button text="Home" className=""/>                
+          </Link>
+        <div className="text-4xl font-bold">Red 1 - 3663</div>
+        <div className="w-[717px] h-[637px] bg-red-start bg-cover bg-center bg-no-repeat "></div>
         {!activeMatch && (
           <button className="p-2 border border-cpr-blue"onClick={() => { setMatchState('auto'); setStartTime(new Date().getTime()); setActiveMatch(true)}}>Start Match</button>
         )}
@@ -98,7 +97,29 @@ const MatchScout: NextPage = () => {
                   )}
                 </div>
               </div>
-              <div>Charge Station Scoring</div>
+              
+              <div className="h-full w-full justify-around flex mt-4">
+                      <div className="flex flex-col gap-2 w-1/5">
+                        <div className="text-2xl font-semibold mb-4 text-center">Mobility</div>
+                        <div className="px-5 py-3 border text-center">Yes</div>
+                        <div className="px-5 py-3 border text-center">No</div>
+                        <div className="px-5 py-3 border text-center">No But Moved</div>
+                      </div>
+                      <div className="flex flex-col gap-2 w-1/5 ">
+                        <div className="text-2xl font-semibold mb-4 text-center">Balancing</div>
+                        <div className="px-5 py-3 border text-center">N/A</div>
+                        <div className="px-5 py-3 border text-center">Docked</div>
+                        <div className="px-5 py-3 border text-center">Engaged</div>
+                      </div>
+                      <div className="flex flex-col gap-2 w-1/5 ">
+                        <div className="text-2xl font-semibold mb-4 text-center">Fouls</div>
+                        <div className="px-5 py-3 border text-center">Crossed Auto Line</div>
+                        <div className="px-5 py-3 border text-center">Too many Pieces</div>
+                        <div className="px-5 py-3 border text-center">Other</div>
+                      </div>
+                      
+
+              </div>
               {Nav(setMatchState, 'tele', 'Start Tele')}
             </div>
           </div>
