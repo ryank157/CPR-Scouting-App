@@ -22,7 +22,7 @@ const Home: NextPage = () => {
         {!session && (
           <>
             <h1 className="mt-16 p-4 text-center text-6xl font-normal ">
-              Welcome
+              Welcome!
             </h1>
             <div className="mb-16 flex flex-col flex-wrap items-center p-4 text-cpr-blue">
             <Button text="Discord Login" onClick={() => signIn('discord')}/>
