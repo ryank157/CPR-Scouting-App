@@ -9,6 +9,9 @@ module.exports = {
       colors: {
         "cpr-blue": "rgb(0,11,113)",
       },
+      backgroundImage: {
+        'scoring-grid': "url('/scoring-grid-cropped.png')"
+      }
     },
   },
 };
