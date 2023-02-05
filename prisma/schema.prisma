@@ -9,6 +9,7 @@ datasource mysql {
   url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("SHADOW_URL")
   provider          = "mysql"
+  relationMode      = "prisma"
 }
 
 // Necessary for Next auth
