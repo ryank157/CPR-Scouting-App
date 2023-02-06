@@ -6,28 +6,35 @@ import Button from "src-components/button";
 import Image from "next/image";
 import { start } from "repl";
 
-
+type MatchState = 'before' | 'auto' | 'tele' | 'endgame' | 'review'
+type ScoringGrid = "nothing" | "auto-cone" | "auto-cube" | "tele-cone" | "tele-cube"
 
 const MatchScout: NextPage = () => {
-  
   const [startTime, setStartTime] = useState(new Date().getTime());
   const [matchTime, setMatchTime] = useState(new Date().getTime())
   const [endTime, setEndTime] = useState(startTime + 138000)
   const [adjustment, setAdjustment] = useState(0)
   const [activeMatch, setActiveMatch] = useState(false)
+  const autoTime = (endTime - matchTime + adjustment - 123000)/1000
+  const teleTime = (endTime - matchTime + adjustment)/1000
   
+  const [cycleToggle, setCycleToggle] = useState(true)
+  const [matchState, setMatchState] = useState<MatchState>('before')
   
+  const grid = Array(3).fill(null).map(() => Array(9).fill(null));
+  const [scoredGrid, setScoredGrid] = useState<ScoringGrid[]>(Array(27).fill("nothing"))
+  const [selectedCell, setSelectedCell] = useState(-1)
+  const [cellToggle, setCellToggle] = useState(true)
   
+  //Advance Time
   useEffect(() => {
     const interval = setInterval(() => {
-      
         setMatchTime(startTime => startTime + 1000);
-      
     }, 1000);
-  
     return () => clearInterval(interval);
   }, []);
 
+  //Update everything on match start
   useEffect(() => {
     setMatchTime(startTime); 
     setEndTime(startTime + 138000)
@@ -35,16 +42,52 @@ const MatchScout: NextPage = () => {
   }, [startTime])
   
   
-  const autoTime = (endTime - matchTime + adjustment - 123000)/1000
-  const teleTime = (endTime - matchTime + adjustment)/1000
   
-  const [cycleToggle, setCycleToggle] = useState(true)
-  const [matchState, setMatchState] = useState<MatchState>('before')
-  
-  const grid = Array(3)
-  .fill(null)
-  .map(() => Array(9).fill(null));
+  useEffect(() => {
+    console.log('render')
+    if (selectedCell === -1) {
+      return;
+    }
 
+    setScoredGrid(prev => {
+      const t = [...prev]
+      let value:ScoringGrid = "nothing"
+      const cones =  [0,2,3,5,6,8,9,11,12,14,15,17]
+      const cubes = [1,4,7,10,13,16]
+      //Bottom Row
+      if (selectedCell >= 18 && selectedCell <= 26) {
+        if (t[selectedCell] === "auto-cone") {
+          value = "auto-cube";
+        } else if (t[selectedCell] === "nothing") {   
+          value = "auto-cone";
+        } else if (t[selectedCell] === "auto-cube") {
+          value = "nothing";
+        }
+      
+      //Cubes 
+      } 
+      if (cubes.includes(selectedCell)) {
+        if(t[selectedCell] === 'nothing'){
+          value = "auto-cube"
+        } else if (t[selectedCell] === 'auto-cube'){
+          value = "nothing"
+        }
+      }
+      //Cones
+      if (cones.includes(selectedCell)) {
+        if(t[selectedCell] === 'nothing'){
+          value = "auto-cone";
+        } else if(t[selectedCell] = "auto-cone"){
+          value = "nothing";
+        }
+      }
+      t[selectedCell] = value
+      return t;
+    })
+ 
+    
+  },[selectedCell,cellToggle])
+  
   
     
   switch (matchState) {
@@ -92,10 +135,15 @@ const MatchScout: NextPage = () => {
                 <div className="grid grid-rows-3  grid-cols-9 bg-scoring-grid bg-cover bg-center bg-no-repeat w-[900px] h-[300px] p-1">
                   {grid.map((row, i) =>
                     row.map((_, j) => (
-                      <div key={i * 9 + j} className='border-2 border-red-500 ' />
+                      
+                      <div onClick={() => {setSelectedCell(i*9+j); setCellToggle(!cellToggle)}} key={i * 9 + j} className={
+                        scoredGrid[i*9+j] === 'auto-cone' ? 'bg-orange-500 border-2 border-red-500 ': 
+                        scoredGrid[i*9+j] === 'auto-cube' ? 'bg-blue-500 border-2 border-red-500 ': 
+                        'border-2 border-red-500' }/>
                     ))
                   )}
                 </div>
+                
               </div>
               
               <div className="h-full w-full justify-around flex mt-4">
@@ -148,10 +196,14 @@ const MatchScout: NextPage = () => {
               </div>
               
               <div>               
-                <div className="grid grid-rows-3  grid-cols-9 bg-scoring-grid bg-cover bg-center bg-no-repeat w-[900px] h-[300px] p-1">
+              <div className="grid grid-rows-3  grid-cols-9 bg-scoring-grid bg-cover bg-center bg-no-repeat w-[900px] h-[300px] p-1">
                   {grid.map((row, i) =>
                     row.map((_, j) => (
-                      <div key={i * 9 + j} className='border-2 border-red-500 ' />
+                      
+                      <div onClick={() => {setSelectedCell(i*9+j); setCellToggle(!cellToggle)}} key={i * 9 + j} className={
+                        scoredGrid[i*9+j] === 'auto-cone' ? 'bg-orange-500 border-2 border-red-500 ': 
+                        scoredGrid[i*9+j] === 'auto-cube' ? 'bg-blue-500 border-2 border-red-500 ': 
+                        'border-2 border-red-500' }/>
                     ))
                   )}
                 </div>
@@ -241,15 +293,8 @@ const MatchScout: NextPage = () => {
             </div>
            <button onClick={(e) => {e.preventDefault(); }}>Submit</button>
            </div>
-        )
-    
-
-}
-  
-
-
-};
-
+        )    
+}};
 
 function Nav(setMatchState: Dispatch<SetStateAction<MatchState>>, path: MatchState, text: string) {
   return(
@@ -257,6 +302,5 @@ function Nav(setMatchState: Dispatch<SetStateAction<MatchState>>, path: MatchSta
   )
 }
 
-type MatchState = 'before' | 'auto' | 'tele' | 'endgame' | 'review'
-
 export default MatchScout;
+
