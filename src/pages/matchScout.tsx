@@ -1,13 +1,15 @@
 import { type NextPage } from "next";
-import { useState, useEffect} from "react";
+import { useState, useEffect, useReducer} from "react";
 import  type {Dispatch, SetStateAction } from "react";
 import Link from "next/link";
 import Button from "src-components/button";
-import Image from "next/image";
-import { start } from "repl";
+import AutoScout from "src-components/matchScout/auto";
+import type { AutoEventsState } from "@/utils/matchScout/auto";
+import { autoEventsReducer } from "@/utils/matchScout/auto";
 
-type MatchState = 'before' | 'auto' | 'tele' | 'endgame' | 'review'
-type ScoringGrid = "nothing" | "auto-cone" | "auto-cube" | "tele-cone" | "tele-cube"
+
+export type MatchState = 'before' | 'auto' | 'tele' | 'endgame' | 'review'
+export type ScoringGrid = "nothing" | "auto-cone" | "auto-cube" | "tele-cone" | "tele-cube"
 
 const MatchScout: NextPage = () => {
   const [startTime, setStartTime] = useState(new Date().getTime());
@@ -20,8 +22,10 @@ const MatchScout: NextPage = () => {
   
   const [cycleToggle, setCycleToggle] = useState(true)
   const [matchState, setMatchState] = useState<MatchState>('before')
+
+   
   
-  const grid = Array(3).fill(null).map(() => Array(9).fill(null));
+  const grid: string[][] = Array(3).fill(null).map(() => Array(9).fill(null));
   const [scoredGrid, setScoredGrid] = useState<ScoringGrid[]>(Array(27).fill("nothing"))
   const [selectedCell, setSelectedCell] = useState(-1)
   const [cellToggle, setCellToggle] = useState(true)
@@ -87,6 +91,14 @@ const MatchScout: NextPage = () => {
  
     
   },[selectedCell,cellToggle])
+
+
+  const initialState: AutoEventsState = {
+    mobility: '',
+    balancing: '',
+    fouls: [],
+  };
+  const [autoEvents, dispatch] = useReducer(autoEventsReducer, initialState);
   
   
     
@@ -111,68 +123,11 @@ const MatchScout: NextPage = () => {
         
     )
     case 'auto':
-        return (
-          <div className="h-screen relative w-full">
-            <div className="absolute top-4 left-4">{Nav(setMatchState, 'before', 'Back')}</div>
-            <div className=" h-full flex flex-col p-4 items-center ">
-              <div className="flex justify-around items-center w-full mb-5">
+      
 
-                <div className="text-4xl ">Auto: 3663</div>
-                <div className="flex">
-                {autoTime > 0 && (<div className="border px-2 py-1 cursor-pointer" onClick={() => setAdjustment( adjustment - 1000)}>-</div>)}
-                <div className="text-4xl mx-2">{
-                  
-                autoTime > 0 ? autoTime : 
-                autoTime > -3 ? 'Switching' :
-                autoTime <= -3 && autoTime >= -4 ? (setMatchState('tele'), 0) :
-                "Complete"
-                
-                }</div>
-                {autoTime > 0 && (<div className="border px-2 py-1 cursor-pointer" onClick={() => setAdjustment( adjustment + 1000)}>+</div>)}
-                </div>
-              </div>
-              <div>               
-                <div className="grid grid-rows-3  grid-cols-9 bg-scoring-grid bg-cover bg-center bg-no-repeat w-[900px] h-[300px] p-1">
-                  {grid.map((row, i) =>
-                    row.map((_, j) => (
-                      
-                      <div onClick={() => {setSelectedCell(i*9+j); setCellToggle(!cellToggle)}} key={i * 9 + j} className={
-                        scoredGrid[i*9+j] === 'auto-cone' ? 'bg-orange-500 border-2 border-red-500 ': 
-                        scoredGrid[i*9+j] === 'auto-cube' ? 'bg-blue-500 border-2 border-red-500 ': 
-                        'border-2 border-red-500' }/>
-                    ))
-                  )}
-                </div>
-                
-              </div>
-              
-              <div className="h-full w-full justify-around flex mt-4">
-                      <div className="flex flex-col gap-2 w-1/5">
-                        <div className="text-2xl font-semibold mb-4 text-center">Mobility</div>
-                        <div className="px-5 py-3 border text-center">Yes</div>
-                        <div className="px-5 py-3 border text-center">No</div>
-                        <div className="px-5 py-3 border text-center">No But Moved</div>
-                      </div>
-                      <div className="flex flex-col gap-2 w-1/5 ">
-                        <div className="text-2xl font-semibold mb-4 text-center">Balancing</div>
-                        <div className="px-5 py-3 border text-center">N/A</div>
-                        <div className="px-5 py-3 border text-center">Docked</div>
-                        <div className="px-5 py-3 border text-center">Engaged</div>
-                      </div>
-                      <div className="flex flex-col gap-2 w-1/5 ">
-                        <div className="text-2xl font-semibold mb-4 text-center">Fouls</div>
-                        <div className="px-5 py-3 border text-center">Crossed Auto Line</div>
-                        <div className="px-5 py-3 border text-center">Too many Pieces</div>
-                        <div className="px-5 py-3 border text-center">Other</div>
-                      </div>
-                      
-
-              </div>
-              {Nav(setMatchState, 'tele', 'Start Tele')}
-            </div>
-          </div>
-        )
-    
+      return AutoScout({autoTime, grid, scoredGrid, cellToggle, setCellToggle, setSelectedCell, adjustment, setAdjustment,setMatchState, autoEvents, dispatch})
+      
+      
     case 'tele':
      return (
         
@@ -296,7 +251,7 @@ const MatchScout: NextPage = () => {
         )    
 }};
 
-function Nav(setMatchState: Dispatch<SetStateAction<MatchState>>, path: MatchState, text: string) {
+export function Nav(setMatchState: Dispatch<SetStateAction<MatchState>>, path: MatchState, text: string) {
   return(
       <button className="p-2 border border-cpr-blue"onClick={(e) => {e.preventDefault(); setMatchState(path)}}>{text}</button>
   )
@@ -304,3 +259,7 @@ function Nav(setMatchState: Dispatch<SetStateAction<MatchState>>, path: MatchSta
 
 export default MatchScout;
 
+
+
+
+ 
