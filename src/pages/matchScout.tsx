@@ -16,14 +16,14 @@ const MatchScout: NextPage = () => {
   //Relating to time and page
   const [timeState, timeDispatch] = useReducer(TimeReducer, initialTimeState);
 
-  useEffect(() => {
-    if (timeState.activeMatch) {
-      const interval = setInterval(() => {
-        timeDispatch({ type: 'ADJUST_TIME', increase: 1000 });
-      }, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [timeState.activeMatch]);
+  // useEffect(() => {
+  //   if (timeState.activeMatch) {
+  //     const interval = setInterval(() => {
+  //       timeDispatch({ type: 'ADJUST_TIME', increase: 1000 });
+  //     }, 1000);
+  //     return () => clearInterval(interval);
+  //   }
+  // }, [timeState.activeMatch]);
 
   
   //Relating to scoring
@@ -100,9 +100,6 @@ const MatchScout: NextPage = () => {
   
       case 'auto':
         return AutoScout({
-          
-          grid, 
-          scoredGrid, 
           cellToggle, 
           setCellToggle, 
           setSelectedCell, 

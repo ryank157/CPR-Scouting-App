@@ -1,7 +1,7 @@
 export interface MatchEventsState {
     startingLoc: number | undefined,
     mobility: Mobility;
-    scoring: ScoredObject[];
+    scoredObjects: ScoredObject[];
     autoBalancing: AutoBalance;
     endgameBalancing: string | undefined,
     fouls: Foul[];
@@ -39,7 +39,7 @@ export type MatchAction =
 export const initialMatchState: MatchEventsState = {
     startingLoc: undefined,
     mobility: undefined,
-    scoring: [],
+    scoredObjects: [],
     autoBalancing: undefined,
     endgameBalancing: undefined,
     fouls: [],
@@ -83,7 +83,8 @@ export const MatchEventsReducer = (state: MatchEventsState, action: MatchAction)
         }
       case 'ADD_SCORE_DETAILS':
         //TODO Need to rework the grid display so that it colors data based on matchEvents scoring array
-        const newestScore = state.scoring[state.scoring.length] || {
+        //Add Check for only unique scores. Or no double scores on bottom level
+        const newestScore = state.scoredObjects[state.scoredObjects.length] || {
           cycleTime: undefined,
           pickupLoc: undefined,
           pickupOrient: undefined,
@@ -100,15 +101,15 @@ export const MatchEventsReducer = (state: MatchEventsState, action: MatchAction)
         newestScore.scoredLoc = action.newScore.scoredLoc !== undefined ? action.newScore.scoredLoc : newestScore?.scoredLoc;
 
         
-        if(state.scoring.length === 0){
+        if(state.scoredObjects.length === 0){
           return {
             ...state,
-            scoring: [newestScore]
+            scoredObjects: [newestScore]
           }
         } else {
           return {
             ...state,
-            scoring: [...state.scoring, newestScore]
+            scoredObjects: [...state.scoredObjects, newestScore]
           }
         }
 

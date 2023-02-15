@@ -1,15 +1,13 @@
-import type { ScoringGrid } from "@/pages/matchScout"
+
 import type {Dispatch} from 'react'
 
 import type { TimeAction, TimeState } from "@/utils/matchScout/time"
 
-
+import ScoringGrid from "./scoringGrid"
 import type { MatchEventsState, MatchAction } from "@/utils/matchScout/events"
 import ScoutHeader from "./header"
 interface AutoProps {
-    
-    grid: string[][],
-    scoredGrid: ScoringGrid[],
+
     cellToggle: boolean,
     setCellToggle: Dispatch<boolean>,
     setSelectedCell: Dispatch<number>,
@@ -25,8 +23,7 @@ interface AutoProps {
 export default function AutoScout(props: AutoProps) {
     
 const {
-    grid, 
-    scoredGrid,
+
     cellToggle,
     setCellToggle,
     setSelectedCell,
@@ -41,34 +38,10 @@ const {
 // bg-scoring-grid bg-cover bg-center bg-no-repeat
 return (
         
-  <div className="flex flex-col justify-center w-full">            
-                  
-    <div className="grid grid-cols-3  gap-6.25">
-    {/* //TODO Need to rework the grid display so that it colors data based on matchEvents scoring array */}
-    {/* TODO rework how the grid/scored grid thing works */}
-      {grid.map((row, i) =>
-        row.map((_, j) => (
-            <div key={i * 9 + j}  className={
-                scoredGrid[i*9+j] === 'auto-cone' ? 'bg-orange-700 border-2 border-red-500 ': 
-                scoredGrid[i*9+j] === 'auto-cube' ? 'bg-blue-700 border-2 border-red-500 ': 
+  <div className="flex flex-col justify-center w-full">                           
+    <ScoringGrid timeState={timeState} timeDispatch={timeDispatch} matchEvents={matchEvents} matchDispatch={matchDispatch}/>
+        
 
-                scoredGrid[i*9+j] === 'tele-cone' ? 'bg-orange-300 border-2 border-red-500 ': 
-                scoredGrid[i*9+j] === 'tele-cube' ? 'bg-blue-300 border-2 border-red-500 ': 
-                'border-2 border-red-500' }
-                
-                onClick={() => {
-                  setSelectedCell(i*9+j); 
-                  setCellToggle(!cellToggle)
-                  matchDispatch({type: 'ADD_SCORE_DETAILS', newScore: {
-                    type: 'auto-cone',
-                    scoredLoc: i*9 + j,
-                  }})
-                }} 
-
-                />
-        ))
-      )}
-    </div>
 
     <div className="h-full w-full justify-around flex mt-4">
       <div className="flex flex-col gap-2 w-1/5">
@@ -115,5 +88,7 @@ return (
 
         )
 }
+
+
 
 

@@ -21,12 +21,13 @@ module.exports = {
         'bottom-empty': "url('/bottom-empty.svg')",
         'bottom-cube': "url('/bottom-cube.svg')",
         'bottom-cone': "url('/bottom-cone.svg')",
-        
       },
       spacing: {
+        '1.25': '5px',
         '6.25': '25px',
         '7.5': '30px',
         '15' : '60px',
+        '25' : '100px',
       }
     },
   },
