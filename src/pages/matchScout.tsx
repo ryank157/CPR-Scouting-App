@@ -7,6 +7,7 @@ import BeforeScout from "src-components/matchScout/before";
 import AutoScout from "src-components/matchScout/auto";
 import {TeleScout} from "src-components/matchScout/tele";
 import { MatchEventsReducer, initialMatchState } from "@/utils/matchScout/events";
+import ScoutHeader from "src-components/matchScout/header";
 
 
 export type ScoringGrid = "nothing" | "auto-cone" | "auto-cube" | "tele-cone" | "tele-cube"
@@ -80,75 +81,89 @@ const MatchScout: NextPage = () => {
  
   
   const [matchEvents, matchDispatch] = useReducer(MatchEventsReducer, initialMatchState)
-  
-  switch (timeState.matchPage) {
-    case 'before':
-    return BeforeScout({
-      timeState,
-      timeDispatch
-    })
 
-    case 'auto':
-      return AutoScout({
+  return(
+    <div className="flex flex-col h-screen">
+    <ScoutHeader timeState={timeState} timeDispatch={timeDispatch}/>
+    <ScoutingBody />
+    </div>
+  )
+
+
+  function ScoutingBody(){
+    switch (timeState.matchPage) {
+      case 'before':
+      return BeforeScout({
+        timeState,
+        timeDispatch
+      })
+  
+      case 'auto':
+        return AutoScout({
+          
+          grid, 
+          scoredGrid, 
+          cellToggle, 
+          setCellToggle, 
+          setSelectedCell, 
+   
+          matchEvents, 
+          matchDispatch,
+          timeState,
+          timeDispatch,
+        })
+  
+      case 'tele':
+       return TeleScout({
         
         grid, 
         scoredGrid, 
         cellToggle, 
         setCellToggle, 
         setSelectedCell, 
- 
+        
         matchEvents, 
-        matchDispatch,
+        matchDispatch, 
+        cycleToggle, 
+        setCycleToggle,
         timeState,
         timeDispatch,
       })
-
-    case 'tele':
-     return TeleScout({
-      
-      grid, 
-      scoredGrid, 
-      cellToggle, 
-      setCellToggle, 
-      setSelectedCell, 
-      
-      matchEvents, 
-      matchDispatch, 
-      cycleToggle, 
-      setCycleToggle,
-      timeState,
-      timeDispatch,
-    })
-
-    case 'endgame':
-     return (
-        <div className="border border-cpr-blue h-screen flex flex-col p-4 items-center justify-between">
-        <div className="self-start p-2 border border-cpr-blue" onClick={() => timeDispatch({type: 'CHANGE_PAGE', page: 'tele'})}>Back</div>
-        <div>endgame</div>
-        <div>
-        <div>Solo vs Double vs Triple</div>
-        <div>If double, go first or second?</div>
-        <div>Start Timer</div>
-        <div>End Timer</div>
-        <div>Success/Fail</div>
-        </div>
-        <div className="p-2 border border-cpr-blue" onClick={() => timeDispatch({type: 'CHANGE_PAGE', page: 'review'})}>Review Match</div>
-        </div>
-     )
-     case 'review':
-        return (
+  
+      case 'endgame':
+       return (
           <div className="border border-cpr-blue h-screen flex flex-col p-4 items-center justify-between">
-           <div className="absolute top-4 left-4 p-2 border border-cpr-blue" onClick={() => timeDispatch({type: 'CHANGE_PAGE', page: 'endgame'})}>Back</div>
-           <div>
-            <div> Your team was x, Scored y points in this way</div>
-            <div>Auto: Pieces + Mobility + Balance = x points</div>
-            <div>Tele: x Pieces placed at these spots for y points</div>
-            <div>Endgame: Balanced/Docked/NA in this time for z points</div>
-            <div>(robot number) scored xyz points.</div>
-            </div>
-           <button onClick={(e) => {e.preventDefault(); }}>Submit</button>
-           </div>
-        )    
+          <div className="self-start p-2 border border-cpr-blue" onClick={() => timeDispatch({type: 'CHANGE_PAGE', page: 'tele'})}>Back</div>
+          <div>endgame</div>
+          <div>
+          <div>Solo vs Double vs Triple</div>
+          <div>If double, go first or second?</div>
+          <div>Start Timer</div>
+          <div>End Timer</div>
+          <div>Success/Fail</div>
+          </div>
+          <div className="p-2 border border-cpr-blue" onClick={() => timeDispatch({type: 'CHANGE_PAGE', page: 'review'})}>Review Match</div>
+          </div>
+       )
+       case 'review':
+          return (
+            <div className="border border-cpr-blue h-screen flex flex-col p-4 items-center justify-between">
+             <div className="absolute top-4 left-4 p-2 border border-cpr-blue" onClick={() => timeDispatch({type: 'CHANGE_PAGE', page: 'endgame'})}>Back</div>
+             <div>
+              <div> Your team was x, Scored y points in this way</div>
+              <div>Auto: Pieces + Mobility + Balance = x points</div>
+              <div>Tele: x Pieces placed at these spots for y points</div>
+              <div>Endgame: Balanced/Docked/NA in this time for z points</div>
+              <div>(robot number) scored xyz points.</div>
+              </div>
+             <button onClick={(e) => {e.preventDefault(); }}>Submit</button>
+             </div>
+          )    
+  }
+
+
+  
+  
 }};
 
 
