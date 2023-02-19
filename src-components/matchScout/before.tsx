@@ -1,21 +1,19 @@
 
 import type {Dispatch} from 'react'
-import Link from "next/link"
-import Button from "src-components/button"
-import ScoutHeader from './header'
 
-import type { TimeAction, TimeState } from "@/utils/matchScout/time"
+
+import type { MatchEventsState,MatchAction } from '@/utils/matchScout/events'
 
 interface BeforeProps {
-    timeState: TimeState,
-    timeDispatch: Dispatch<TimeAction>
+    matchEvents: MatchEventsState,
+    matchDispatch: Dispatch<MatchAction>
 }
 
 export default function BeforeScout(props: BeforeProps) {
     
 const {
-    timeState,
-    timeDispatch,    
+    matchEvents,
+    matchDispatch,    
     } = props
 
     return (

@@ -5,7 +5,7 @@ import type { TimeAction, TimeState } from "@/utils/matchScout/time"
 
 import ScoringGrid from "./scoringGrid"
 import type { MatchEventsState, MatchAction } from "@/utils/matchScout/events"
-import ScoutHeader from "./header"
+import AutoButton from 'src-components/autoButton'
 interface AutoProps {
 
     cellToggle: boolean,
@@ -23,64 +23,35 @@ interface AutoProps {
 export default function AutoScout(props: AutoProps) {
     
 const {
-
-    cellToggle,
-    setCellToggle,
-    setSelectedCell,
-    
-    
     matchEvents,
     matchDispatch,
     timeState,
     timeDispatch
     } = props
-    
-// bg-scoring-grid bg-cover bg-center bg-no-repeat
 return (
         
   <div className="flex flex-col justify-center w-full">                           
     <ScoringGrid timeState={timeState} timeDispatch={timeDispatch} matchEvents={matchEvents} matchDispatch={matchDispatch}/>
         
-
-
-    <div className="h-full w-full justify-around flex mt-4">
-      <div className="flex flex-col gap-2 w-1/5">
-        <div className="text-2xl font-semibold mb-4 text-center">Mobility</div>
-        <div className={`px-5 py-3 border text-center cursor-pointer ${matchEvents.mobility === 'yes' ? 'bg-blue-200' : ''}`}
-            onClick={() => matchDispatch({ type: 'SET_MOBILITY', mobility: 'yes' })}
-        >Yes</div>
-        <div className={`px-5 py-3 border text-center cursor-pointer ${matchEvents.mobility === 'no' ? 'bg-blue-200' : ''}`}
-            onClick={() => matchDispatch({ type: 'SET_MOBILITY', mobility: 'no' })}
-        >No</div>
-        <div className={`px-5 py-3 border text-center cursor-pointer ${matchEvents.mobility === 'no but moved' ? 'bg-blue-200' : ''}`}
-            onClick={() => matchDispatch({ type: 'SET_MOBILITY', mobility: 'no but moved' })}
-        >No but Moved</div>
-        
+    <div className="h-full w-full justify-center gap-[22px] flex mt-4 pb-10">
+      <div className="flex flex-col gap-2.5 w-[310px] ">
+        <div className="text-xl font-semibold text-center -mb-1.25">Mobility</div>
+        <AutoButton icon={['bg-auto-mob-score', 'bg-auto-mob-score-s']} variant={matchEvents.mobility === 'yes'} onClick={() => matchDispatch({ type: 'SET_MOBILITY', mobility: 'yes' })}>Scored</AutoButton>
+        <AutoButton icon={['bg-auto-mob-no', 'bg-auto-mob-no-s']} variant={matchEvents.mobility === 'no'} onClick={() => matchDispatch({ type: 'SET_MOBILITY', mobility: 'no' })}>No</AutoButton>
+        <AutoButton icon={['bg-auto-mob-failed', 'bg-auto-mob-failed-s']} variant={matchEvents.mobility === 'failed'} onClick={() => matchDispatch({ type: 'SET_MOBILITY', mobility: 'failed' })}>Failed</AutoButton>      
       </div>
-      <div className="flex flex-col gap-2 w-1/5 ">
-        <div className="text-2xl font-semibold mb-4 text-center">Balancing</div>
-        <div className={`px-5 py-3 border text-center cursor-pointer ${matchEvents.autoBalancing === 'docked' ? 'bg-blue-200' : ''}`}
-            onClick={() => matchDispatch({ type: 'SET_AUTO_BALANCING', autoBalance: 'docked' })}
-        >Docked</div>
-        <div className={`px-5 py-3 border text-center cursor-pointer ${matchEvents.autoBalancing === 'engaged' ? 'bg-blue-200' : ''}`}
-            onClick={() => matchDispatch({ type: 'SET_AUTO_BALANCING', autoBalance: 'engaged' })}
-        >Engaged</div>
-        <div className={`px-5 py-3 border text-center cursor-pointer ${matchEvents.autoBalancing === 'failed' ? 'bg-blue-200' : ''}`}
-            onClick={() => matchDispatch({ type: 'SET_AUTO_BALANCING', autoBalance: 'failed' })}
-        >Failed</div>
-        
+      <div className="flex flex-col gap-2.5 w-[310px] ">
+        <div className="text-xl font-semibold text-center -mb-1.25">Balancing</div>
+        <AutoButton icon={['bg-auto-engaged', 'bg-auto-engaged-s']} variant={matchEvents.autoBalancing === 'engaged'} onClick={() => matchDispatch({ type: 'SET_AUTO_BALANCING', autoBalance: 'engaged' })}>Engaged</AutoButton>
+        <AutoButton icon={['bg-auto-docked', 'bg-auto-docked-s']} variant={matchEvents.autoBalancing === 'docked'} onClick={() => matchDispatch({ type: 'SET_AUTO_BALANCING', autoBalance: 'docked' })}>Docked</AutoButton>
+        <AutoButton icon={['bg-auto-bal-na', 'bg-auto-bal-na-s']} variant={matchEvents.autoBalancing === 'failed'} onClick={() => matchDispatch({ type: 'SET_AUTO_BALANCING', autoBalance: 'failed' })}>Failed</AutoButton>
       </div>
-      <div className="flex flex-col gap-2 w-1/5 ">
-        <div className="text-2xl font-semibold mb-4 text-center">Fouls</div>
-        <div className={`px-5 py-3 border text-center cursor-pointer ${matchEvents.fouls.includes('crossed auto line') ? 'bg-blue-200' : ''}`}
-            onClick={() => matchDispatch({ type: 'FOUL_TOGGLE', newFoul: 'crossed auto line' })}
-        >Crossed Auto Line</div>
-        <div className={`px-5 py-3 border text-center cursor-pointer ${matchEvents.fouls.includes('too many pieces')  ? 'bg-blue-200' : ''}`}
-            onClick={() => matchDispatch({ type: 'FOUL_TOGGLE', newFoul: 'too many pieces' })}
-        >Too Many Pieces</div>
-        <div className={`px-5 py-3 border text-center cursor-pointer ${matchEvents.fouls.includes('other') ? 'bg-blue-200' : ''}`}
-            onClick={() => matchDispatch({ type: 'FOUL_TOGGLE', newFoul: 'other' })}
-        >Other</div>
+
+      <div className="flex flex-col gap-2.5 w-[310px] ">
+        <div className="text-xl font-semibold text-center -mb-1.25">Fouls</div>
+        <AutoButton icon={['bg-auto-foul-cross', 'bg-auto-foul-cross-s']} variant={matchEvents.fouls.includes('crossed half line')} onClick={() => matchDispatch({ type: 'FOUL_TOGGLE', newFoul: 'crossed half line' })}>Cross Half Line</AutoButton>
+        <AutoButton icon={['bg-auto-foul-pieces', 'bg-auto-foul-pieces-s']} variant={matchEvents.fouls.includes('too many pieces')} onClick={() => matchDispatch({ type: 'FOUL_TOGGLE', newFoul: 'too many pieces' })}>2+ Game Pieces</AutoButton>
+        <AutoButton icon={['bg-auto-foul-other', 'bg-auto-foul-other-s']} variant={matchEvents.fouls.includes('other')} onClick={() => matchDispatch({ type: 'FOUL_TOGGLE', newFoul: 'other' })}>Other</AutoButton>
       </div>
     </div>
     

@@ -1,15 +1,11 @@
-import {useState} from 'react'
 
-import type { ScoringGrid } from "@/pages/matchScout"
+
+
 import type {Dispatch} from 'react'
 
-import type { TimeAction, TimeState, MatchPage } from "@/utils/matchScout/time"
+import type { TimeAction, TimeState } from "@/utils/matchScout/time"
 import Button from 'src-components/button'
 import Link from 'next/link'
-import TimerButton from 'src-components/timerButton'
-
-
-import type { MatchEventsState, MatchAction } from "@/utils/matchScout/events"
 
 interface ScoutHeaderProps {
     timeState: TimeState,
@@ -21,7 +17,6 @@ export default function ScoutHeader({timeState, timeDispatch}: ScoutHeaderProps)
    const {activeMatch, startTime, matchTime, endTime, adjustment, matchPage} = timeState
 
    const autoTime = (timeState.endTime - timeState.matchTime - 123000) / 1000; 
-
 
     switch(matchPage) {
         case "before":

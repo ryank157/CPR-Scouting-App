@@ -94,8 +94,8 @@ const MatchScout: NextPage = () => {
     switch (timeState.matchPage) {
       case 'before':
       return BeforeScout({
-        timeState,
-        timeDispatch
+        matchEvents,
+        matchDispatch
       })
   
       case 'auto':

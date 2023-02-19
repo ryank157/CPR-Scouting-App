@@ -8,13 +8,13 @@ export interface MatchEventsState {
     defense: string[];
   }
 
-export type Mobility = 'yes' | 'no' | 'no but moved' | undefined
+export type Mobility = 'yes' | 'no' | 'failed' | undefined
 export type ScoringTypes = "auto-cone" | "auto-cube" | "tele-cone" | "tele-cube" | undefined
 export type PickupLocation = 'feeder' | 'middle' | 'community' | undefined
 export type PickupOrientation = 'side' | 'upright' | 'cube' | undefined
 export type Delayed = 'defended' | 'obstructed' | undefined
 export type AutoBalance = 'docked' | 'engaged' | 'failed' | undefined
-export type Foul = 'crossed auto line' | 'too many pieces' | 'other' | undefined
+export type Foul = 'crossed half line' | 'too many pieces' | 'other' | undefined
 export type ScoredObject = {
   cycleTime?: number | undefined,
   pickupLoc?: PickupLocation,
@@ -59,6 +59,12 @@ export const MatchEventsReducer = (state: MatchEventsState, action: MatchAction)
           mobility: action.mobility ,
         };
       case 'SET_AUTO_BALANCING':
+        if(action.autoBalance === state.autoBalancing) {
+          return {
+            ...state,
+            autoBalancing: undefined,
+          }
+        }
         return {
           ...state,
           autoBalancing: action.autoBalance,
@@ -106,7 +112,7 @@ export const MatchEventsReducer = (state: MatchEventsState, action: MatchAction)
             ...state,
             scoredObjects: [newestScore]
           }
-        } else {
+        } else{
           return {
             ...state,
             scoredObjects: [...state.scoredObjects, newestScore]

@@ -1,13 +1,6 @@
-import {useMemo} from 'react'
-
 import type { ScoringGrid } from "@/pages/matchScout"
 import type {Dispatch} from 'react'
-
-import type { TimeAction, TimeState, MatchPage } from "@/utils/matchScout/time"
-import Button from 'src-components/button'
-import Link from 'next/link'
-import TimerButton from 'src-components/timerButton'
-
+import type { TimeAction, TimeState } from "@/utils/matchScout/time"
 
 import type { MatchEventsState, MatchAction, ScoredObject, ScoringTypes } from "@/utils/matchScout/events"
 
@@ -27,7 +20,9 @@ export default function ScoringGrid({matchEvents, matchDispatch}: ScoringGridPro
   
     return (
       <div className="relative flex flex-wrap justify-center">
-        <div className="transform -rotate-90 text-3xl absolute left-0 top-1/2">Feeder Station</div>
+        <div className="w-15 flex justify-center items-center">
+        <div className="transform -rotate-90 text-3xl whitespace-nowrap">Feeder Station</div>
+        </div>
         <div className="flex flex-col">
         {grid.map((row, rowIndex) => (
             <div key={rowIndex+100} className="flex gap-1.25 pb-1.25">
@@ -78,7 +73,9 @@ export default function ScoringGrid({matchEvents, matchDispatch}: ScoringGridPro
             </div>
             ))}
         </div>
-        <div className="transform rotate-90 text-3xl absolute right-0 top-1/2">Void</div>
+        <div className="w-15 flex justify-center items-center">
+        <div className="transform rotate-90 text-3xl whitespace-nowrap">Void</div>
+        </div>
       </div>
     );
   }
@@ -147,11 +144,9 @@ export default function ScoringGrid({matchEvents, matchDispatch}: ScoringGridPro
   
     let styling = `w-25 h-25 flex justify-center items-center border bg-cover bg-center ${bgImage}`;
   
-    if ((gridLoc + 1) % 3 === 0 && gridLoc < 17) {
+    if ([2,5,11,14,22,28].includes(gridLoc)) {
       styling += " mr-4";
-    } else if (gridLoc === 22 || gridLoc === 28) {
-      styling += " mr-4";
-    }
+    } 
   
     return styling;
   }
