@@ -112,17 +112,8 @@ const MatchScout: NextPage = () => {
   
       case 'tele':
        return TeleScout({
-        
-        grid, 
-        scoredGrid, 
-        cellToggle, 
-        setCellToggle, 
-        setSelectedCell, 
-        
         matchEvents, 
         matchDispatch, 
-        cycleToggle, 
-        setCycleToggle,
         timeState,
         timeDispatch,
       })

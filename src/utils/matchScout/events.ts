@@ -107,6 +107,8 @@ export const MatchEventsReducer = (state: MatchEventsState, action: MatchAction)
         newestScore.scoredLoc = action.newScore.scoredLoc !== undefined ? action.newScore.scoredLoc : newestScore?.scoredLoc;
 
         
+        
+
         if(state.scoredObjects.length === 0){
           return {
             ...state,
@@ -122,6 +124,7 @@ export const MatchEventsReducer = (state: MatchEventsState, action: MatchAction)
 
       case 'EDIT_SCORE':
         //some code
+        console.log('edit score')
         return {
           ...state
         }

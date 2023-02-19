@@ -17,6 +17,7 @@ export default function ScoutHeader({timeState, timeDispatch}: ScoutHeaderProps)
    const {activeMatch, startTime, matchTime, endTime, adjustment, matchPage} = timeState
 
    const autoTime = (timeState.endTime - timeState.matchTime - 123000) / 1000; 
+   const teleTime = (timeState.endTime - timeState.matchTime) / 1000; 
 
     switch(matchPage) {
         case "before":
@@ -52,12 +53,12 @@ export default function ScoutHeader({timeState, timeDispatch}: ScoutHeaderProps)
                         </div>
                         <div className='flex gap-2.5 font-bold justify-center items-center'>
 
-                        <Button className='w-15' onClick={() => timeDispatch({ type: 'ADJUST_TIME', increase: -1000 })}>+</Button>
+                        <Button className='w-15 text-4xl pb-2' onClick={() => timeDispatch({ type: 'ADJUST_TIME', increase: -1000 })}>+</Button>
                         <div className='font-bold text-3xl'>{
                             autoTime > 0 ? autoTime : 
                             autoTime > -3 ? 'Switching' : "Complete"
                         }</div>
-                        <Button className='w-15' onClick={() => timeDispatch({ type: 'ADJUST_TIME', increase: 1000 })}>-</Button>
+                        <Button className='w-15 text-4xl pb-2' onClick={() => timeDispatch({ type: 'ADJUST_TIME', increase: 1000 })}>-</Button>
 
                         <Button className='' onClick={() => timeDispatch({type: 'CHANGE_PAGE', page: 'tele'})}>Tele Op</Button>
                         </div>
@@ -67,6 +68,25 @@ export default function ScoutHeader({timeState, timeDispatch}: ScoutHeaderProps)
         case "tele":
             return (
                 <>
+                <div className='w-full flex justify-between p-7.5 '>
+                    <div className='flex  items-center gap-7.5'>
+                        <Button className='' onClick={() => timeDispatch({type: 'CHANGE_PAGE', page: 'auto'})}>Back</Button>
+                        <div className="flex flex-col ">
+                            <div className='font-bold text-3xl'>Tele-Op</div>
+                            <div className='text-3xl'>Team #####</div>
+                        </div>
+                    </div>
+                    <div className='flex gap-2.5 font-bold justify-center items-center'>
+
+                    <Button className='w-15 text-4xl pb-2' onClick={() => timeDispatch({ type: 'ADJUST_TIME', increase: -1000 })}>+</Button>
+                    <div className='font-bold text-3xl'>{
+                        teleTime > 120 ? 'In Auto' : teleTime
+                    }</div>
+                    <Button className='w-15 text-4xl pb-2' onClick={() => timeDispatch({ type: 'ADJUST_TIME', increase: 1000 })}>-</Button>
+
+                    <Button className='' onClick={() => timeDispatch({type: 'CHANGE_PAGE', page: 'endgame'})}>End Game</Button>
+                    </div>
+                </div>
                 </>
             )
         case "endgame":

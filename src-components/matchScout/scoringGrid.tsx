@@ -1,8 +1,9 @@
 import type { ScoringGrid } from "@/pages/matchScout"
 import type {Dispatch} from 'react'
-import type { TimeAction, TimeState } from "@/utils/matchScout/time"
+import type { MatchPage, TimeAction, TimeState } from "@/utils/matchScout/time"
 
 import type { MatchEventsState, MatchAction, ScoredObject, ScoringTypes } from "@/utils/matchScout/events"
+import { time } from "console"
 
 interface ScoringGridProps {
     timeState: TimeState,
@@ -12,9 +13,10 @@ interface ScoringGridProps {
 }
 
 
-export default function ScoringGrid({matchEvents, matchDispatch}: ScoringGridProps) {
+export default function ScoringGrid({matchEvents, matchDispatch, timeState}: ScoringGridProps) {
     const grid: string[][] = Array(3).fill(Array(9).fill(''));
     const {scoredObjects} = matchEvents
+    const {matchPage} = timeState
 
 
   
@@ -33,11 +35,11 @@ export default function ScoringGrid({matchEvents, matchDispatch}: ScoringGridPro
                     return (
                         <div 
                         key={gridLoc} 
-                        className={cellClasses(gridLoc,scoredObjects)} 
+                        className={cellClasses(gridLoc,scoredObjects, matchPage)} 
                         onClick={() => 
                             matchDispatch({type: 'ADD_SCORE_DETAILS', newScore: {
                             cycleTime: 15,
-                            type: scoredType(gridLoc),
+                            type: scoredType(gridLoc, matchPage),
                             scoredLoc: gridLoc,
                             }})
                           }>
@@ -48,18 +50,33 @@ export default function ScoringGrid({matchEvents, matchDispatch}: ScoringGridPro
                     const gridLoc = rowIndex * 9 + cellIndex*2;
                     const diagSlots = [gridLoc, gridLoc+1]
                     return (
-                        <div key={gridLoc+1000}  className={`${cellClasses(gridLoc,scoredObjects)} relative overflow-hidden `}>
+                        <div key={gridLoc+1000}  className={`${cellClasses(gridLoc,scoredObjects, matchPage)} relative overflow-hidden `}>
                             <div className="h-[150px] w-[150px] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-45 grid grid-cols-2 grid-rows-1">
                                 {diagSlots.map((slotLoc) => {
                                 return <div 
                                     key={slotLoc}
                                     className="" 
                                     onClick={() => 
+                                        //If not scored already do add score details
+
                                         matchDispatch({type: 'ADD_SCORE_DETAILS', newScore: {
                                         cycleTime: 15,
-                                        type: scoredType(slotLoc),
+                                        type: scoredType(slotLoc,matchPage),
                                         scoredLoc: slotLoc,
-                                    }})}>
+                                        }})
+
+                                        //If page is auto, then do edit score and remove score
+
+
+                                        //If page is tele && edit score button was pressed, then 
+                                            //edit the specific entry
+                                            //On submit, update the entry and start a new cycle
+
+                                            //if delete pressed
+                                                //remove from scoredObjects
+                                    
+                                    
+                                    }>
 
                                 </div>
                                 })
@@ -80,7 +97,7 @@ export default function ScoringGrid({matchEvents, matchDispatch}: ScoringGridPro
     );
   }
 
-  const cellClasses = (gridLoc: number, scoredObjects: ScoredObject[]) => {
+  const cellClasses = (gridLoc: number, scoredObjects: ScoredObject[], matchPage: MatchPage) => {
     //Need to cut the renders WAY down somehow
     const cones = [0, 2, 3, 5, 6, 8, 9, 11, 12, 14, 15, 17];
     const cubes = [1, 4, 7, 10, 13, 16];
@@ -96,8 +113,10 @@ export default function ScoringGrid({matchEvents, matchDispatch}: ScoringGridPro
     });
 
     if (scoredLocsSet.size !== 0 ){
-        //Bottom Row
-       if(gridLoc > 17 && (scoredLocsSet.has(gridLoc) || scoredLocsSet.has(gridLoc+1))){
+        if(matchPage === 'auto' && ((gridLoc > 17 && (scoredLocsSet.has(gridLoc) || scoredLocsSet.has(gridLoc+1))) || scoredLocsSet.has(gridLoc))) {
+            bgImage = 'bg-inactive-border'
+            //Bottom Row
+        } else if(gridLoc > 17 && (scoredLocsSet.has(gridLoc) || scoredLocsSet.has(gridLoc+1))){
            scoredObjects.forEach((score) => {
                 for(let i=0; i< groundCones.length; i++){
                     if(score.scoredLoc === groundCubes[i] && gridLoc === groundCones[i]){
@@ -152,7 +171,7 @@ export default function ScoringGrid({matchEvents, matchDispatch}: ScoringGridPro
   }
   
 
-function scoredType(gridLoc: number): ScoringTypes {
+function scoredType(gridLoc: number, matchPage: MatchPage): ScoringTypes {
     const cones = [0,2,3,5,6,8,9,11,12,14,15,17]
     const cubes = [1,4,7,10,13,16]
     const groundCones = [18,20,22,24,26,28,30,32,34]
@@ -161,11 +180,27 @@ function scoredType(gridLoc: number): ScoringTypes {
     let scoredType: ScoringTypes = undefined
 
     if(cones.includes(gridLoc) || groundCones.includes(gridLoc)) {
-        scoredType = 'auto-cone'
+        if(matchPage === 'auto') {
+            scoredType = 'auto-cone'
+        } else if (matchPage === 'tele') {
+            scoredType = 'tele-cone'
+        } else {
+            scoredType = undefined
+        }
     }else if(cubes.includes(gridLoc) || groundCubes.includes(gridLoc)) {
-        scoredType = 'auto-cube'
+        if(matchPage === 'auto') {
+            scoredType = 'auto-cube'
+        } else if (matchPage === 'tele') {
+            scoredType = 'tele-cube'
+        } else {
+            scoredType = undefined
+        }
     }
     return scoredType
+}
+
+function scoringClick() {
+    return undefined
 }
     
 
