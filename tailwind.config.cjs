@@ -41,6 +41,8 @@ module.exports = {
         'auto-foul-other': "url('/auto-foul-other.svg')",
         'auto-foul-cross-s': "url('/auto-foul-cross-s.svg')",
         'auto-foul-cross': "url('/auto-foul-cross.svg')",
+        'endgame-red': "url('/endgame-red.svg')",
+        'endgame-blue': "url('/endgame-blue.svg')",
 
       },
       spacing: {

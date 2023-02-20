@@ -8,6 +8,8 @@ import AutoScout from "src-components/matchScout/auto";
 import {TeleScout} from "src-components/matchScout/tele";
 import { MatchEventsReducer, initialMatchState } from "@/utils/matchScout/events";
 import ScoutHeader from "src-components/matchScout/header";
+import { EndgameScout } from "src-components/matchScout/endgame";
+import { ReviewScout } from "src-components/matchScout/review";
 
 
 export type ScoringGrid = "nothing" | "auto-cone" | "auto-cube" | "tele-cone" | "tele-cube"
@@ -120,32 +122,21 @@ const MatchScout: NextPage = () => {
   
       case 'endgame':
        return (
-          <div className="border border-cpr-blue h-screen flex flex-col p-4 items-center justify-between">
-          <div className="self-start p-2 border border-cpr-blue" onClick={() => timeDispatch({type: 'CHANGE_PAGE', page: 'tele'})}>Back</div>
-          <div>endgame</div>
-          <div>
-          <div>Solo vs Double vs Triple</div>
-          <div>If double, go first or second?</div>
-          <div>Start Timer</div>
-          <div>End Timer</div>
-          <div>Success/Fail</div>
-          </div>
-          <div className="p-2 border border-cpr-blue" onClick={() => timeDispatch({type: 'CHANGE_PAGE', page: 'review'})}>Review Match</div>
-          </div>
+          EndgameScout({
+            matchEvents,
+            matchDispatch,
+            timeState,
+            timeDispatch,
+          })
        )
        case 'review':
           return (
-            <div className="border border-cpr-blue h-screen flex flex-col p-4 items-center justify-between">
-             <div className="absolute top-4 left-4 p-2 border border-cpr-blue" onClick={() => timeDispatch({type: 'CHANGE_PAGE', page: 'endgame'})}>Back</div>
-             <div>
-              <div> Your team was x, Scored y points in this way</div>
-              <div>Auto: Pieces + Mobility + Balance = x points</div>
-              <div>Tele: x Pieces placed at these spots for y points</div>
-              <div>Endgame: Balanced/Docked/NA in this time for z points</div>
-              <div>(robot number) scored xyz points.</div>
-              </div>
-             <button onClick={(e) => {e.preventDefault(); }}>Submit</button>
-             </div>
+            ReviewScout({
+              matchEvents,
+              matchDispatch,
+              timeState,
+              timeDispatch,
+            })
           )    
   }
 
