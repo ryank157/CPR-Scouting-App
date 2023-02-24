@@ -43,7 +43,7 @@ export default function ScoringGrid({matchEvents, matchDispatch, timeState}: Sco
                             scoredLoc: gridLoc,
                             }})
                           }>
-                        
+                            {gridLoc}
                         </div>
                     );
                 } else {
@@ -77,7 +77,7 @@ export default function ScoringGrid({matchEvents, matchDispatch, timeState}: Sco
                                     
                                     
                                     }>
-
+                                    {gridLoc}
                                 </div>
                                 })
                                 }
