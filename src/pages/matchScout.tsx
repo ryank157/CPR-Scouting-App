@@ -27,57 +27,9 @@ const MatchScout: NextPage = () => {
   //   }
   // }, [timeState.activeMatch]);
 
-  
-  //Relating to scoring
-  const grid: string[][] = Array(3).fill(null).map(() => Array(9).fill(null));
-  const [scoredGrid, setScoredGrid] = useState<ScoringGrid[]>(Array(27).fill("nothing"))
-  const [selectedCell, setSelectedCell] = useState(-1)
-  const [cellToggle, setCellToggle] = useState(true)
-  const [cycleToggle, setCycleToggle] = useState(true)
 
   
-  useEffect(() => {
-    if (selectedCell === -1) {
-      return;
-    }
-
-    setScoredGrid(prev => {
-      const t = [...prev]
-      let value:ScoringGrid = "nothing"
-      const cones =  [0,2,3,5,6,8,9,11,12,14,15,17]
-      const cubes = [1,4,7,10,13,16]
-      //Bottom Row
-      if (selectedCell >= 18 && selectedCell <= 26) {
-        if (t[selectedCell] === "auto-cone") {
-          value = "auto-cube";
-        } else if (t[selectedCell] === "nothing") {   
-          value = "auto-cone";
-        } else if (t[selectedCell] === "auto-cube") {
-          value = "nothing";
-        } 
-      } 
-
-      if (cubes.includes(selectedCell)) {
-        if(t[selectedCell] === 'nothing'){
-          value = "auto-cube"
-        } else if (t[selectedCell] === 'auto-cube'){
-          value = "nothing"
-        }
-      }
-      
-      if (cones.includes(selectedCell)) {
-        if(t[selectedCell] === 'nothing'){
-          value = "auto-cone";
-        } else if(t[selectedCell] = "auto-cone"){
-          value = "nothing";
-        }
-      }
-      t[selectedCell] = value
-      return t;
-    })
- 
-    
-  },[selectedCell,cellToggle])
+  
 
   //Relating to match events
  
@@ -101,11 +53,7 @@ const MatchScout: NextPage = () => {
       })
   
       case 'auto':
-        return AutoScout({
-          cellToggle, 
-          setCellToggle, 
-          setSelectedCell, 
-   
+        return AutoScout({   
           matchEvents, 
           matchDispatch,
           timeState,
