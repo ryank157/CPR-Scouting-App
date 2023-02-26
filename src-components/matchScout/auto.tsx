@@ -7,13 +7,6 @@ import ScoringGrid from "./scoringGrid"
 import type { MatchEventsState, MatchAction } from "@/utils/matchScout/events"
 import AutoButton from 'src-components/autoButton'
 interface AutoProps {
-
-    cellToggle: boolean,
-    setCellToggle: Dispatch<boolean>,
-    setSelectedCell: Dispatch<number>,
-
-
-    
     matchEvents: MatchEventsState,
     matchDispatch: Dispatch<MatchAction>,
     timeState: TimeState,

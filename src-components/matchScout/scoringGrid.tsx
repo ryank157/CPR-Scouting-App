@@ -1,5 +1,6 @@
 import type { ScoringGrid } from "@/pages/matchScout"
 import type {Dispatch} from 'react'
+import {useState, useEffect} from 'react'
 import type { MatchPage, TimeAction, TimeState } from "@/utils/matchScout/time"
 
 import type { MatchEventsState, MatchAction, ScoredObject, ScoringTypes } from "@/utils/matchScout/events"
@@ -9,16 +10,15 @@ interface ScoringGridProps {
     timeState: TimeState,
     timeDispatch: Dispatch<TimeAction>,
     matchEvents: MatchEventsState,
-    matchDispatch: Dispatch<MatchAction>
+    matchDispatch: Dispatch<MatchAction>,
+    cSO?: ScoredObject,
 }
 
 
-export default function ScoringGrid({matchEvents, matchDispatch, timeState}: ScoringGridProps) {
+export default function ScoringGrid({matchEvents, matchDispatch, timeState, cSO}: ScoringGridProps) {
     const grid: string[][] = Array(3).fill(Array(9).fill(''));
     const {scoredObjects} = matchEvents
     const {matchPage} = timeState
-
-
   
     return (
       <div className="relative flex flex-wrap justify-center">
@@ -38,12 +38,11 @@ export default function ScoringGrid({matchEvents, matchDispatch, timeState}: Sco
                         className={cellClasses(gridLoc,scoredObjects, matchPage)} 
                         onClick={() => 
                             matchDispatch({type: 'ADD_SCORE_DETAILS', newScore: {
-                            cycleTime: 15,
+                            ...cSO,
                             type: scoredType(gridLoc, matchPage),
                             scoredLoc: gridLoc,
                             }})
                           }>
-                            {gridLoc}
                         </div>
                     );
                 } else {
@@ -60,24 +59,13 @@ export default function ScoringGrid({matchEvents, matchDispatch, timeState}: Sco
                                         //If not scored already do add score details
 
                                         matchDispatch({type: 'ADD_SCORE_DETAILS', newScore: {
+                                        ...cSO,
                                         cycleTime: 15,
                                         type: scoredType(slotLoc,matchPage),
                                         scoredLoc: slotLoc,
-                                        }})
-
-                                        //If page is auto, then do edit score and remove score
-
-
-                                        //If page is tele && edit score button was pressed, then 
-                                            //edit the specific entry
-                                            //On submit, update the entry and start a new cycle
-
-                                            //if delete pressed
-                                                //remove from scoredObjects
-                                    
+                                        }})                                   
                                     
                                     }>
-                                    {gridLoc}
                                 </div>
                                 })
                                 }
@@ -112,42 +100,56 @@ export default function ScoringGrid({matchEvents, matchDispatch, timeState}: Sco
     }
     });
 
-    if (scoredLocsSet.size !== 0 ){
-        if(matchPage === 'auto' && ((gridLoc > 17 && (scoredLocsSet.has(gridLoc) || scoredLocsSet.has(gridLoc+1))) || scoredLocsSet.has(gridLoc))) {
-            bgImage = 'bg-inactive-border'
-            //Bottom Row
-        } else if(gridLoc > 17 && (scoredLocsSet.has(gridLoc) || scoredLocsSet.has(gridLoc+1))){
-           scoredObjects.forEach((score) => {
-                for(let i=0; i< groundCones.length; i++){
-                    if(score.scoredLoc === groundCubes[i] && gridLoc === groundCones[i]){
-                        bgImage = 'bg-bottom-cube'
-                        break
-                    } else if(score.scoredLoc === gridLoc){
-                        bgImage = 'bg-bottom-cone'
-                        break
-                    } 
+    const thisScore = scoredObjects.find((score) => score.scoredLoc === gridLoc )
+    let groundCubeScore = undefined
+    if(gridLoc > 17){
+        groundCubeScore = scoredObjects.find((score) => score.scoredLoc === gridLoc + 1 )
+    }
+    //if scored
+    // if((scoredLocsSet.has(gridLoc))) {
+    if(thisScore || groundCubeScore) {
+      
+      
+        //If scoredType auto
+            //If top 2 rows
+            if(gridLoc <= 17 && thisScore?.scoredLoc === (gridLoc)){
+      
+                //Auto
+                if(thisScore?.type === 'auto-cone' ){
+                    bgImage = 'bg-inactive-border'
                 }
-            })
-       //Top 2 Rows
-        } else if(gridLoc <= 17 && scoredLocsSet.has(gridLoc) && bgImage === '') {
-        if (cones.includes(gridLoc)) {
-            bgImage ="bg-cone-filled"
-          } else if (cubes.includes(gridLoc)) {
-            bgImage = "bg-cube-filled"
-          }
-        //Default
-        } else {
-            if (cones.includes(gridLoc)) {
-            bgImage = "bg-cone-empty";
-            } else if (cubes.includes(gridLoc)) {
-            bgImage = "bg-cube-empty";
-            } else if (groundCones.includes(gridLoc)) {
-            bgImage = "bg-bottom-empty";
-            } else if (groundCubes.includes(gridLoc)) {
-            bgImage = "bg-bottom-empty";
+                if(thisScore?.type === 'auto-cube'){
+                    bgImage = 'bg-inactive-border'
+                }
+                //Tele
+                if(thisScore?.type === 'tele-cone' ){
+                    bgImage = 'bg-cone-filled'
+                }
+                if(thisScore?.type === 'tele-cube'){
+                    bgImage = 'bg-cube-filled'
+                }
+                //If bottom row cone
+            } else if(gridLoc > 17 && thisScore?.scoredLoc === (gridLoc)) {
+      
+                //Auto
+                if(thisScore?.type === 'auto-cone' ){
+                    bgImage = 'bg-inactive-border'
+                //Tele
+                } else if(thisScore?.type === 'tele-cone' ){
+                    bgImage = 'bg-bottom-cone'
+                }
+                //If bottom row cube
+            } else if (gridLoc > 17 && groundCubeScore?.scoredLoc === (gridLoc+1)) {
+      
+                //Auto
+                if(groundCubeScore?.type === 'auto-cube'){
+                    bgImage = 'bg-inactive-border'
+                //Tele
+                } else if(groundCubeScore?.type === 'tele-cube'){
+                    bgImage = 'bg-bottom-cube'
+                }
             }
-        }   
-        //Nothing Scored yet
+    //if not scored
     } else {
         if (cones.includes(gridLoc)) {
             bgImage = "bg-cone-empty";
@@ -159,7 +161,9 @@ export default function ScoringGrid({matchEvents, matchDispatch, timeState}: Sco
             bgImage = "bg-bottom-empty";
         }
     }
-   
+        //default cell
+
+  
   
     let styling = `w-25 h-25 flex justify-center items-center border bg-cover bg-center ${bgImage}`;
   

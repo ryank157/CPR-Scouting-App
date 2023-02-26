@@ -1,3 +1,4 @@
+
 export interface MatchEventsState {
     startingLoc: number | undefined,
     mobility: Mobility;
@@ -34,12 +35,21 @@ export type MatchAction =
     | {type: 'FOUL_TOGGLE'; newFoul: Foul;}
     | {type: 'ADD_SCORE_DETAILS'; newScore: ScoredObject;}
     | {type: 'EDIT_SCORE';}
+  
+const blankScore = {
+      cycleTime: undefined,
+      pickupLoc: undefined,
+      pickupOrient: undefined,
+      delayed: undefined,
+      type: undefined,
+      scoredLoc: undefined,
+    }
 
 
 export const initialMatchState: MatchEventsState = {
     startingLoc: undefined,
     mobility: undefined,
-    scoredObjects: [],
+    scoredObjects: [blankScore],
     autoBalancing: undefined,
     endgameBalancing: undefined,
     fouls: [],
@@ -90,7 +100,10 @@ export const MatchEventsReducer = (state: MatchEventsState, action: MatchAction)
       case 'ADD_SCORE_DETAILS':
         //TODO Need to rework the grid display so that it colors data based on matchEvents scoring array
         //Add Check for only unique scores. Or no double scores on bottom level
-        const newestScore = state.scoredObjects[state.scoredObjects.length] || {
+
+        const currentLength = state.scoredObjects.length
+
+        const newestScore = state.scoredObjects[currentLength] || {
           cycleTime: undefined,
           pickupLoc: undefined,
           pickupOrient: undefined,
@@ -98,6 +111,11 @@ export const MatchEventsReducer = (state: MatchEventsState, action: MatchAction)
           type: undefined,
           scoredLoc: undefined,
         }
+
+
+
+
+
         
         newestScore.cycleTime = action.newScore.cycleTime !== undefined ? action.newScore.cycleTime : newestScore?.cycleTime;
         newestScore.pickupLoc = action.newScore.pickupLoc !== undefined ? action.newScore.pickupLoc : newestScore?.pickupLoc;
@@ -107,17 +125,33 @@ export const MatchEventsReducer = (state: MatchEventsState, action: MatchAction)
         newestScore.scoredLoc = action.newScore.scoredLoc !== undefined ? action.newScore.scoredLoc : newestScore?.scoredLoc;
 
         
-        
-
-        if(state.scoredObjects.length === 0){
-          return {
-            ...state,
-            scoredObjects: [newestScore]
+        //Update Data
+        if(newestScore.scoredLoc === undefined){        
+          if(currentLength === 1) {          
+            return {
+              ...state,
+              scoredObjects: [newestScore]
+            }
+          } else {
+            state.scoredObjects[currentLength - 1] = newestScore
+            return {
+              ...state,
+              scoredObjects: [...state.scoredObjects]
+            }
           }
-        } else{
-          return {
-            ...state,
-            scoredObjects: [...state.scoredObjects, newestScore]
+        //Log score
+        } else if (newestScore.scoredLoc !== undefined){
+          if(currentLength === 1){
+            return {
+              ...state,
+              scoredObjects: [newestScore, blankScore]
+            }
+          } else {
+            state.scoredObjects[currentLength - 1] = newestScore
+            return {
+              ...state,
+              scoredObjects: [...state.scoredObjects, blankScore]
+            }
           }
         }
 
