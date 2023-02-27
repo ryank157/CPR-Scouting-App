@@ -2,22 +2,70 @@
 
 
 import type {Dispatch} from 'react'
+import { useState } from 'react'
 
 import type { TimeAction, TimeState } from "@/utils/matchScout/time"
+import type { MatchEventsState, MatchAction } from '@/utils/matchScout/events'
 import Button from 'src-components/button'
 import Link from 'next/link'
+import { trpc } from '@/utils/trpc'
 
 interface ScoutHeaderProps {
+    matchEvents: MatchEventsState,
+    matchDispatch: Dispatch<MatchAction>,
     timeState: TimeState,
     timeDispatch: Dispatch<TimeAction>
 
 }
 
-export default function ScoutHeader({timeState, timeDispatch}: ScoutHeaderProps) {
+export default function ScoutHeader({matchEvents, matchDispatch, timeState, timeDispatch}: ScoutHeaderProps) {
    const {activeMatch, startTime, matchTime, endTime, adjustment, matchPage} = timeState
 
    const autoTime = (timeState.endTime - timeState.matchTime - 123000) / 1000; 
-   const teleTime = (timeState.endTime - timeState.matchTime) / 1000; 
+   const teleTime = (timeState.endTime - timeState.matchTime) / 1000 >= 0 ? (timeState.endTime - timeState.matchTime) / 1000 : 0 ; 
+   const [submitClick, setSubmitClick] = useState(false)
+   
+   const m = matchEvents
+   const SO = m.scoredObjects.map((score) => {
+        return {
+            type: score.type as string,
+        scoredLocation: score.scoredLoc,
+        cycleTime: score.cycleTime,
+        pickupLocation: score.pickupLoc as string | undefined,
+        pickupOrientation: score.pickupOrient as string | undefined,
+        delayed: score.delayed as string | undefined,
+        }   
+   })
+
+   const dataSubmission = {
+    scouter: 'Timmy',
+    startingLocation: m.startingLoc,
+    mobility: m.mobility as unknown as string | undefined,
+    autoBalancing: m.autoBalancing as unknown as string | undefined,
+    endRobots: m.endgameBalancing.numberOfRobots,
+    endOrder: m.endgameBalancing.order,
+    endResult: m.endgameBalancing.result,
+    fouls: m.fouls as unknown as string[],
+    defense: m.defense,
+    feedback: m.feedback,
+    scoredPieces: SO,
+   }
+
+   const {error} = trpc.match.submitMatch.useQuery(dataSubmission, {
+    enabled: Boolean(submitClick),
+    onError(err) {
+        console.log(err)
+    },
+    onSuccess(res) {
+        setSubmitClick(false)
+    }
+
+   })
+
+   
+
+    
+
 
     switch(matchPage) {
         case "before":
@@ -108,7 +156,11 @@ export default function ScoutHeader({timeState, timeDispatch}: ScoutHeaderProps)
                     }</div>
                     <Button className='w-15 text-4xl pb-2' onClick={() => timeDispatch({ type: 'ADJUST_TIME', increase: 1000 })}>-</Button>
 
-                    <Button className='' onClick={() => timeDispatch({type: 'CHANGE_PAGE', page: 'review'})}>Review</Button>
+                    <Button className='' onClick={() => {
+                            setSubmitClick(true)
+                            timeDispatch({type: 'CHANGE_PAGE', page: 'before'})
+                    }
+                       }>Submit</Button>
                     </div>
                 </div>
                 </>
@@ -116,7 +168,7 @@ export default function ScoutHeader({timeState, timeDispatch}: ScoutHeaderProps)
         case "review":
             return (
                 <>
-                                <div className='w-full flex justify-between p-7.5 '>
+                                {/* <div className='w-full flex justify-between p-7.5 '>
                     <div className='flex  items-center gap-7.5'>
                         <Button className='' onClick={() => timeDispatch({type: 'CHANGE_PAGE', page: 'endgame'})}>Back</Button>
                         <div className="flex flex-col ">
@@ -128,9 +180,13 @@ export default function ScoutHeader({timeState, timeDispatch}: ScoutHeaderProps)
 
 
 
-                    <Button className='' onClick={() => timeDispatch({type: 'CHANGE_PAGE', page: 'before'})}>Submit</Button>
+                    <Button className='' onClick={() => {
+
+                        timeDispatch({type: 'CHANGE_PAGE', page: 'before'})
+                        
+                        }}>Submit</Button>
                     </div>
-                </div>
+                </div> */}
                 </>
             )
     }

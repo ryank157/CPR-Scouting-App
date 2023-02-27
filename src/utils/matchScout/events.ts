@@ -4,9 +4,10 @@ export interface MatchEventsState {
     mobility: Mobility;
     scoredObjects: ScoredObject[];
     autoBalancing: AutoBalance;
-    endgameBalancing: string | undefined,
+    endgameBalancing: Endgame,
     fouls: Foul[];
     defense: string[];
+    feedback: string | undefined;
   }
 
 export type Mobility = 'yes' | 'no' | 'failed' | undefined
@@ -25,16 +26,23 @@ export type ScoredObject = {
   scoredLoc?: number,
 }
 
+export type Endgame = {
+    numberOfRobots: 1 | 2 | 3 | undefined,
+    order: 1 | 2 | 3 | undefined,
+    result: 'balance' | 'dock' | 'fail' | undefined,
+  }
+
 
 
 export type MatchAction =
     | {type: 'SET_STARTING_LOC'; location: number}
     | {type: 'SET_MOBILITY'; mobility: Mobility}
     | {type: 'SET_AUTO_BALANCING'; autoBalance: AutoBalance}
-    | {type: 'SET_ENDGAME_BALANCING';}
+    | {type: 'SET_ENDGAME_BALANCING'; endgame: Endgame}
     | {type: 'FOUL_TOGGLE'; newFoul: Foul;}
     | {type: 'ADD_SCORE_DETAILS'; newScore: ScoredObject;}
     | {type: 'EDIT_SCORE';}
+    | {type: 'SET_FEEDBACK'; message: string}
   
 const blankScore = {
       cycleTime: undefined,
@@ -51,9 +59,14 @@ export const initialMatchState: MatchEventsState = {
     mobility: undefined,
     scoredObjects: [blankScore],
     autoBalancing: undefined,
-    endgameBalancing: undefined,
+    endgameBalancing: {
+      numberOfRobots: undefined,
+      order: undefined,
+      result: undefined,
+    },
     fouls: [],
     defense: [],
+    feedback: undefined,
   };
 
 export const MatchEventsReducer = (state: MatchEventsState, action: MatchAction): MatchEventsState => {
@@ -80,9 +93,14 @@ export const MatchEventsReducer = (state: MatchEventsState, action: MatchAction)
           autoBalancing: action.autoBalance,
         };
       case 'SET_ENDGAME_BALANCING':
-        //SOME CODE
+        const endGame = state.endgameBalancing 
+        endGame.numberOfRobots = action.endgame.numberOfRobots !== undefined ? action.endgame.numberOfRobots : endGame.numberOfRobots;
+        endGame.order = action.endgame.order !== undefined ? action.endgame.order : endGame.order;
+        endGame.result = action.endgame.result !== undefined ? action.endgame.result : endGame?.result;
+        console.log(endGame)
+
         return {
-          ...state
+          ...state, endgameBalancing: {...endGame }
         }
       case 'FOUL_TOGGLE':
         const index = state.fouls.indexOf(action.newFoul);
@@ -112,11 +130,6 @@ export const MatchEventsReducer = (state: MatchEventsState, action: MatchAction)
           scoredLoc: undefined,
         }
 
-
-
-
-
-        
         newestScore.cycleTime = action.newScore.cycleTime !== undefined ? action.newScore.cycleTime : newestScore?.cycleTime;
         newestScore.pickupLoc = action.newScore.pickupLoc !== undefined ? action.newScore.pickupLoc : newestScore?.pickupLoc;
         newestScore.pickupOrient = action.newScore.pickupOrient !== undefined ? action.newScore.pickupOrient : newestScore?.pickupOrient;
@@ -161,6 +174,12 @@ export const MatchEventsReducer = (state: MatchEventsState, action: MatchAction)
         console.log('edit score')
         return {
           ...state
+        }
+
+      case 'SET_FEEDBACK':
+        return {
+          ...state,
+          feedback: action.message
         }
         
       default:

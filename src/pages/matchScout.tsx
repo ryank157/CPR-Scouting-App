@@ -1,5 +1,5 @@
 import { type NextPage } from "next";
-import { useState, useEffect, useReducer} from "react";
+import { useState, useEffect, useReducer, useRef} from "react";
 
 import { TimeReducer, initialTimeState } from "@/utils/matchScout/time";
 
@@ -18,27 +18,21 @@ const MatchScout: NextPage = () => {
   //Relating to time and page
   const [timeState, timeDispatch] = useReducer(TimeReducer, initialTimeState);
 
-  // useEffect(() => {
-  //   if (timeState.activeMatch) {
-  //     const interval = setInterval(() => {
-  //       timeDispatch({ type: 'ADJUST_TIME', increase: 1000 });
-  //     }, 1000);
-  //     return () => clearInterval(interval);
-  //   }
-  // }, [timeState.activeMatch]);
-
-
-  
-  
+  useEffect(() => {
+    if (timeState.activeMatch && timeState.endTime > new Date().getTime()) {
+      const interval = setInterval(() => {
+        timeDispatch({ type: 'ADJUST_TIME', increase: 1000 });
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [timeState.activeMatch]);
 
   //Relating to match events
- 
-  
   const [matchEvents, matchDispatch] = useReducer(MatchEventsReducer, initialMatchState)
 
   return(
     <div className="flex flex-col h-screen">
-    <ScoutHeader timeState={timeState} timeDispatch={timeDispatch}/>
+    <ScoutHeader timeState={timeState} timeDispatch={timeDispatch} matchEvents={matchEvents} matchDispatch={matchDispatch}/>
     <ScoutingBody />
     </div>
   )

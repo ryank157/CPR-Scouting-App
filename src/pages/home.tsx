@@ -8,6 +8,7 @@ import Button from "src-components/button";
 const Home: NextPage = () => {
   const { data: session } = useSession();
   const { data: test } = trpc.tba.getTBAData.useQuery();
+  console.log(test)
 
 
   return (
@@ -19,7 +20,7 @@ const Home: NextPage = () => {
       </Head>
       {/* <Navbar /> */}
       <div className="max-w-screen flex h-screen flex-col items-center ">
-        {!session && (
+        {/* {!session && (
           <>
             <h1 className="mt-16 p-4 text-center text-6xl font-normal ">
               Welcome!
@@ -30,8 +31,8 @@ const Home: NextPage = () => {
             <Button className="mt-10">Continue as Guest</Button>
             </div>
           </>
-        )}
-        {session && (
+        )} */}
+        
           <div className="w-75 mb-16 flex h-screen flex-col flex-wrap items-stretch justify-between p-4  text-cpr-blue">
             <div className="w-full">
               <Link href="/schedule">
@@ -45,7 +46,6 @@ const Home: NextPage = () => {
             <Button onClick={() => signOut()}>Sign Out</Button>
            
           </div>
-        )}
       </div>
 
       {/* <main className="flex h-screen flex-col items-center justify-center border border-black ">

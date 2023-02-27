@@ -15,10 +15,11 @@ interface ScoringGridProps {
 }
 
 
-export default function ScoringGrid({matchEvents, matchDispatch, timeState, cSO}: ScoringGridProps) {
+export default function ScoringGrid({matchEvents, matchDispatch, timeState, timeDispatch, cSO}: ScoringGridProps) {
     const grid: string[][] = Array(3).fill(Array(9).fill(''));
     const {scoredObjects} = matchEvents
     const {matchPage} = timeState
+    const teleTime = (timeState.endTime - timeState.matchTime) / 1000 >= 0 ? (timeState.endTime - timeState.matchTime) / 1000 : 0 ; 
   
     return (
       <div className="relative flex flex-wrap justify-center">
@@ -36,12 +37,16 @@ export default function ScoringGrid({matchEvents, matchDispatch, timeState, cSO}
                         <div 
                         key={gridLoc} 
                         className={cellClasses(gridLoc,scoredObjects, matchPage)} 
-                        onClick={() => 
+                        onClick={() => {
+                            
                             matchDispatch({type: 'ADD_SCORE_DETAILS', newScore: {
                             ...cSO,
                             type: scoredType(gridLoc, matchPage),
                             scoredLoc: gridLoc,
                             }})
+
+                            timeDispatch({type: 'SET_CYCLE_START', timeStamp: teleTime})
+                        }
                           }>
                         </div>
                     );
@@ -55,15 +60,20 @@ export default function ScoringGrid({matchEvents, matchDispatch, timeState, cSO}
                                 return <div 
                                     key={slotLoc}
                                     className="" 
-                                    onClick={() => 
-                                        //If not scored already do add score details
+                                    onClick={() => {
 
                                         matchDispatch({type: 'ADD_SCORE_DETAILS', newScore: {
                                         ...cSO,
-                                        cycleTime: 15,
                                         type: scoredType(slotLoc,matchPage),
                                         scoredLoc: slotLoc,
-                                        }})                                   
+                                        }})  
+
+                                        timeDispatch({type: 'SET_CYCLE_START', timeStamp: teleTime})
+                                    }
+                                        //If not scored already do add score details
+
+                                        
+                                        
                                     
                                     }>
                                 </div>
