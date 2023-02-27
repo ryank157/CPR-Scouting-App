@@ -6,9 +6,10 @@ import { trpc } from "../utils/trpc";
 import Button from "src-components/button";
 
 const Home: NextPage = () => {
-  const { data: session } = useSession();
-  const { data: test } = trpc.tba.getTBAData.useQuery();
-  
+  // const { data: session } = useSession();
+  // const { data: test } = trpc.tba.getTBAData.useQuery();
+
+
   return (
     <>
       <Head>
@@ -16,22 +17,23 @@ const Home: NextPage = () => {
         <meta name="description" content="CPR scouting app for 2023" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="max-w-screen flex h-screen flex-col items-center ">       
+      {/* <Navbar /> */}
+      <div className="max-w-screen flex h-screen flex-col items-center ">
+
           <div className="w-75 mb-16 flex h-screen flex-col flex-wrap items-stretch justify-between p-4  text-cpr-blue">
-            <div className="w-full">
+            <div className="w-full flex flex-col ">
               <Link href="/schedule">
-              <Button className="mt-10">Match Schedule</Button>
+              <Button className="mt-10 w-80">Match Schedule</Button>                
               </Link>
-              <Button className="mt-10">Scoreboard</Button>
+              <Button className="mt-10 w-80" >Scoreboard</Button>
               <Link href="/matchScout">
-              <Button className="mt-10">Start Scouting</Button>
+              <Button className="mt-10 w-80">Start Scouting</Button>
               </Link>
             </div>
-            <Button onClick={() => signOut()}>Sign Out</Button>
+            <Button className='w-80' onClick={() => signOut()}>Sign Out</Button>
            
           </div>
       </div>
-
     </>
   );
 };
