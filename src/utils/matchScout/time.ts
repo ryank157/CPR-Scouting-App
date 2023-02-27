@@ -59,7 +59,7 @@ export const TimeReducer = (state: TimeState, action: TimeAction) => {
       return {
         ...state,
         activeMatch: false,
-        matchPage: 'review' as MatchPage, 
+        matchPage: 'before' as MatchPage, 
       };
     case 'SET_CYCLE_START':
       return {

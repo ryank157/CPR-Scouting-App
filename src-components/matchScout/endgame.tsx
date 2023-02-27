@@ -3,7 +3,6 @@ import type {Dispatch } from 'react'
 import type { TimeState, TimeAction } from "@/utils/matchScout/time"
 import type {MatchAction, MatchEventsState } from "@/utils/matchScout/events"
 
-import TeleButton from 'src-components/teleButton'
 import EndgameButton from 'src-components/endgameButton'
 
 
@@ -24,6 +23,8 @@ const {
     timeState,
     timeDispatch
     } = props
+
+    console.log(matchEvents.endgameBalancing)
 
   
 return (

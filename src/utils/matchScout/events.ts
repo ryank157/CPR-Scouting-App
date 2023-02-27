@@ -43,6 +43,7 @@ export type MatchAction =
     | {type: 'ADD_SCORE_DETAILS'; newScore: ScoredObject;}
     | {type: 'EDIT_SCORE';}
     | {type: 'SET_FEEDBACK'; message: string}
+    | {type: 'RESET_MATCH';}
   
 const blankScore = {
       cycleTime: undefined,
@@ -180,6 +181,17 @@ export const MatchEventsReducer = (state: MatchEventsState, action: MatchAction)
         return {
           ...state,
           feedback: action.message
+        }
+
+      case 'RESET_MATCH':
+        return {
+         ...initialMatchState,
+         endgameBalancing: {
+          numberOfRobots: undefined,
+          order: undefined,
+          result: undefined,
+         },
+         scoredObjects: [blankScore]
         }
         
       default:

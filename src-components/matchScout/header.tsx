@@ -3,6 +3,7 @@
 
 import type {Dispatch} from 'react'
 import { useState } from 'react'
+import { initialMatchState } from '@/utils/matchScout/events'
 
 import type { TimeAction, TimeState } from "@/utils/matchScout/time"
 import type { MatchEventsState, MatchAction } from '@/utils/matchScout/events'
@@ -17,6 +18,7 @@ interface ScoutHeaderProps {
     timeDispatch: Dispatch<TimeAction>
 
 }
+
 
 export default function ScoutHeader({matchEvents, matchDispatch, timeState, timeDispatch}: ScoutHeaderProps) {
    const {activeMatch, startTime, matchTime, endTime, adjustment, matchPage} = timeState
@@ -58,6 +60,7 @@ export default function ScoutHeader({matchEvents, matchDispatch, timeState, time
     },
     onSuccess(res) {
         setSubmitClick(false)
+        matchDispatch({type: 'RESET_MATCH'})
     }
 
    })
@@ -158,7 +161,9 @@ export default function ScoutHeader({matchEvents, matchDispatch, timeState, time
 
                     <Button className='' onClick={() => {
                             setSubmitClick(true)
-                            timeDispatch({type: 'CHANGE_PAGE', page: 'before'})
+                            
+                            timeDispatch({type: 'END_MATCH'})
+                            
                     }
                        }>Submit</Button>
                     </div>
