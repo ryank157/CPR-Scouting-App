@@ -19,20 +19,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {/* <Navbar /> */}
-      <div className="max-w-screen flex h-screen flex-col items-center ">
-        {/* {!session && (
-          <>
-            <h1 className="mt-16 p-4 text-center text-6xl font-normal ">
-              Welcome!
-            </h1>
-            <div className="mb-16 flex flex-col flex-wrap items-center p-4 text-cpr-blue">
-            <Button onClick={() => signIn('discord')}>Discord Login</Button>
-             
-            <Button className="mt-10">Continue as Guest</Button>
-            </div>
-          </>
-        )} */}
-        
+      <div className="max-w-screen flex h-screen flex-col items-center ">       
           <div className="w-75 mb-16 flex h-screen flex-col flex-wrap items-stretch justify-between p-4  text-cpr-blue">
             <div className="w-full">
               <Link href="/schedule">

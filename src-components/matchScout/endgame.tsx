@@ -23,9 +23,6 @@ const {
     timeState,
     timeDispatch
     } = props
-
-    console.log(matchEvents.endgameBalancing)
-
   
 return (
 <div className="flex justify-center w-full pt-[35px] "> 
