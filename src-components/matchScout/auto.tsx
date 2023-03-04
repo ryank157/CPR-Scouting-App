@@ -14,7 +14,6 @@ interface AutoProps {
 }
 
 export default function AutoScout(props: AutoProps) {
-  console.log("autoScout");
   const { matchEvents, matchDispatch, timeState, timeDispatch } = props;
   const memoizedScoringGrid = useMemo(() => {
     return (

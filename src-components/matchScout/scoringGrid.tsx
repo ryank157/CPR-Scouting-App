@@ -25,7 +25,6 @@ export default function ScoringGrid({
   timeDispatch,
   cSO,
 }: ScoringGridProps) {
-  console.log("scoringGrid");
   const grid: string[][] = Array(3).fill(Array(9).fill(""));
   const { scoredObjects } = matchEvents;
   const { matchPage } = timeState;
@@ -36,11 +35,11 @@ export default function ScoringGrid({
 
   return (
     <div className="relative flex flex-wrap justify-center">
-      <div className="flex w-15 items-center justify-center">
+      {/* <div className="flex w-15 items-center justify-center">
         <div className="-rotate-90 transform whitespace-nowrap text-3xl">
           Feeder Station
         </div>
-      </div>
+      </div> */}
       <div className="flex flex-col">
         {grid.map((row, rowIndex) => (
           <div key={rowIndex + 100} className="flex gap-1.25 pb-1.25">
@@ -115,11 +114,11 @@ export default function ScoringGrid({
           </div>
         ))}
       </div>
-      <div className="flex w-15 items-center justify-center">
+      {/* <div className="flex w-15 items-center justify-center">
         <div className="rotate-90 transform whitespace-nowrap text-3xl">
           Void
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

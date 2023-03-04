@@ -40,8 +40,6 @@ const MatchScout: NextPage = () => {
     initialMatchState
   );
 
-  console.log("matchScout");
-
   const memoizedScout = useMemo(() => {
     return <ScoutingBody />;
   }, [matchEvents, timeState.matchPage]);

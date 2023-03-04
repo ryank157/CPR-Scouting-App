@@ -1,14 +1,12 @@
-
 import { z } from "zod";
 import { router, publicProcedure } from "../trpc";
 
-import prisma from '../../../utils/prisma'
+import prisma from "../../../utils/prisma";
 
 export const matchRouter = router({
   submitMatch: publicProcedure
-  .input(z.object({
-    
-    
+    .input(
+      z.object({
         scouter: z.string().optional(),
         startingLocation: z.number().optional(),
         mobility: z.string().optional(),
@@ -19,28 +17,31 @@ export const matchRouter = router({
         fouls: z.string().array(),
         defense: z.string().array(),
         feedback: z.string().optional(),
-        scoredPieces: z.object({
+        scoredPieces: z
+          .object({
             type: z.string().optional(),
             scoredLocation: z.number().optional(),
             cycleTime: z.number().optional(),
             pickupLocation: z.string().optional(),
             pickupOrientation: z.string().optional(),
             delayed: z.string().optional(),
-        }).array()
+          })
+          .array(),
+      })
+    )
+    .query(async ({ input }) => {
+      const i = input;
+      console.log(i);
 
-  }))
-  .query(async ({input}) => {
-    const i = input
-    console.log(i)
-
-    await prisma.robotMatch.create({
-        data: {
+      await prisma.robotMatch
+        .create({
+          data: {
             matchId: 1,
             startingLoc: i.startingLocation,
             mobility: i.mobility,
             autoBalance: i.autoBalancing,
-            fouls: i.fouls.join(','),
-            defense: i.defense.join(','),
+            fouls: i.fouls.join(","),
+            defense: i.defense.join(","),
             endRobots: i.endRobots,
             endOrder: i.endOrder,
             endResult: i.endResult,
@@ -49,15 +50,15 @@ export const matchRouter = router({
 
             scoredPieces: {
               createMany: {
-                data: i.scoredPieces
-              }
-            }
-        }
-    }).catch((err) => {
-      console.log(err)
-    })
+                data: i.scoredPieces,
+              },
+            },
+          },
+        })
+        .catch((err) => {
+          console.log(err);
+        });
 
-    
-    return 'test'
-  })
+      return "test";
+    }),
 });

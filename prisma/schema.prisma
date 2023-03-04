@@ -64,6 +64,7 @@ model Robot {
   id         Int         @id @unique
   name       String
   teamNumber Int         @unique
+  city       String
   events     Event[]
   match      Match[]
   alliances  Alliances[]

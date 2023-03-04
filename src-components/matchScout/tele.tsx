@@ -14,7 +14,6 @@ interface TeleProps {
 }
 
 export const TeleScout: React.FC<TeleProps> = (props: TeleProps) => {
-  console.log("tele Scout");
   const { matchEvents, matchDispatch, timeState, timeDispatch } = props;
   const [cSO, setCSO] = useState(
     matchEvents.scoredObjects[matchEvents.scoredObjects.length - 1]
