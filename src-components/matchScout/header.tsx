@@ -7,6 +7,7 @@ import type { MatchEventsState, MatchAction } from "@/utils/matchScout/events";
 import Button from "src-components/button";
 import Link from "next/link";
 import { trpc } from "@/utils/trpc";
+import userStore from "@/utils/stores";
 
 interface ScoutHeaderProps {
   matchEvents: MatchEventsState;
@@ -21,7 +22,7 @@ export default function ScoutHeader({
   timeState,
   timeDispatch,
 }: ScoutHeaderProps) {
-  console.log("Scout Header");
+  const { name } = userStore();
   const { activeMatch, startTime, matchTime, endTime, adjustment, matchPage } =
     timeState;
 
@@ -71,7 +72,6 @@ export default function ScoutHeader({
 
   switch (matchPage) {
     case "before":
-      console.log("before");
       return (
         <>
           <div className="flex w-full justify-between p-7.5 ">
@@ -85,6 +85,9 @@ export default function ScoutHeader({
               </div>
             </div>
             <div className="flex gap-2.5 font-bold">
+              <Link href={"/login"}>
+                <Button className="">{name ? name : "Log In"}</Button>
+              </Link>
               <Button className="">No Show</Button>
               {!activeMatch && (
                 <Button
@@ -111,7 +114,6 @@ export default function ScoutHeader({
         </>
       );
     case "auto":
-      console.log("auto");
       return (
         <>
           <div className="flex w-full justify-between p-7.5 ">

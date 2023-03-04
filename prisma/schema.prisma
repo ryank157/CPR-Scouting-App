@@ -61,18 +61,20 @@ model VerificationToken {
 }
 
 model Robot {
-  id         Int         @id @unique
+  id         Int          @id @unique @default(autoincrement())
   name       String
-  teamNumber Int         @unique
+  teamNumber Int          @unique
   city       String
   events     Event[]
   match      Match[]
   alliances  Alliances[]
+  robotMatch RobotMatch[]
 }
 
 model Event {
   id        Int         @id @default(autoincrement())
   name      String
+  key       String
   robots    Robot[]
   matches   Match[]
   alliances Alliances[]
@@ -83,16 +85,22 @@ model Match {
   flag           String //Type of match: normal, replay, practice, etc.
   event          Event        @relation(fields: [eventId], references: [id])
   eventId        Int
+  matchNumber    Int
   robot          Robot[]
   robotMatchData RobotMatch[]
 
+  @@unique([matchNumber, eventId, flag])
   @@index([eventId])
 }
 
 model RobotMatch {
-  id      Int   @id @default(autoincrement())
-  match   Match @relation(fields: [matchId], references: [id])
-  matchId Int
+  id       Int    @id @default(autoincrement())
+  match    Match  @relation(fields: [matchId], references: [id])
+  matchId  Int
+  robot    Robot  @relation(fields: [robotId], references: [teamNumber])
+  robotId  Int
+  station  Int
+  alliance String
 
   startingLoc  Int?
   mobility     String?
@@ -105,9 +113,10 @@ model RobotMatch {
   endResult    String?
   feedback     String?
 
-  scouter String?
+  scouter Scouter[]
 
   @@index([matchId])
+  @@index([robotId])
 }
 
 model ScoredPiece {
@@ -133,4 +142,11 @@ model Alliances {
   alliancePosition Int
 
   @@index([eventId])
+}
+
+model Scouter {
+  id         Int          @id @default(autoincrement())
+  name       String
+  scouterId  String
+  robotMatch RobotMatch[]
 }

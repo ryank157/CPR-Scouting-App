@@ -1,5 +1,5 @@
 import { type NextPage } from "next";
-import { useState, useEffect, useReducer, useRef, useMemo } from "react";
+import { useEffect, useReducer, useMemo } from "react";
 
 import { TimeReducer, initialTimeState } from "@/utils/matchScout/time";
 
