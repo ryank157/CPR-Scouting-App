@@ -51,7 +51,7 @@ export type MatchAction =
   | { type: "EDIT_SCORE" }
   | { type: "SET_FEEDBACK"; message: string }
   | { type: "RESET_MATCH" }
-  | { type: "SET_SCOUTER"; name: string };
+  | { type: "SET_SCOUTER"; scouterId: string };
 
 const blankScore = {
   cycleTime: undefined,
@@ -236,7 +236,7 @@ export const MatchEventsReducer = (
     case "SET_SCOUTER":
       return {
         ...state,
-        scouter: action.name,
+        scouter: action.scouterId,
       };
 
     default:

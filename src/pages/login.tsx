@@ -3,12 +3,13 @@ import { trpc } from "../utils/trpc";
 import Link from "next/link";
 import Button from "src-components/button";
 import userStore from "@/utils/stores";
+import { Scouter } from "@prisma/client";
 
 const Login = () => {
-  const { name, setName } = userStore();
+  const { user, setUser } = userStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredScouters, setFilteredScouters] = useState<
-    string[] | undefined
+    Scouter[] | undefined
   >(undefined);
   const { data: scouters } = trpc.auth.fetchScouters.useQuery();
   useEffect(() => {
@@ -18,8 +19,7 @@ const Login = () => {
     });
 
     if (results) {
-      const names = results.map((scout) => scout.name);
-      setFilteredScouters(names);
+      setFilteredScouters(results);
     }
   }, [searchTerm, scouters]);
 
@@ -33,10 +33,10 @@ const Login = () => {
             </Link>
           </div>
           <div className="flex items-center justify-center gap-2.5 font-bold">
-            {name ? (
+            {user ? (
               <>
                 <div>Signed in as:</div>
-                <Button className="w-60"> {name}</Button>
+                <Button className="w-60"> {user.name}</Button>
               </>
             ) : (
               <div>Not Signed in</div>
@@ -60,9 +60,9 @@ const Login = () => {
               <div
                 key={index}
                 className="w-30 cursor-pointer border px-4 py-2 hover:bg-gray-100"
-                onClick={() => setName(scout)}
+                onClick={() => setUser(scout)}
               >
-                {scout}
+                {scout.name}
               </div>
             );
           })}

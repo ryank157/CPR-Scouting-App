@@ -147,6 +147,6 @@ model Alliances {
 model Scouter {
   id         Int          @id @default(autoincrement())
   name       String
-  scouterId  String
+  scouterId  String       @unique
   robotMatch RobotMatch[]
 }

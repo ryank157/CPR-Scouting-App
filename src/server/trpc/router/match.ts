@@ -2,12 +2,13 @@ import { z } from "zod";
 import { router, publicProcedure } from "../trpc";
 
 import prisma from "../../../utils/prisma";
+import { connect } from "http2";
 
 export const matchRouter = router({
   submitMatch: publicProcedure
     .input(
       z.object({
-        scouter: z.string().optional(),
+        scouter: z.string(),
         startingLocation: z.number().optional(),
         mobility: z.string().optional(),
         autoBalancing: z.string().optional(),
@@ -33,31 +34,37 @@ export const matchRouter = router({
       const i = input;
       console.log(i);
 
-      await prisma.robotMatch
-        .create({
-          data: {
-            matchId: 1,
-            startingLoc: i.startingLocation,
-            mobility: i.mobility,
-            autoBalance: i.autoBalancing,
-            fouls: i.fouls.join(","),
-            defense: i.defense.join(","),
-            endRobots: i.endRobots,
-            endOrder: i.endOrder,
-            endResult: i.endResult,
-            feedback: i.feedback,
-            scouter: i.scouter,
-
-            scoredPieces: {
-              createMany: {
-                data: i.scoredPieces,
-              },
+      const result = await prisma.robotMatch.create({
+        data: {
+          matchId: 1,
+          startingLoc: i.startingLocation,
+          mobility: i.mobility,
+          autoBalance: i.autoBalancing,
+          fouls: i.fouls.join(","),
+          defense: i.defense.join(","),
+          endRobots: i.endRobots,
+          endOrder: i.endOrder,
+          endResult: i.endResult,
+          feedback: i.feedback,
+          robotId: 1778,
+          station: 2,
+          alliance: "red",
+          scouter: {
+            connect: {
+              scouterId: i.scouter,
             },
           },
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+          scoredPieces: {
+            createMany: {
+              data: i.scoredPieces,
+            },
+          },
+        },
+      });
+
+      const matches = await prisma.robotMatch.findMany();
+      console.log(matches);
+      console.log(result);
 
       return "test";
     }),

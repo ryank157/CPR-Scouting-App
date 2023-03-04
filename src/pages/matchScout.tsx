@@ -57,7 +57,6 @@ const MatchScout: NextPage = () => {
   );
 
   function ScoutingBody() {
-    console.log("Scouting Body");
     switch (timeState.matchPage) {
       case "before":
         return BeforeScout({

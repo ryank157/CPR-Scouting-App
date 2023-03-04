@@ -9,7 +9,6 @@ import Button from "src-components/button";
 const Home: NextPage = () => {
   // const { data: session } = useSession();
   // const { data: test } = trpc.tba.getTBAData.useQuery();
-  const [scouter, setScouter] = useState("");
 
   return (
     <>

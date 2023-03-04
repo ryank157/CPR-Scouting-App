@@ -4,10 +4,10 @@ import { trpc } from "../utils/trpc";
 
 const Home: NextPage = () => {
   // const { data: session } = useSession();
-  //   const { data: test } = trpc.tba.fetchEventRobots.useQuery();
+  // const { data: test } = trpc.tba.populateRobots.useQuery();
   //   const { data: two } = trpc.tba.getTBAData.useQuery();
-  // const { data: two } = trpc.tba.fetchDistrictEvents.useQuery();
-  trpc.auth.uploadScouters.useQuery();
+  // const { data: two } = trpc.tba.populateMatches.useQuery();
+  // trpc.auth.uploadScouters.useQuery();
 
   return <></>;
 };

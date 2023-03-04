@@ -20,7 +20,7 @@ export const tbaRouter = router({
     return data;
   }),
 
-  fetchEventRobots: publicProcedure.query(async () => {
+  populateRobots: publicProcedure.query(async () => {
     const data: any[] = await axios
       .get(
         "https://www.thebluealliance.com/api/v3/event/2023wasno/teams/simple",
@@ -34,6 +34,7 @@ export const tbaRouter = router({
         return res.data;
       });
 
+    console.log(data);
     const eventRobots = data.map((robot) => {
       return {
         name: robot.nickname,
@@ -42,52 +43,25 @@ export const tbaRouter = router({
       };
     });
 
+    eventRobots.forEach(async (robot) => {
+      await prisma.robot.create({
+        data: {
+          name: robot.name,
+          teamNumber: robot.number,
+          city: robot.city,
+          events: {
+            connect: {
+              id: 1,
+            },
+          },
+        },
+      });
+    });
+
     return eventRobots;
     // return data;
   }),
-  fetchDistrictEvents: publicProcedure.query(async () => {
-    const data: any[] = await axios
-      .get(
-        "https://www.thebluealliance.com/api/v3/event/2023wasno/teams/simple",
-        {
-          headers: {
-            "X-TBA-Auth-Key": process.env.THE_BLUE_ALLIANCE,
-          },
-        }
-      )
-      .then((res) => {
-        return res.data;
-      });
-
-    // console.log(data);
-    // const eventRobots = data.map((robot) => {
-    //   return {
-    //     name: robot.nickname,
-    //     city: robot.city,
-    //     number: robot.team_number,
-    //   };
-    // });
-
-    // eventRobots.forEach(async (robot) => {
-    //   await prisma.robot.create({
-    //     data: {
-    //       name: robot.name,
-    //       teamNumber: robot.number,
-    //       city: robot.city,
-    //       events: {
-    //         connect: {
-    //           id: 1,
-    //         },
-    //       },
-    //     },
-    //   });
-    // });
-
-    // return eventRobots;
-    // // return data;
-    return "fill in the event buddy";
-  }),
-  fetchMatchSchedule: publicProcedure.query(async () => {
+  populateMatchSchedule: publicProcedure.query(async () => {
     const data: MatchType[] = await axios
       .get(
         "https://www.thebluealliance.com/api/v3/event/2023wasno/matches/simple",
@@ -109,7 +83,7 @@ export const tbaRouter = router({
       };
     });
 
-    // assignRobotsToMatches(matchData)
+    // assignRobotsToMatches(matchData);
   }),
 });
 

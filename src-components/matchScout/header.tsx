@@ -22,12 +22,12 @@ export default function ScoutHeader({
   timeState,
   timeDispatch,
 }: ScoutHeaderProps) {
-  const { name } = userStore();
+  const { user } = userStore();
   const { activeMatch, matchPage } = timeState;
 
   useEffect(() => {
-    matchDispatch({ type: "SET_SCOUTER", name: name });
-  }, [name]);
+    matchDispatch({ type: "SET_SCOUTER", scouterId: user.scouterId });
+  }, [user]);
 
   const autoTime = (timeState.endTime - timeState.matchTime - 123000) / 1000;
   const teleTime =
@@ -49,7 +49,7 @@ export default function ScoutHeader({
   });
 
   const dataSubmission = {
-    scouter: name,
+    scouter: user.scouterId,
     startingLocation: m.startingLoc,
     mobility: m.mobility as unknown as string | undefined,
     autoBalancing: m.autoBalancing as unknown as string | undefined,
@@ -89,7 +89,9 @@ export default function ScoutHeader({
             </div>
             <div className="flex gap-2.5 font-bold">
               <Link href={"/login"}>
-                <Button className="">{name ? name : "Log In"}</Button>
+                <Button className="">
+                  {user.scouterId ? user.name : "Log In"}
+                </Button>
               </Link>
               <Button className="">No Show</Button>
               {!activeMatch && (
