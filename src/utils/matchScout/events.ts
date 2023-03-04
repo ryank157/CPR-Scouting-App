@@ -8,6 +8,10 @@ export interface MatchEventsState {
   defense: string[];
   feedback: string | undefined;
   scouter: string | undefined;
+  robotId: number | undefined;
+  station: number | undefined;
+  alliance: string | undefined;
+  matchId: number | undefined;
 }
 
 export type Mobility = "yes" | "no" | "failed" | undefined;
@@ -51,7 +55,16 @@ export type MatchAction =
   | { type: "EDIT_SCORE" }
   | { type: "SET_FEEDBACK"; message: string }
   | { type: "RESET_MATCH" }
-  | { type: "SET_SCOUTER"; scouterId: string };
+  | { type: "SET_SCOUTER"; scouterId: string }
+  | {
+      type: "SET_ROBOT";
+      robotInfo: {
+        robotId: number;
+        alliance: string;
+        station: number;
+        matchId: number;
+      };
+    };
 
 const blankScore = {
   cycleTime: undefined,
@@ -76,6 +89,10 @@ export const initialMatchState: MatchEventsState = {
   defense: [],
   feedback: undefined,
   scouter: undefined,
+  robotId: undefined,
+  station: undefined,
+  alliance: undefined,
+  matchId: undefined,
 };
 
 export const MatchEventsReducer = (
@@ -237,6 +254,14 @@ export const MatchEventsReducer = (
       return {
         ...state,
         scouter: action.scouterId,
+      };
+    case "SET_ROBOT":
+      return {
+        ...state,
+        robotId: action.robotInfo.robotId,
+        station: action.robotInfo.station,
+        alliance: action.robotInfo.alliance,
+        matchId: action.robotInfo.matchId,
       };
 
     default:

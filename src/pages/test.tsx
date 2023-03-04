@@ -6,7 +6,9 @@ const Home: NextPage = () => {
   // const { data: session } = useSession();
   // const { data: test } = trpc.tba.populateRobots.useQuery();
   //   const { data: two } = trpc.tba.getTBAData.useQuery();
-  // const { data: two } = trpc.tba.populateMatches.useQuery();
+  // const { data: two } = trpc.tba.populateMatchSchedule.useQuery();
+  trpc.match.testQuery.useQuery();
+
   // trpc.auth.uploadScouters.useQuery();
 
   return <></>;

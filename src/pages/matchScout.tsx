@@ -13,6 +13,8 @@ import {
 import ScoutHeader from "src-components/matchScout/header";
 import { EndgameScout } from "src-components/matchScout/endgame";
 import { ReviewScout } from "src-components/matchScout/review";
+import { scheduleStore } from "@/utils/stores";
+import { trpc } from "@/utils/trpc";
 
 export type ScoringGrid =
   | "nothing"
@@ -23,8 +25,20 @@ export type ScoringGrid =
 
 const MatchScout: NextPage = () => {
   //Relating to time and page
+
+  const { schedule, setSchedule } = scheduleStore();
+  trpc.tba.fetchMatchSchedule.useQuery(undefined, {
+    enabled: Boolean(schedule.length === 0),
+    onSuccess(res) {
+      res.sort((a, b) => a.matchNumber - b.matchNumber);
+      //Put in schedule store
+      setSchedule(res);
+    },
+  });
+
   const [timeState, timeDispatch] = useReducer(TimeReducer, initialTimeState);
 
+  console.log(timeState);
   useEffect(() => {
     if (timeState.activeMatch && timeState.endTime > new Date().getTime()) {
       const interval = setInterval(() => {

@@ -1,14 +1,22 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { signIn, signOut, useSession } from "next-auth/react";
+
 import { trpc } from "../utils/trpc";
 import { useState } from "react";
 import Button from "src-components/button";
+import { scheduleStore } from "@/utils/stores";
 
 const Home: NextPage = () => {
-  // const { data: session } = useSession();
-  // const { data: test } = trpc.tba.getTBAData.useQuery();
+  const { schedule, setSchedule } = scheduleStore();
+  trpc.tba.fetchMatchSchedule.useQuery(undefined, {
+    enabled: Boolean(schedule.length === 0),
+    onSuccess(res) {
+      res.sort((a, b) => a.matchNumber - b.matchNumber);
+      //Put in schedule store
+      setSchedule(res);
+    },
+  });
 
   return (
     <>
@@ -31,9 +39,6 @@ const Home: NextPage = () => {
               <Button className="mt-10 w-80">Start Scouting</Button>
             </Link>
           </div>
-          <Button className="w-80" onClick={() => signOut()}>
-            Sign Out
-          </Button>
         </div>
       </div>
     </>

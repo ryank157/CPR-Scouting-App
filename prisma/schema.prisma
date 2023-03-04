@@ -66,7 +66,6 @@ model Robot {
   teamNumber Int          @unique
   city       String
   events     Event[]
-  match      Match[]
   alliances  Alliances[]
   robotMatch RobotMatch[]
 }
@@ -86,7 +85,6 @@ model Match {
   event          Event        @relation(fields: [eventId], references: [id])
   eventId        Int
   matchNumber    Int
-  robot          Robot[]
   robotMatchData RobotMatch[]
 
   @@unique([matchNumber, eventId, flag])
@@ -115,6 +113,7 @@ model RobotMatch {
 
   scouter Scouter[]
 
+  @@unique([matchId, robotId])
   @@index([matchId])
   @@index([robotId])
 }

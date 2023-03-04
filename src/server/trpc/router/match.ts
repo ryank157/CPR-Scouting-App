@@ -18,6 +18,10 @@ export const matchRouter = router({
         fouls: z.string().array(),
         defense: z.string().array(),
         feedback: z.string().optional(),
+        robotId: z.number(),
+        alliance: z.string(),
+        station: z.number(),
+        matchId: z.number(),
         scoredPieces: z
           .object({
             type: z.string().optional(),
@@ -34,9 +38,11 @@ export const matchRouter = router({
       const i = input;
       console.log(i);
 
-      const result = await prisma.robotMatch.create({
+      const result = await prisma.robotMatch.update({
+        where: {
+          matchId_robotId: { matchId: i.matchId, robotId: i.robotId },
+        },
         data: {
-          matchId: 1,
           startingLoc: i.startingLocation,
           mobility: i.mobility,
           autoBalance: i.autoBalancing,
@@ -46,9 +52,9 @@ export const matchRouter = router({
           endOrder: i.endOrder,
           endResult: i.endResult,
           feedback: i.feedback,
-          robotId: 1778,
-          station: 2,
-          alliance: "red",
+          robotId: i.robotId,
+          station: i.station,
+          alliance: i.alliance,
           scouter: {
             connect: {
               scouterId: i.scouter,
@@ -62,10 +68,20 @@ export const matchRouter = router({
         },
       });
 
-      const matches = await prisma.robotMatch.findMany();
-      console.log(matches);
-      console.log(result);
-
       return "test";
     }),
+
+  testQuery: publicProcedure.query(async () => {
+    const test = await prisma.robotMatch.findFirst({
+      where: {
+        id: 3722,
+      },
+      include: {
+        scouter: true,
+        scoredPieces: true,
+        robot: true,
+      },
+    });
+    console.log(test);
+  }),
 });

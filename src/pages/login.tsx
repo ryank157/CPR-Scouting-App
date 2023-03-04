@@ -3,7 +3,7 @@ import { trpc } from "../utils/trpc";
 import Link from "next/link";
 import Button from "src-components/button";
 import userStore from "@/utils/stores";
-import { Scouter } from "@prisma/client";
+import type { Scouter } from "@prisma/client";
 
 const Login = () => {
   const { user, setUser } = userStore();
@@ -33,7 +33,7 @@ const Login = () => {
             </Link>
           </div>
           <div className="flex items-center justify-center gap-2.5 font-bold">
-            {user ? (
+            {user.name ? (
               <>
                 <div>Signed in as:</div>
                 <Button className="w-60"> {user.name}</Button>

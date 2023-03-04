@@ -1,6 +1,7 @@
 // store.ts
 import type { Scouter } from "@prisma/client";
 import { create } from "zustand";
+import type { Robot } from "@prisma/client";
 
 type User = {
   user: Scouter;
@@ -18,4 +19,27 @@ export const userStore = create<User>()((set) => ({
       },
     })),
 }));
+
+type Schedule = {
+  schedule: Match[];
+  setSchedule: (schedule: Match[]) => void;
+};
+
+export const scheduleStore = create<Schedule>()((set) => ({
+  schedule: [],
+  setSchedule: (newSchedule) =>
+    set((state) => ({
+      schedule: newSchedule,
+    })),
+}));
+
+export type Match = {
+  id: number;
+  robotMatchData: {
+    robot: Robot;
+    station: number;
+    alliance: string;
+  }[];
+  matchNumber: number;
+};
 export default userStore;

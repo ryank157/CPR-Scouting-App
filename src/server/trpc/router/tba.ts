@@ -43,20 +43,20 @@ export const tbaRouter = router({
       };
     });
 
-    eventRobots.forEach(async (robot) => {
-      await prisma.robot.create({
-        data: {
-          name: robot.name,
-          teamNumber: robot.number,
-          city: robot.city,
-          events: {
-            connect: {
-              id: 1,
-            },
-          },
-        },
-      });
-    });
+    // eventRobots.forEach(async (robot) => {
+    //   await prisma.robot.create({
+    //     data: {
+    //       name: robot.name,
+    //       teamNumber: robot.number,
+    //       city: robot.city,
+    //       events: {
+    //         connect: {
+    //           id: 1, //event ID
+    //         },
+    //       },
+    //     },
+    //   });
+    // });
 
     return eventRobots;
     // return data;
@@ -75,15 +75,38 @@ export const tbaRouter = router({
         return res.data;
       });
 
-    const matchData: matchData = data.map((match) => {
-      return {
-        matchNumber: match.match_number,
-        blue: match.alliances.blue.team_keys,
-        red: match.alliances.red.team_keys,
-      };
-    });
+    const delData = await prisma.match.deleteMany();
+    const delData2 = await prisma.robotMatch.deleteMany();
 
-    // assignRobotsToMatches(matchData);
+    const matchData: matchData = data
+      .map((match) => {
+        return {
+          matchNumber: match.match_number,
+          blue: match.alliances.blue.team_keys,
+          red: match.alliances.red.team_keys,
+        };
+      })
+      .sort((a, b) => b.matchNumber - a.matchNumber);
+    console.log(matchData);
+
+    assignRobotsToMatches(matchData);
+    return matchData;
+  }),
+  fetchMatchSchedule: publicProcedure.query(async () => {
+    const data = await prisma.match.findMany({
+      select: {
+        id: true,
+        matchNumber: true,
+        robotMatchData: {
+          select: {
+            robot: true,
+            alliance: true,
+            station: true,
+          },
+        },
+      },
+    });
+    return data;
   }),
 });
 
@@ -122,33 +145,35 @@ async function assignRobotsToMatches(matchData: matchData) {
       },
     });
 
-    // Connect the blue robots to the match
-    let blueIndex = 0;
-    for (const blueRobotNumber of blueRobotNumbers) {
-      await prisma.robotMatch.create({
-        data: {
-          match: { connect: { id: dbMatch.id } },
-          robot: { connect: { teamNumber: blueRobotNumber } },
-          alliance: "blue",
-          station: blueIndex,
-        },
-      });
-      blueIndex++;
-    }
+    // Construct the data for the blue robots
+    const blueRobotMatchData = blueRobotNumbers.map(
+      (blueRobotNumber, index) => ({
+        matchId: dbMatch.id,
+        robotId: blueRobotNumber,
+        alliance: "blue",
+        station: index,
+      })
+    );
 
-    // Connect the red robots to the match
-    let redIndex = 0;
-    for (const redRobotNumber of redRobotNumbers) {
-      await prisma.robotMatch.create({
-        data: {
-          match: { connect: { id: dbMatch.id } },
-          robot: { connect: { teamNumber: redRobotNumber } },
-          alliance: "red",
-          station: redIndex,
-        },
-      });
-      redIndex++;
-    }
+    // Construct the data for the red robots
+    const redRobotMatchData = redRobotNumbers.map((redRobotNumber, index) => ({
+      matchId: dbMatch.id,
+      robotId: redRobotNumber,
+      alliance: "red",
+      station: index,
+    }));
+
+    // Use createMany to create the blue robot matches, ensuring that only one is created for each unique combination of match and robot
+    await prisma.robotMatch.createMany({
+      data: blueRobotMatchData,
+      skipDuplicates: true,
+    });
+
+    // Use createMany to create the red robot matches, ensuring that only one is created for each unique combination of match and robot
+    await prisma.robotMatch.createMany({
+      data: redRobotMatchData,
+      skipDuplicates: true,
+    });
   }
 }
 

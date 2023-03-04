@@ -1,13 +1,14 @@
 import type { Dispatch } from "react";
 import { useState, useEffect } from "react";
-import { initialMatchState } from "@/utils/matchScout/events";
 
 import type { TimeAction, TimeState } from "@/utils/matchScout/time";
 import type { MatchEventsState, MatchAction } from "@/utils/matchScout/events";
 import Button from "src-components/button";
 import Link from "next/link";
 import { trpc } from "@/utils/trpc";
-import userStore from "@/utils/stores";
+import { userStore, scheduleStore } from "@/utils/stores";
+import type { Match } from "@/utils/stores";
+import type { Robot } from "@prisma/client";
 
 interface ScoutHeaderProps {
   matchEvents: MatchEventsState;
@@ -23,7 +24,49 @@ export default function ScoutHeader({
   timeDispatch,
 }: ScoutHeaderProps) {
   const { user } = userStore();
+  const { schedule } = scheduleStore();
   const { activeMatch, matchPage } = timeState;
+
+  //Robot Position
+  const [robotStationIndex, setRobotStationIndex] = useState(0);
+  const robotStation = stationOptions[robotStationIndex];
+  const handleNextStation = () => {
+    setRobotStationIndex(
+      (prevIndex) => (prevIndex + 1) % stationOptions.length
+    );
+  };
+
+  const [match, setMatch] = useState<Match | undefined>(undefined);
+  const [matchSelect, isMatchSelect] = useState(false);
+  const [thisRobot, setThisRobot] = useState<Robot | undefined>(undefined);
+
+  useEffect(() => {
+    const currentAlliance = robotStation?.split(" ")[0];
+    const currentStation = Number(robotStation?.split(" ")[1]) - 1;
+    if (match && robotStationIndex) {
+      const currentMatch = schedule.find(
+        (newMatch) => newMatch.id === match.id
+      );
+      const matchBot = currentMatch?.robotMatchData.find(
+        (robot) =>
+          robot.alliance === currentAlliance && robot.station === currentStation
+      );
+      if (matchBot) {
+        matchDispatch({
+          type: "SET_ROBOT",
+          robotInfo: {
+            robotId: matchBot.robot.teamNumber,
+            alliance: matchBot.alliance,
+            station: matchBot.station,
+            matchId: currentMatch?.id as number,
+          },
+        });
+        setThisRobot(matchBot.robot);
+      }
+    } else {
+      setThisRobot(undefined);
+    }
+  }, [match, robotStationIndex]);
 
   useEffect(() => {
     matchDispatch({ type: "SET_SCOUTER", scouterId: user.scouterId });
@@ -60,6 +103,11 @@ export default function ScoutHeader({
     defense: m.defense,
     feedback: m.feedback,
     scoredPieces: SO,
+    //Fix this later
+    matchId: m.matchId as number,
+    robotId: m.robotId as number,
+    alliance: m.alliance as string,
+    station: m.station as number,
   };
 
   const { error } = trpc.match.submitMatch.useQuery(dataSubmission, {
@@ -70,6 +118,7 @@ export default function ScoutHeader({
     onSuccess(res) {
       setSubmitClick(false);
       matchDispatch({ type: "RESET_MATCH" });
+      timeDispatch({ type: "END_MATCH" });
     },
   });
 
@@ -83,8 +132,43 @@ export default function ScoutHeader({
                 <Button className="">Home</Button>
               </Link>
               <div className="flex flex-col ">
-                <div className="text-3xl font-bold">Match # - Pos</div>
-                <div className="text-3xl">Team #####</div>
+                <div className=" pb-1 text-3xl font-bold">
+                  <span
+                    className="relative border border-cpr-blue-dark bg-cpr-blue-light p-2"
+                    onClick={() => isMatchSelect(!matchSelect)}
+                  >
+                    Match {match?.matchNumber ? match.matchNumber : "?"}
+                    {matchSelect && (
+                      <div className="absolute top-0 z-10 h-60 w-60 overflow-y-auto border border-cpr-blue-dark bg-gray-100 p-2 text-xl">
+                        {schedule.map((match, index) => {
+                          return (
+                            <div
+                              key={index}
+                              className="cursor-pointer border-t border-gray-500 py-2 text-center"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setMatch(match);
+                                isMatchSelect(false);
+                              }}
+                            >
+                              Match {match.matchNumber}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </span>{" "}
+                  -{" "}
+                  <span
+                    className="cursor-pointer border border-cpr-blue-dark bg-cpr-blue-light p-2"
+                    onClick={() => handleNextStation()}
+                  >
+                    {robotStation}
+                  </span>
+                </div>
+                <div className="pt-2 text-3xl">
+                  Team {thisRobot?.teamNumber ? thisRobot.teamNumber : "?"}
+                </div>
               </div>
             </div>
             <div className="flex gap-2.5 font-bold">
@@ -96,9 +180,13 @@ export default function ScoutHeader({
               <Button className="">No Show</Button>
               {!activeMatch && (
                 <Button
-                  className=""
+                  className={`${
+                    thisRobot && user.scouterId ? "" : "w-40 bg-gray-100"
+                  }`}
                   onClick={() => {
-                    timeDispatch({ type: "START_MATCH" });
+                    thisRobot && user.scouterId
+                      ? timeDispatch({ type: "START_MATCH" })
+                      : undefined;
                   }}
                 >
                   Start
@@ -133,7 +221,9 @@ export default function ScoutHeader({
               </Button>
               <div className="flex flex-col ">
                 <div className="text-3xl font-bold">Autonomous</div>
-                <div className="text-3xl">Team #####</div>
+                <div className="text-3xl">
+                  Team {thisRobot?.teamNumber ? thisRobot.teamNumber : "?"}
+                </div>
               </div>
             </div>
             <div className="flex items-center justify-center gap-2.5 font-bold">
@@ -188,7 +278,9 @@ export default function ScoutHeader({
               </Button>
               <div className="flex flex-col ">
                 <div className="text-3xl font-bold">Tele-Op</div>
-                <div className="text-3xl">Team #####</div>
+                <div className="text-3xl">
+                  Team {thisRobot?.teamNumber ? thisRobot.teamNumber : "?"}
+                </div>
               </div>
             </div>
             <div className="flex items-center justify-center gap-2.5 font-bold">
@@ -239,7 +331,9 @@ export default function ScoutHeader({
               </Button>
               <div className="flex flex-col ">
                 <div className="text-3xl font-bold">Endgame</div>
-                <div className="text-3xl">Team #####</div>
+                <div className="text-3xl">
+                  Team {thisRobot?.teamNumber ? thisRobot.teamNumber : "?"}
+                </div>
               </div>
             </div>
             <div className="flex items-center justify-center gap-2.5 font-bold">
@@ -267,8 +361,6 @@ export default function ScoutHeader({
                 className=""
                 onClick={() => {
                   setSubmitClick(true);
-
-                  timeDispatch({ type: "END_MATCH" });
                 }}
               >
                 Submit
@@ -303,3 +395,21 @@ export default function ScoutHeader({
       );
   }
 }
+
+type options =
+  | "?"
+  | "red 1"
+  | "red 2"
+  | "red 3"
+  | "blue 1"
+  | "blue 2"
+  | "blue 3";
+const stationOptions: options[] = [
+  "?",
+  "red 1",
+  "red 2",
+  "red 3",
+  "blue 1",
+  "blue 2",
+  "blue 3",
+];
