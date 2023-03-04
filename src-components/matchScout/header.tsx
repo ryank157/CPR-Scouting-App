@@ -1,5 +1,5 @@
 import type { Dispatch } from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { initialMatchState } from "@/utils/matchScout/events";
 
 import type { TimeAction, TimeState } from "@/utils/matchScout/time";
@@ -23,8 +23,11 @@ export default function ScoutHeader({
   timeDispatch,
 }: ScoutHeaderProps) {
   const { name } = userStore();
-  const { activeMatch, startTime, matchTime, endTime, adjustment, matchPage } =
-    timeState;
+  const { activeMatch, matchPage } = timeState;
+
+  useEffect(() => {
+    matchDispatch({ type: "SET_SCOUTER", name: name });
+  }, [name]);
 
   const autoTime = (timeState.endTime - timeState.matchTime - 123000) / 1000;
   const teleTime =
@@ -46,7 +49,7 @@ export default function ScoutHeader({
   });
 
   const dataSubmission = {
-    scouter: "Timmy",
+    scouter: name,
     startingLocation: m.startingLoc,
     mobility: m.mobility as unknown as string | undefined,
     autoBalancing: m.autoBalancing as unknown as string | undefined,
