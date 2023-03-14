@@ -38,7 +38,6 @@ const MatchScout: NextPage = () => {
 
   const [timeState, timeDispatch] = useReducer(TimeReducer, initialTimeState);
 
-  console.log(timeState);
   useEffect(() => {
     if (timeState.activeMatch && timeState.endTime > new Date().getTime()) {
       const interval = setInterval(() => {

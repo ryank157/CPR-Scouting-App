@@ -5,13 +5,14 @@ import { trpc } from "../utils/trpc";
 const Home: NextPage = () => {
   // const { data: session } = useSession();
   // const { data: test } = trpc.tba.populateRobots.useQuery();
-  //   const { data: two } = trpc.tba.getTBAData.useQuery();
+  // const { data: two } = trpc.tba.getTBAData.useQuery();
   // const { data: two } = trpc.tba.populateMatchSchedule.useQuery();
-  trpc.match.testQuery.useQuery();
-
+  // const { data: data } = trpc.match.exportData.useQuery();
+  // console.log(data);
   // trpc.auth.uploadScouters.useQuery();
+  const { data: match } = trpc.test.fetchMatchData.useQuery();
 
-  return <></>;
+  return <div>Hello</div>;
 };
 
 export default Home;

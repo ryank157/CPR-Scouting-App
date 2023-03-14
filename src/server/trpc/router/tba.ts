@@ -75,9 +75,6 @@ export const tbaRouter = router({
         return res.data;
       });
 
-    const delData = await prisma.match.deleteMany();
-    const delData2 = await prisma.robotMatch.deleteMany();
-
     const matchData: matchData = data
       .map((match) => {
         return {
@@ -87,7 +84,6 @@ export const tbaRouter = router({
         };
       })
       .sort((a, b) => b.matchNumber - a.matchNumber);
-    console.log(matchData);
 
     assignRobotsToMatches(matchData);
     return matchData;

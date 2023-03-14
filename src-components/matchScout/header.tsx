@@ -184,9 +184,10 @@ export default function ScoutHeader({
                     thisRobot && user.scouterId ? "" : "w-40 bg-gray-100"
                   }`}
                   onClick={() => {
-                    thisRobot && user.scouterId
-                      ? timeDispatch({ type: "START_MATCH" })
-                      : undefined;
+                    // thisRobot && user.scouterId
+                    //   ? timeDispatch({ type: "START_MATCH" })
+                    //   : undefined;
+                    timeDispatch({ type: "START_MATCH" });
                   }}
                 >
                   Start

@@ -32,7 +32,6 @@ export default function ScoringGrid({
     (timeState.endTime - timeState.matchTime) / 1000 >= 0
       ? (timeState.endTime - timeState.matchTime) / 1000
       : 0;
-
   return (
     <div className="relative flex flex-wrap justify-center">
       {/* <div className="flex w-15 items-center justify-center">
@@ -51,6 +50,8 @@ export default function ScoringGrid({
                     key={gridLoc}
                     className={cellClasses(gridLoc, scoredObjects, matchPage)}
                     onClick={() => {
+                      console.log("scored objects");
+                      console.log(matchEvents.scoredObjects);
                       matchDispatch({
                         type: "ADD_SCORE_DETAILS",
                         newScore: {
@@ -91,8 +92,8 @@ export default function ScoringGrid({
                                   type: "ADD_SCORE_DETAILS",
                                   newScore: {
                                     ...cSO,
-                                    type: scoredType(slotLoc, matchPage),
-                                    scoredLoc: slotLoc,
+                                    type: scoredType(gridLoc, matchPage),
+                                    scoredLoc: gridLoc,
                                   },
                                 });
 

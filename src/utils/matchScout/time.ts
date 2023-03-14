@@ -22,7 +22,7 @@ export const initialTimeState: TimeState = {
   activeMatch: false,
   startTime: new Date().getTime(),
   matchTime: new Date().getTime(),
-  endTime: new Date().getTime() + 138000,
+  endTime: new Date().getTime() + 140000,
   adjustment: 0,
   matchPage: "before",
   cycleStart: 120,

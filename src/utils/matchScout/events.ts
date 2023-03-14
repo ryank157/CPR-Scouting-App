@@ -51,7 +51,10 @@ export type MatchAction =
   | { type: "SET_AUTO_BALANCING"; autoBalance: AutoBalance }
   | { type: "SET_ENDGAME_BALANCING"; endgame: Endgame }
   | { type: "FOUL_TOGGLE"; newFoul: Foul }
-  | { type: "ADD_SCORE_DETAILS"; newScore: ScoredObject }
+  | {
+      type: "ADD_SCORE_DETAILS";
+      newScore: ScoredObject;
+    }
   | { type: "EDIT_SCORE" }
   | { type: "SET_FEEDBACK"; message: string }
   | { type: "RESET_MATCH" }
@@ -66,19 +69,19 @@ export type MatchAction =
       };
     };
 
-const blankScore = {
-  cycleTime: undefined,
-  pickupLoc: undefined,
-  pickupOrient: undefined,
-  delayed: undefined,
-  type: undefined,
-  scoredLoc: undefined,
-};
-
 export const initialMatchState: MatchEventsState = {
   startingLoc: undefined,
   mobility: undefined,
-  scoredObjects: [blankScore],
+  scoredObjects: [
+    {
+      cycleTime: undefined,
+      pickupLoc: undefined,
+      pickupOrient: undefined,
+      delayed: undefined,
+      type: undefined,
+      scoredLoc: undefined,
+    },
+  ],
   autoBalancing: undefined,
   endgameBalancing: {
     numberOfRobots: undefined,
@@ -162,8 +165,9 @@ export const MatchEventsReducer = (
       //Add Check for only unique scores. Or no double scores on bottom level
 
       const currentLength = state.scoredObjects.length;
+      // const currentScores = action.payload.currentObjects;
 
-      const newestScore = state.scoredObjects[currentLength] || {
+      const newestScore = state.scoredObjects[currentLength - 1] || {
         cycleTime: undefined,
         pickupLoc: undefined,
         pickupOrient: undefined,
@@ -199,30 +203,72 @@ export const MatchEventsReducer = (
 
       //Update Data
       if (newestScore.scoredLoc === undefined) {
+        console.log("no score location");
         if (currentLength === 1) {
+          console.log("no score loc length 1");
           return {
             ...state,
             scoredObjects: [newestScore],
           };
         } else {
-          state.scoredObjects[currentLength - 1] = newestScore;
+          console.log("no scored loc length !== 1");
+          const updatedScoredObjects = state.scoredObjects.map(
+            (scoredObj, index) => {
+              if (index === currentLength - 1) {
+                return newestScore;
+              }
+              return scoredObj;
+            }
+          );
+
           return {
             ...state,
-            scoredObjects: [...state.scoredObjects],
+            scoredObjects: updatedScoredObjects,
           };
         }
-        //Log score
       } else if (newestScore.scoredLoc !== undefined) {
+        console.log("scored loc");
         if (currentLength === 1) {
+          console.log("scored loc length 1");
+
           return {
             ...state,
-            scoredObjects: [newestScore, blankScore],
+            scoredObjects: [
+              newestScore,
+              {
+                cycleTime: undefined,
+                pickupLoc: undefined,
+                pickupOrient: undefined,
+                delayed: undefined,
+                type: undefined,
+                scoredLoc: undefined,
+              },
+            ],
           };
         } else {
-          state.scoredObjects[currentLength - 1] = newestScore;
+          console.log("scored loc L !== 1");
+          const updatedScoredObjects = state.scoredObjects.map(
+            (scoredObj, index) => {
+              if (index === currentLength - 1) {
+                return newestScore;
+              }
+              return scoredObj;
+            }
+          );
+          console.log(updatedScoredObjects);
           return {
             ...state,
-            scoredObjects: [...state.scoredObjects, blankScore],
+            scoredObjects: [
+              ...updatedScoredObjects,
+              {
+                cycleTime: undefined,
+                pickupLoc: undefined,
+                pickupOrient: undefined,
+                delayed: undefined,
+                type: undefined,
+                scoredLoc: undefined,
+              },
+            ],
           };
         }
       }
@@ -248,7 +294,16 @@ export const MatchEventsReducer = (
           order: undefined,
           result: undefined,
         },
-        scoredObjects: [blankScore],
+        scoredObjects: [
+          {
+            cycleTime: undefined,
+            pickupLoc: undefined,
+            pickupOrient: undefined,
+            delayed: undefined,
+            type: undefined,
+            scoredLoc: undefined,
+          },
+        ],
       };
     case "SET_SCOUTER":
       return {
@@ -268,3 +323,30 @@ export const MatchEventsReducer = (
       return state;
   }
 };
+
+function doubleCheck(scoredLoc: number, currentScores: number[]) {
+  const doubles = [
+    [18, 19],
+    [20, 21],
+    [22, 23],
+    [24, 25],
+    [26, 27],
+    [28, 29],
+    [30, 31],
+    [32, 33],
+    [34, 35],
+  ];
+
+  if (doubles.some((pair) => pair.includes(scoredLoc))) {
+    const otherInPair = doubles
+      .find((pair) => pair.includes(scoredLoc))!
+      .find((num) => num !== scoredLoc)!;
+    if (currentScores.includes(otherInPair)) {
+      return false;
+    }
+    return true;
+  }
+  return true;
+
+  return scoredLoc;
+}
