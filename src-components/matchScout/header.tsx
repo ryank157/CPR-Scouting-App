@@ -39,7 +39,16 @@ export default function ScoutHeader({
   const [match, setMatch] = useState<Match | undefined>(undefined);
   const [matchSelect, isMatchSelect] = useState(false);
   const [thisRobot, setThisRobot] = useState<Robot | undefined>(undefined);
+  const [submitClick, setSubmitClick] = useState(false);
+  const scoredLocs = matchEvents.scoredObjects.map((score) => score.scoredLoc);
 
+  const autoTime = (timeState.endTime - timeState.matchTime - 138000) / 1000;
+  const teleTime =
+    (timeState.endTime - timeState.matchTime) / 1000 >= 0
+      ? (timeState.endTime - timeState.matchTime) / 1000
+      : 0;
+
+  //Robot Match Data
   useEffect(() => {
     const currentAlliance = robotStation?.split(" ")[0];
     const currentStation = Number(robotStation?.split(" ")[1]) - 1;
@@ -68,16 +77,46 @@ export default function ScoutHeader({
     }
   }, [match, robotStationIndex]);
 
+  //Scouter
   useEffect(() => {
     matchDispatch({ type: "SET_SCOUTER", scouterId: user.scouterId });
   }, [user]);
 
-  const autoTime = (timeState.endTime - timeState.matchTime - 138000) / 1000;
-  const teleTime =
-    (timeState.endTime - timeState.matchTime) / 1000 >= 0
-      ? (timeState.endTime - timeState.matchTime) / 1000
-      : 0;
-  const [submitClick, setSubmitClick] = useState(false);
+  //Create a useEffect that has a dependency array for when a scored piece is submitted.
+  useEffect(() => {
+    console.log("use effecting");
+    const teleObjects = matchEvents.scoredObjects.filter((obj) =>
+      obj.type?.includes("tele")
+    );
+
+    const newObjectIndex = matchEvents.scoredObjects.findIndex(
+      (obj) => obj.cycleTime === undefined && obj.type?.includes("tele")
+    );
+
+    const alreadyScoredCycleTime = teleObjects
+      .filter((obj) => obj.cycleTime !== undefined)
+      .reduce(
+        (total, obj) => (obj.cycleTime ? total + obj.cycleTime : total),
+        0
+      ); // sum the already scored cycle times
+
+    const cycleTime = Math.max(0, 135 - alreadyScoredCycleTime - teleTime); // calculate the cycle time
+
+    if (newObjectIndex !== undefined) {
+      matchDispatch({
+        type: "SET_CYCLE_TIME",
+        payload: {
+          newObjectIndex: newObjectIndex,
+          cycleTime: cycleTime,
+        },
+      });
+    }
+
+    //Locate the last tele object that has a scored piece without a cycle time.
+    //Sum the already scored pieces cycle times together.
+    //135 - SUM - remaining match time = cycle time.
+    //Set cycle time
+  }, [matchEvents.scoredObjects.length]);
 
   const m = matchEvents;
   const SO = m.scoredObjects.map((score) => {

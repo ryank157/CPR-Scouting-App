@@ -168,14 +168,20 @@ export const TeleScout: React.FC<TeleProps> = (props: TeleProps) => {
             </div>
             <div className="flex h-[148px] flex-col text-center ">
               {matchEvents.scoredObjects.map((score, index) => {
+                let scoreType = "";
+                score.type?.includes("auto") ? (scoreType += "a") : "";
+                score.type?.includes("cube")
+                  ? (scoreType += "cube")
+                  : (scoreType += "cone");
+                console.log(score);
                 return (
-                  score.scoredLoc && (
+                  score.scoredLoc !== undefined && (
                     <div key={index} className="flex">
-                      <div className="w-1/4">{index}</div>
-                      <div className="w-1/4">{score.cycleTime}</div>
+                      <div className="w-1/4">{index + 1}</div>
                       <div className="w-1/4">
-                        {score.type?.includes("cube") ? "cube" : "cone"}
+                        {score.type?.includes("auto") ? " " : score.cycleTime}
                       </div>
+                      <div className="w-1/4">{scoreType}</div>
                       <div className="w-1/4">N/A</div>
                     </div>
                   )

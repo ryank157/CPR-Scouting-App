@@ -55,6 +55,10 @@ export type MatchAction =
       type: "ADD_SCORE_DETAILS";
       newScore: ScoredObject;
     }
+  | {
+      type: "SET_CYCLE_TIME";
+      payload: { newObjectIndex: number; cycleTime: number };
+    }
   | { type: "EDIT_SCORE" }
   | { type: "SET_FEEDBACK"; message: string }
   | { type: "RESET_MATCH" }
@@ -291,6 +295,19 @@ export const MatchEventsReducer = (
 
       return {
         ...state,
+      };
+    case "SET_CYCLE_TIME":
+      const { newObjectIndex, cycleTime } = action.payload;
+      const scoredObjects = state.scoredObjects.slice(); // create a shallow copy of the scored objects array
+      scoredObjects[newObjectIndex] = {
+        // update the object at the given index
+        ...scoredObjects[newObjectIndex], // keep the existing properties of the object
+        cycleTime: cycleTime, // update the cycleTime property
+      };
+
+      return {
+        ...state,
+        scoredObjects: scoredObjects, // return the new array of scored objects
       };
 
     case "SET_FEEDBACK":

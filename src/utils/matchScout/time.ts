@@ -5,7 +5,6 @@ export type TimeState = {
   endTime: number;
   adjustment: number;
   matchPage: MatchPage;
-  cycleStart: number;
 };
 
 export type MatchPage = "before" | "auto" | "tele" | "endgame" | "review";
@@ -24,7 +23,6 @@ export const initialTimeState: TimeState = {
   endTime: new Date().getTime() + 153000,
   adjustment: 0,
   matchPage: "before",
-  cycleStart: 135,
 };
 
 export const TimeReducer = (state: TimeState, action: TimeAction) => {
@@ -59,13 +57,6 @@ export const TimeReducer = (state: TimeState, action: TimeAction) => {
       return {
         ...state,
         ...initialTimeState,
-      };
-    case "SET_CYCLE_START":
-      console.log("setting start");
-      console.log(state.cycleStart);
-      return {
-        ...state,
-        cycleStart: action.timeStamp,
       };
 
     default:
