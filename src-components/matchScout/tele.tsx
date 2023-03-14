@@ -18,15 +18,9 @@ export const TeleScout: React.FC<TeleProps> = (props: TeleProps) => {
   const [cSO, setCSO] = useState(
     matchEvents.scoredObjects[matchEvents.scoredObjects.length - 1]
   );
-  const teleTime =
-    (timeState.endTime - timeState.matchTime) / 1000 >= 0
-      ? (timeState.endTime - timeState.matchTime) / 1000
-      : 0;
-
-  const cycleTime =
-    timeState.cycleStart - teleTime >= 0 ? timeState.cycleStart - teleTime : 0;
 
   const memoizedScoringGrid = useMemo(() => {
+    console.log("memoing");
     return (
       <ScoringGrid
         timeState={timeState}
@@ -40,13 +34,6 @@ export const TeleScout: React.FC<TeleProps> = (props: TeleProps) => {
   useEffect(() => {
     setCSO(matchEvents.scoredObjects[matchEvents.scoredObjects.length - 1]);
   }, [matchEvents.scoredObjects]);
-
-  useEffect(() => {
-    setCSO({
-      ...cSO,
-      cycleTime: cycleTime,
-    });
-  }, [cycleTime]);
 
   return (
     <div className="flex w-full flex-col justify-center">

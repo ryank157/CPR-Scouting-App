@@ -138,7 +138,6 @@ export const MatchEventsReducer = (
         action.endgame.result !== undefined
           ? action.endgame.result
           : endGame?.result;
-      console.log(endGame);
 
       return {
         ...state,
@@ -165,7 +164,28 @@ export const MatchEventsReducer = (
       //Add Check for only unique scores. Or no double scores on bottom level
 
       const currentLength = state.scoredObjects.length;
-      // const currentScores = action.payload.currentObjects;
+
+      // Only allow unique scores
+      const currentScoredLocs = state.scoredObjects.map(
+        (score) => score.scoredLoc
+      );
+      const hasDuplicates =
+        currentScoredLocs.length !== new Set(currentScoredLocs).size;
+      if (hasDuplicates) {
+        return {
+          ...state,
+          scoredObjects: state.scoredObjects
+            .slice(0, currentLength - 1)
+            .concat({
+              cycleTime: undefined,
+              pickupLoc: undefined,
+              pickupOrient: undefined,
+              delayed: undefined,
+              type: undefined,
+              scoredLoc: undefined,
+            }),
+        };
+      }
 
       const newestScore = state.scoredObjects[currentLength - 1] || {
         cycleTime: undefined,
@@ -203,15 +223,12 @@ export const MatchEventsReducer = (
 
       //Update Data
       if (newestScore.scoredLoc === undefined) {
-        console.log("no score location");
         if (currentLength === 1) {
-          console.log("no score loc length 1");
           return {
             ...state,
             scoredObjects: [newestScore],
           };
         } else {
-          console.log("no scored loc length !== 1");
           const updatedScoredObjects = state.scoredObjects.map(
             (scoredObj, index) => {
               if (index === currentLength - 1) {
@@ -227,10 +244,7 @@ export const MatchEventsReducer = (
           };
         }
       } else if (newestScore.scoredLoc !== undefined) {
-        console.log("scored loc");
         if (currentLength === 1) {
-          console.log("scored loc length 1");
-
           return {
             ...state,
             scoredObjects: [
@@ -246,7 +260,6 @@ export const MatchEventsReducer = (
             ],
           };
         } else {
-          console.log("scored loc L !== 1");
           const updatedScoredObjects = state.scoredObjects.map(
             (scoredObj, index) => {
               if (index === currentLength - 1) {
@@ -255,7 +268,7 @@ export const MatchEventsReducer = (
               return scoredObj;
             }
           );
-          console.log(updatedScoredObjects);
+
           return {
             ...state,
             scoredObjects: [
@@ -275,7 +288,7 @@ export const MatchEventsReducer = (
 
     case "EDIT_SCORE":
       //some code
-      console.log("edit score");
+
       return {
         ...state,
       };

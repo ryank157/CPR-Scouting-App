@@ -1,5 +1,5 @@
 import { type NextPage } from "next";
-import { useEffect, useReducer, useMemo } from "react";
+import { useEffect, useReducer, useMemo, useState } from "react";
 
 import { TimeReducer, initialTimeState } from "@/utils/matchScout/time";
 
@@ -35,7 +35,6 @@ const MatchScout: NextPage = () => {
       setSchedule(res);
     },
   });
-
   const [timeState, timeDispatch] = useReducer(TimeReducer, initialTimeState);
 
   useEffect(() => {

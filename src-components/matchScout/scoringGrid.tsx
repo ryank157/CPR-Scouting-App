@@ -15,6 +15,7 @@ interface ScoringGridProps {
   timeDispatch: Dispatch<TimeAction>;
   matchEvents: MatchEventsState;
   matchDispatch: Dispatch<MatchAction>;
+
   cSO?: ScoredObject;
 }
 
@@ -23,15 +24,18 @@ export default function ScoringGrid({
   matchDispatch,
   timeState,
   timeDispatch,
+
   cSO,
 }: ScoringGridProps) {
   const grid: string[][] = Array(3).fill(Array(9).fill(""));
+
   const { scoredObjects } = matchEvents;
   const { matchPage } = timeState;
   const teleTime =
     (timeState.endTime - timeState.matchTime) / 1000 >= 0
       ? (timeState.endTime - timeState.matchTime) / 1000
       : 0;
+
   return (
     <div className="relative flex flex-wrap justify-center">
       {/* <div className="flex w-15 items-center justify-center">
@@ -50,8 +54,6 @@ export default function ScoringGrid({
                     key={gridLoc}
                     className={cellClasses(gridLoc, scoredObjects, matchPage)}
                     onClick={() => {
-                      console.log("scored objects");
-                      console.log(matchEvents.scoredObjects);
                       matchDispatch({
                         type: "ADD_SCORE_DETAILS",
                         newScore: {
@@ -59,11 +61,6 @@ export default function ScoringGrid({
                           type: scoredType(gridLoc, matchPage),
                           scoredLoc: gridLoc,
                         },
-                      });
-
-                      timeDispatch({
-                        type: "SET_CYCLE_START",
-                        timeStamp: teleTime,
                       });
                     }}
                   ></div>
@@ -95,11 +92,6 @@ export default function ScoringGrid({
                                     type: scoredType(gridLoc, matchPage),
                                     scoredLoc: gridLoc,
                                   },
-                                });
-
-                                timeDispatch({
-                                  type: "SET_CYCLE_START",
-                                  timeStamp: teleTime,
                                 });
                               }
                               //If not scored already do add score details

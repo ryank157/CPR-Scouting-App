@@ -15,17 +15,16 @@ export type TimeAction =
   | { type: "ADJUST_TIME"; increase: number }
   | { type: "CHANGE_PAGE"; page: MatchPage }
   | { type: "END_MATCH" }
-  | { type: "SET_CYCLE_START"; timeStamp: number }
-  | { type: "ADJUST_CYCLE_TIME"; timeStamp: number; adjustment: number };
+  | { type: "SET_CYCLE_START"; timeStamp: number };
 
 export const initialTimeState: TimeState = {
   activeMatch: false,
   startTime: new Date().getTime(),
   matchTime: new Date().getTime(),
-  endTime: new Date().getTime() + 140000,
+  endTime: new Date().getTime() + 153000,
   adjustment: 0,
   matchPage: "before",
-  cycleStart: 120,
+  cycleStart: 135,
 };
 
 export const TimeReducer = (state: TimeState, action: TimeAction) => {
@@ -37,7 +36,7 @@ export const TimeReducer = (state: TimeState, action: TimeAction) => {
         startTime: matchBegin,
         activeMatch: true,
         matchTime: matchBegin,
-        endTime: matchBegin + 138000,
+        endTime: matchBegin + 153000,
         adjustment: 0,
         matchPage: "auto" as MatchPage,
       };
@@ -62,22 +61,13 @@ export const TimeReducer = (state: TimeState, action: TimeAction) => {
         ...initialTimeState,
       };
     case "SET_CYCLE_START":
+      console.log("setting start");
+      console.log(state.cycleStart);
       return {
         ...state,
         cycleStart: action.timeStamp,
       };
-    case "ADJUST_CYCLE_TIME":
-      let newCycleTime = action.timeStamp + action.adjustment;
-      if (action.timeStamp + action.adjustment > 120) {
-        newCycleTime = 120;
-      } else if (action.timeStamp + action.adjustment < 0) {
-        newCycleTime = 0;
-      }
 
-      return {
-        ...state,
-        cycleStart: newCycleTime,
-      };
     default:
       return state;
   }

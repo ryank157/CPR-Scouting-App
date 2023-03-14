@@ -72,7 +72,7 @@ export default function ScoutHeader({
     matchDispatch({ type: "SET_SCOUTER", scouterId: user.scouterId });
   }, [user]);
 
-  const autoTime = (timeState.endTime - timeState.matchTime - 123000) / 1000;
+  const autoTime = (timeState.endTime - timeState.matchTime - 138000) / 1000;
   const teleTime =
     (timeState.endTime - timeState.matchTime) / 1000 >= 0
       ? (timeState.endTime - timeState.matchTime) / 1000
@@ -294,7 +294,7 @@ export default function ScoutHeader({
                 +
               </Button>
               <div className="text-3xl font-bold">
-                {teleTime > 120 ? "In Auto" : teleTime}
+                {teleTime > 135 ? "In Auto" : teleTime}
               </div>
               <Button
                 className="w-15 pb-2 text-4xl"
