@@ -19,8 +19,8 @@ export const EndgameScout: React.FC<EndgameProps> = (props: EndgameProps) => {
   const endLocs = [1, 2, 3, 4, 5, 6];
 
   const endGameColors = matchEvents.alliance?.includes("red")
-    ? ["bg-red-200", "bg-red-400"]
-    : ["bg-blue-200", "bg-blue-400"];
+    ? ["bg-red-400", "bg-red-600"]
+    : ["bg-blue-400", "bg-blue-600"];
 
   return (
     <div className="flex w-full justify-center pt-[35px] ">

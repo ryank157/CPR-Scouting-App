@@ -39,7 +39,7 @@ export const TeleScout: React.FC<TeleProps> = (props: TeleProps) => {
     <div className="flex w-full flex-col justify-center">
       {memoizedScoringGrid}
 
-      <div className="mt-4 flex h-full w-full justify-center gap-[10px]">
+      <div className="mt-4 flex h-full w-full justify-center gap-[10px] pb-3">
         <div className="flex flex-col">
           <div className="mb-1.25 text-center text-xl font-semibold">
             Current Cycle
