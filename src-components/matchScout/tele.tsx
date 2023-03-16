@@ -24,7 +24,6 @@ export const TeleScout: React.FC<TeleProps> = (props: TeleProps) => {
   }, []);
 
   const memoizedScoringGrid = useMemo(() => {
-    console.log("memoing");
     return (
       <ScoringGrid
         timeState={timeState}

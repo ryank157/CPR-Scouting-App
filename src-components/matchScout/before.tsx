@@ -12,7 +12,7 @@ export default function BeforeScout(props: BeforeProps) {
 
   return (
     <>
-      <div className="flex flex-grow flex-col items-center justify-end ">
+      <div className="flex flex-grow flex-col items-center pt-[10px] ">
         {matchEvents.alliance?.includes("red") ? (
           <div className="relative h-[350px] w-[484px] bg-red-start bg-cover bg-center bg-no-repeat">
             <div
