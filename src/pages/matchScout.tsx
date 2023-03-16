@@ -38,7 +38,10 @@ const MatchScout: NextPage = () => {
   const [timeState, timeDispatch] = useReducer(TimeReducer, initialTimeState);
 
   useEffect(() => {
-    if (timeState.activeMatch && timeState.endTime > new Date().getTime()) {
+    if (
+      timeState.activeMatch &&
+      timeState.endTime + 1000 > new Date().getTime()
+    ) {
       const interval = setInterval(() => {
         timeDispatch({ type: "ADJUST_TIME", increase: 1000 });
       }, 1000);
