@@ -16,6 +16,11 @@ interface EndgameProps {
 export const EndgameScout: React.FC<EndgameProps> = (props: EndgameProps) => {
   const { matchEvents, matchDispatch } = props;
   const [feedback, setFeedback] = useState(matchEvents.feedback || "");
+  const endLocs = [1, 2, 3, 4, 5, 6];
+
+  const endGameColors = matchEvents.alliance?.includes("red")
+    ? ["bg-red-200", "bg-red-400"]
+    : ["bg-blue-200", "bg-blue-400"];
 
   return (
     <div className="flex w-full justify-center pt-[35px] ">
@@ -23,7 +28,42 @@ export const EndgameScout: React.FC<EndgameProps> = (props: EndgameProps) => {
         <div className="flex items-center justify-center pb-[26px] text-xl font-bold">
           Start Position
         </div>
-        <div className="h-[500px] w-[427px] bg-endgame-red bg-contain bg-center bg-no-repeat"></div>
+        <div
+          className={`relative h-[500px] w-[427px] ${
+            matchEvents.alliance?.includes("red")
+              ? "bg-endgame-red"
+              : "bg-endgame-blue"
+          } bg-contain bg-center bg-no-repeat`}
+        >
+          {endLocs.map((location, index) => {
+            const position =
+              index < 3
+                ? { top: 105 + 98 * index, left: 55 }
+                : { top: 105 + 98 * (index - 3), right: 35 };
+            return (
+              <div
+                key={index}
+                className={`absolute h-[100px] w-[50px] cursor-pointer border-2 border-black p-2 transition-all duration-300 ease-in  ${
+                  matchEvents.endgameBalancing.endingLoc === undefined
+                    ? "animate-pulse " + endGameColors[0]
+                    : matchEvents.endgameBalancing.endingLoc === index
+                    ? endGameColors[1]
+                    : "opacity-50"
+                }`}
+                style={position}
+                onClick={() => {
+                  matchDispatch({
+                    type: "SET_ENDGAME_BALANCING",
+                    endgame: {
+                      ...matchEvents.endgameBalancing,
+                      endingLoc: index,
+                    },
+                  });
+                }}
+              ></div>
+            );
+          })}
+        </div>
       </div>
       <div className="flex w-1/2 flex-col justify-between">
         <div className="flex flex-col items-center justify-center gap-y-6">

@@ -40,6 +40,7 @@ export type ScoredObject = {
 };
 
 export type Endgame = {
+  endingLoc: number | undefined;
   numberOfRobots: 1 | 2 | 3 | undefined;
   order: 1 | 2 | 3 | undefined;
   result: "balance" | "dock" | "fail" | undefined;
@@ -88,6 +89,7 @@ export const initialMatchState: MatchEventsState = {
   ],
   autoBalancing: undefined,
   endgameBalancing: {
+    endingLoc: undefined,
     numberOfRobots: undefined,
     order: undefined,
     result: undefined,
@@ -130,6 +132,11 @@ export const MatchEventsReducer = (
       };
     case "SET_ENDGAME_BALANCING":
       const endGame = state.endgameBalancing;
+
+      endGame.endingLoc =
+        action.endgame.endingLoc !== undefined
+          ? action.endgame.endingLoc
+          : endGame.endingLoc;
       endGame.numberOfRobots =
         action.endgame.numberOfRobots !== undefined
           ? action.endgame.numberOfRobots
@@ -320,6 +327,7 @@ export const MatchEventsReducer = (
       return {
         ...initialMatchState,
         endgameBalancing: {
+          endingLoc: undefined,
           numberOfRobots: undefined,
           order: undefined,
           result: undefined,
@@ -346,7 +354,7 @@ export const MatchEventsReducer = (
         robotId: action.robotInfo.robotId,
         station: action.robotInfo.station,
         alliance: action.robotInfo.alliance,
-        matchId: action.robotInfo.matchId,
+        matchId: action.robotInfo.matchId || undefined,
       };
 
     default:
