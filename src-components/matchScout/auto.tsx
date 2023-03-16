@@ -1,4 +1,4 @@
-import type { Dispatch } from "react";
+import { Dispatch, useEffect } from "react";
 
 import type { TimeAction, TimeState } from "@/utils/matchScout/time";
 import { useMemo } from "react";
@@ -15,6 +15,11 @@ interface AutoProps {
 
 export default function AutoScout(props: AutoProps) {
   const { matchEvents, matchDispatch, timeState, timeDispatch } = props;
+  //Scroll to bottom
+  useEffect(() => {
+    window.scrollTo(0, document.body.scrollHeight);
+  }, []);
+
   const memoizedScoringGrid = useMemo(() => {
     return (
       <ScoringGrid

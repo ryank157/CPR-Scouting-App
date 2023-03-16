@@ -1,7 +1,7 @@
 import type { Dispatch } from "react";
 import type { TimeState, TimeAction } from "@/utils/matchScout/time";
 import type { MatchAction, MatchEventsState } from "@/utils/matchScout/events";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import EndgameButton from "src-components/endgameButton";
 
@@ -17,6 +17,10 @@ export const EndgameScout: React.FC<EndgameProps> = (props: EndgameProps) => {
   const { matchEvents, matchDispatch } = props;
   const [feedback, setFeedback] = useState(matchEvents.feedback || "");
   const endLocs = [1, 2, 3, 4, 5, 6];
+
+  useEffect(() => {
+    window.scrollTo(0, document.body.scrollHeight);
+  }, []);
 
   const endGameColors = matchEvents.alliance?.includes("red")
     ? ["bg-red-400", "bg-red-600"]
