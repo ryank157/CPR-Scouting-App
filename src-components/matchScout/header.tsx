@@ -219,10 +219,12 @@ export default function ScoutHeader({
               {!activeMatch && (
                 <Button
                   className={`${
-                    thisRobot && user.scouterId ? "" : "w-40 bg-gray-100"
+                    thisRobot && user.scouterId && matchEvents.startingLoc
+                      ? ""
+                      : "w-40 bg-gray-100"
                   }`}
                   onClick={() => {
-                    // thisRobot && user.scouterId
+                    // thisRobot && user.scouterId && matchEvents.startingLoc
                     //   ? timeDispatch({ type: "START_MATCH" })
                     //   : undefined;
                     timeDispatch({ type: "START_MATCH" });
