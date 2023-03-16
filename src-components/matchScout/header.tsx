@@ -40,7 +40,6 @@ export default function ScoutHeader({
   const [matchSelect, isMatchSelect] = useState(false);
   const [thisRobot, setThisRobot] = useState<Robot | undefined>(undefined);
   const [submitClick, setSubmitClick] = useState(false);
-  const scoredLocs = matchEvents.scoredObjects.map((score) => score.scoredLoc);
 
   const autoTime = (timeState.endTime - timeState.matchTime - 138000) / 1000;
   const teleTime =
@@ -165,13 +164,13 @@ export default function ScoutHeader({
     case "before":
       return (
         <>
-          <div className="flex w-full justify-between p-7.5 ">
+          <div className="flex w-full justify-between p-3 ">
             <div className="flex  items-center gap-7.5">
               <Link href={"/"}>
                 <Button className="">Home</Button>
               </Link>
               <div className="flex flex-col ">
-                <div className=" pb-1 text-3xl font-bold">
+                <div className=" pt-1 text-3xl font-bold">
                   <span
                     className="relative border border-cpr-blue-dark bg-cpr-blue-light p-2"
                     onClick={() => isMatchSelect(!matchSelect)}
@@ -249,7 +248,7 @@ export default function ScoutHeader({
     case "auto":
       return (
         <>
-          <div className="flex w-full justify-between p-7.5 ">
+          <div className="flex w-full justify-between p-3 ">
             <div className="flex  items-center gap-7.5">
               <Button
                 className=""
@@ -306,7 +305,7 @@ export default function ScoutHeader({
     case "tele":
       return (
         <>
-          <div className="flex w-full justify-between p-7.5 ">
+          <div className="flex w-full justify-between p-3 ">
             <div className="flex  items-center gap-7.5">
               <Button
                 className=""
@@ -359,7 +358,7 @@ export default function ScoutHeader({
     case "endgame":
       return (
         <>
-          <div className="flex w-full justify-between p-7.5 ">
+          <div className="flex w-full justify-between p-3 ">
             <div className="flex  items-center gap-7.5">
               <Button
                 className=""
