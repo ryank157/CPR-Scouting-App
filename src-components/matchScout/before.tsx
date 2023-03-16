@@ -13,9 +13,9 @@ export default function BeforeScout(props: BeforeProps) {
   return (
     <>
       <div className="flex flex-grow flex-col items-center justify-end ">
-        <div className="relative h-[454px] w-[628px] bg-red-start bg-cover bg-center bg-no-repeat">
+        <div className="relative h-[350px] w-[484px] bg-red-start bg-cover bg-center bg-no-repeat">
           <div
-            className={`absolute h-[79px] w-[141px] translate-x-[61px] translate-y-[5px] cursor-pointer border border-black p-2 transition-all duration-300 ease-in  ${
+            className={`absolute h-[61px] w-[109px] translate-x-[47px] translate-y-[4px] cursor-pointer border border-black p-2 transition-all duration-300 ease-in  ${
               matchEvents.startingLoc === undefined
                 ? "animate-pulse bg-red-100"
                 : matchEvents.startingLoc === 0
@@ -29,7 +29,7 @@ export default function BeforeScout(props: BeforeProps) {
             {`Loc ${0 + 1}`}
           </div>
           <div
-            className={`absolute  h-[220px] w-[142px] translate-x-[60px] translate-y-[96px] cursor-pointer border border-black p-2 transition-all duration-300 ease-in  ${
+            className={`absolute  h-[170px] w-[109px] translate-x-[46px] translate-y-[74px] cursor-pointer border border-black p-2 transition-all duration-300 ease-in  ${
               matchEvents.startingLoc === undefined
                 ? "animate-pulse bg-red-100"
                 : matchEvents.startingLoc === 1
@@ -43,7 +43,7 @@ export default function BeforeScout(props: BeforeProps) {
             {`Loc ${1 + 1}`}
           </div>
           <div
-            className={`absolute h-[133px] w-[225px] translate-x-[203px] translate-y-[183px] cursor-pointer border border-black p-2 transition-all duration-300 ease-in  ${
+            className={`absolute h-[102px] w-[173px] translate-x-[156px] translate-y-[142px] cursor-pointer border border-black p-2 transition-all duration-300 ease-in  ${
               matchEvents.startingLoc === undefined
                 ? "animate-pulse bg-red-100"
                 : matchEvents.startingLoc === 2
@@ -57,7 +57,7 @@ export default function BeforeScout(props: BeforeProps) {
             {`Loc ${2 + 1}`}
           </div>
           <div
-            className={`absolute h-[167px] w-[120px] translate-x-[430px] translate-y-[148px] cursor-pointer border border-black p-2 transition-all duration-300 ease-in  ${
+            className={`absolute h-[129px] w-[92px] translate-x-[331px] translate-y-[114px] cursor-pointer border border-black p-2 transition-all duration-300 ease-in  ${
               matchEvents.startingLoc === undefined
                 ? "animate-pulse bg-red-100"
                 : matchEvents.startingLoc === 3
