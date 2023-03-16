@@ -41,9 +41,9 @@ export const TeleScout: React.FC<TeleProps> = (props: TeleProps) => {
 
       <div className="mt-4 flex h-full w-full justify-center gap-[10px]">
         <div className="flex flex-col">
-          {/* <div className="mb-1.25 text-center text-xl font-semibold">
+          <div className="mb-1.25 text-center text-xl font-semibold">
             Current Cycle
-          </div> */}
+          </div>
           <div className="flex">
             <div className="mr-1.5 flex h-full w-15 items-center justify-center border p-2">
               <div className="-rotate-90 transform whitespace-nowrap text-lg">
@@ -156,9 +156,9 @@ export const TeleScout: React.FC<TeleProps> = (props: TeleProps) => {
         </div>
 
         <div className="flex w-[310px] flex-col">
-          {/* <div className="mb-1.25 text-center text-xl font-semibold">
+          <div className="mb-1.25 text-center text-xl font-semibold">
             Cycle History
-          </div> */}
+          </div>
           <div className="h-[200px] overflow-auto  border-2 border-inactive-border">
             <div className="flex h-[48px] items-center justify-center border-b border-inactive-border text-center text-xl">
               <div className="w-1/4">#</div>
