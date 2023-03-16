@@ -38,14 +38,14 @@ export default function ScoringGrid({
 
   return (
     <div className="relative flex flex-wrap justify-center">
-      {/* <div className="flex w-15 items-center justify-center">
+      <div className="flex w-15 items-center justify-center">
         <div className="-rotate-90 transform whitespace-nowrap text-3xl">
           Feeder Station
         </div>
-      </div> */}
+      </div>
       <div className="flex flex-col">
         {grid.map((row, rowIndex) => (
-          <div key={rowIndex + 100} className="flex gap-1.25 pb-1.25">
+          <div key={rowIndex + 100} className="flex gap-[2px] pb-[2px]">
             {row.map((cell, cellIndex) => {
               if (rowIndex === 0 || rowIndex === 1) {
                 const gridLoc = rowIndex * 9 + cellIndex;
@@ -107,11 +107,11 @@ export default function ScoringGrid({
           </div>
         ))}
       </div>
-      {/* <div className="flex w-15 items-center justify-center">
+      <div className="flex w-15 items-center justify-center">
         <div className="rotate-90 transform whitespace-nowrap text-3xl">
           Void
         </div>
-      </div> */}
+      </div>
     </div>
   );
 }
@@ -195,10 +195,10 @@ const cellClasses = (
   }
   //default cell
 
-  let styling = `w-25 h-25 flex justify-center items-center border bg-cover bg-center ${bgImage}`;
+  let styling = `w-[88px] h-[88px] flex justify-center items-center border bg-cover bg-center ${bgImage}`;
 
   if ([2, 5, 11, 14, 22, 28].includes(gridLoc)) {
-    styling += " mr-4";
+    styling += " mr-2";
   }
 
   return styling;

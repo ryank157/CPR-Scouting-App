@@ -30,7 +30,7 @@ export default function AutoScout(props: AutoProps) {
     <div className="flex w-full flex-col justify-center">
       {memoizedScoringGrid}
 
-      <div className="mt-4 flex h-full w-full justify-center gap-[22px] pb-10">
+      <div className="mt-2 flex h-full w-full justify-center gap-[16px] pb-6">
         <div className="flex w-[310px] flex-col gap-2.5 ">
           <div className="-mb-1.25 text-center text-xl font-semibold">
             Mobility
