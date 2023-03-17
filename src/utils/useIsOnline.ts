@@ -4,8 +4,7 @@ const useIsOnline = () => {
   const [isOnline, setIsOnline] = useState(true);
 
   useEffect(() => {
-    if (typeof window === "undefined" || typeof window.navigator === undefined)
-      return;
+    if (typeof window === "undefined") return;
 
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
