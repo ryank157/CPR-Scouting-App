@@ -11,7 +11,6 @@ import type {
   PickupOrientation,
   Delayed,
   AutoBalance,
-  Foul,
 } from "@/utils/matchScout/events";
 import Button from "src-components/button";
 import Link from "next/link";
@@ -19,13 +18,13 @@ import { trpc } from "@/utils/trpc";
 import { userStore, scheduleStore, useLocalMatchesStore } from "@/utils/stores";
 import type { Match } from "@/utils/stores";
 import type { Robot } from "@prisma/client";
+import useIsOnline from "@/utils/useIsOnline";
 
 interface ScoutHeaderProps {
   matchEvents: MatchEventsState;
   matchDispatch: Dispatch<MatchAction>;
   timeState: TimeState;
   timeDispatch: Dispatch<TimeAction>;
-  isOnline: boolean;
 }
 
 export default function ScoutHeader({
@@ -33,16 +32,14 @@ export default function ScoutHeader({
   matchDispatch,
   timeState,
   timeDispatch,
-  isOnline,
 }: ScoutHeaderProps) {
   const { user } = userStore();
   const { schedule } = scheduleStore();
   const { activeMatch, matchPage } = timeState;
+  const isOnline = useIsOnline();
 
   //Match Storage
   const { addMatch } = useLocalMatchesStore();
-
-  //Online or offline
 
   //Robot Position
   const [robotStationIndex, setRobotStationIndex] = useState(0);
@@ -171,25 +168,17 @@ export default function ScoutHeader({
     station: m.station as number,
   };
 
-  if (isOnline) {
-    const { error } = trpc.match.submitMatches.useQuery([dataSubmission], {
-      enabled: Boolean(submitClick),
-      onError(err) {
-        console.log(err);
-      },
-      onSuccess(res) {
-        setSubmitClick(false);
-        matchDispatch({ type: "RESET_MATCH" });
-        timeDispatch({ type: "END_MATCH" });
-      },
-    });
-  } else {
-    // Store the match result locally using Zustand
-    addMatch(dataSubmission);
-    setSubmitClick(false);
-    matchDispatch({ type: "RESET_MATCH" });
-    timeDispatch({ type: "END_MATCH" });
-  }
+  const { error } = trpc.match.submitMatches.useQuery([dataSubmission], {
+    enabled: submitClick && isOnline,
+    onError(err) {
+      console.log(err);
+    },
+    onSuccess(res) {
+      setSubmitClick(false);
+      matchDispatch({ type: "RESET_MATCH" });
+      timeDispatch({ type: "END_MATCH" });
+    },
+  });
 
   switch (matchPage) {
     case "before":
@@ -432,10 +421,18 @@ export default function ScoutHeader({
               <Button
                 className=""
                 onClick={() => {
-                  setSubmitClick(true);
+                  if (isOnline) {
+                    setSubmitClick(true);
+                  } else {
+                    // Store the match result locally using Zustand
+                    addMatch(dataSubmission);
+                    setSubmitClick(false);
+                    matchDispatch({ type: "RESET_MATCH" });
+                    timeDispatch({ type: "END_MATCH" });
+                  }
                 }}
               >
-                Submit
+                {isOnline ? "Submit" : "Store"}
               </Button>
             </div>
           </div>

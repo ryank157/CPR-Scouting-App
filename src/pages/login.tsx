@@ -1,19 +1,17 @@
 import { useState, useEffect } from "react";
-import { trpc } from "../utils/trpc";
 import Link from "next/link";
 import Button from "src-components/button";
 import userStore from "@/utils/stores";
 import type { Scouter } from "@prisma/client";
 
 const Login = () => {
-  const { user, setUser } = userStore();
+  const { user, users, setUser } = userStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredScouters, setFilteredScouters] = useState<
     Scouter[] | undefined
   >(undefined);
-  const { data: scouters } = trpc.auth.fetchScouters.useQuery();
   useEffect(() => {
-    const results = scouters?.filter((scout) => {
+    const results = users?.filter((scout) => {
       const searchRegex = new RegExp(searchTerm.split("").join(".*"), "i");
       return searchRegex.test(scout.name);
     });
@@ -21,7 +19,7 @@ const Login = () => {
     if (results) {
       setFilteredScouters(results);
     }
-  }, [searchTerm, scouters]);
+  }, [searchTerm]);
 
   return (
     <>

@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { trpc } from "../utils/trpc";
 import Link from "next/link";
 import Button from "src-components/button";
-import userStore, { useLocalMatchesStore } from "@/utils/stores";
+import { useLocalMatchesStore } from "@/utils/stores";
 import useIsOnline from "@/utils/useIsOnline";
 
 const Data = () => {

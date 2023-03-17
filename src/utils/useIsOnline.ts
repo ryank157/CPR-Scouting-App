@@ -1,40 +1,26 @@
 import { useState, useEffect } from "react";
 
 const useIsOnline = () => {
-  const [isOnlineStatus, setIsOnlineStatus] = useState(true);
+  const [isOnline, setIsOnline] = useState(true);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    console.log("toggled " + isOnline);
 
-    const checkOnlineStatus = async () => {
-      const online = await isOnline();
-      setIsOnlineStatus(online);
-    };
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
 
-    checkOnlineStatus();
-
-    // Check the online status every 10 seconds
-    const interval = setInterval(checkOnlineStatus, 10000);
+    setIsOnline(navigator.onLine);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
 
     return () => {
-      clearInterval(interval);
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
     };
   }, []);
 
-  return isOnlineStatus;
+  return isOnline;
 };
 
 export default useIsOnline;
-
-async function isOnline() {
-  try {
-    const response = await fetch("https://www.google.com", {
-      mode: "no-cors",
-      cache: "no-cache",
-    });
-
-    return true;
-  } catch (error) {
-    return false;
-  }
-}

@@ -3,14 +3,18 @@ import type { Scouter } from "@prisma/client";
 import { create } from "zustand";
 import type { Robot } from "@prisma/client";
 import type { MatchEventsState } from "./matchScout/events";
+import { persist } from "zustand/middleware";
 
 type User = {
   user: Scouter;
+  users: Scouter[];
   setUser: (user: Scouter) => void;
+  setUsers: (dbUsers: Scouter[]) => void;
 };
 
 export const userStore = create<User>()((set) => ({
   user: { id: 0, scouterId: "", name: "" },
+  users: [],
   setUser: (newUser) =>
     set((state) => ({
       user: {
@@ -19,6 +23,10 @@ export const userStore = create<User>()((set) => ({
         name: newUser.name,
       },
     })),
+  setUsers: (dbUsers) =>
+    set(() => ({
+      users: dbUsers,
+    })),
 }));
 
 type Schedule = {
@@ -26,13 +34,21 @@ type Schedule = {
   setSchedule: (schedule: Match[]) => void;
 };
 
-export const scheduleStore = create<Schedule>()((set) => ({
-  schedule: [],
-  setSchedule: (newSchedule) =>
-    set((state) => ({
-      schedule: newSchedule,
-    })),
-}));
+export const scheduleStore = create<Schedule>()(
+  persist(
+    (set) => ({
+      schedule: [],
+      setSchedule: (newSchedule) =>
+        set(() => ({
+          schedule: newSchedule,
+        })),
+    }),
+    {
+      name: "schedule-store",
+      getStorage: () => localStorage,
+    }
+  )
+);
 
 export type Match = {
   id: number;
