@@ -10,7 +10,12 @@ const Data = () => {
   const [isSubmit, setIsSubmit] = useState(false);
   const [successfulSubmit, setSuccessfulSubmit] = useState(false);
 
-  const [isOnline, setIsOnline] = useState(true);
+  const [isOnline, setIsOnline] = useState(() => {
+    if (typeof window !== "undefined") {
+      return navigator.onLine;
+    }
+    return true;
+  });
 
   useEffect(() => {
     // Check if the code is running in the browser

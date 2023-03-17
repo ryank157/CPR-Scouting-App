@@ -36,7 +36,12 @@ const MatchScout: NextPage = () => {
     },
   });
   const [timeState, timeDispatch] = useReducer(TimeReducer, initialTimeState);
-  const [isOnline, setIsOnline] = useState(true);
+  const [isOnline, setIsOnline] = useState(() => {
+    if (typeof window !== "undefined") {
+      return navigator.onLine;
+    }
+    return true;
+  });
 
   useEffect(() => {
     // Check if the code is running in the browser
