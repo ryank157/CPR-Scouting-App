@@ -2,7 +2,7 @@
 import type { Scouter } from "@prisma/client";
 import { create } from "zustand";
 import type { Robot } from "@prisma/client";
-import { MatchEventsState } from "./matchScout/events";
+import type { MatchEventsState } from "./matchScout/events";
 
 type User = {
   user: Scouter;

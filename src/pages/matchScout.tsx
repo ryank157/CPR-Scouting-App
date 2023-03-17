@@ -15,6 +15,7 @@ import { EndgameScout } from "src-components/matchScout/endgame";
 import { ReviewScout } from "src-components/matchScout/review";
 import { scheduleStore } from "@/utils/stores";
 import { trpc } from "@/utils/trpc";
+import useIsOnline from "@/utils/useIsOnline";
 
 export type ScoringGrid =
   | "nothing"
@@ -36,30 +37,7 @@ const MatchScout: NextPage = () => {
     },
   });
   const [timeState, timeDispatch] = useReducer(TimeReducer, initialTimeState);
-  const [isOnline, setIsOnline] = useState(() => {
-    if (typeof window !== "undefined") {
-      return navigator.onLine;
-    }
-    return true;
-  });
-
-  useEffect(() => {
-    // Check if the code is running in the browser
-    if (typeof window !== "undefined") {
-      setIsOnline(navigator.onLine);
-
-      const handleOnline = () => setIsOnline(true);
-      const handleOffline = () => setIsOnline(false);
-
-      window.addEventListener("online", handleOnline);
-      window.addEventListener("offline", handleOffline);
-
-      return () => {
-        window.removeEventListener("online", handleOnline);
-        window.removeEventListener("offline", handleOffline);
-      };
-    }
-  }, []);
+  const isOnline = useIsOnline();
 
   useEffect(() => {
     if (

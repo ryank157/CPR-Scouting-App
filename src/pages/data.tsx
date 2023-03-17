@@ -3,37 +3,14 @@ import { trpc } from "../utils/trpc";
 import Link from "next/link";
 import Button from "src-components/button";
 import userStore, { useLocalMatchesStore } from "@/utils/stores";
-import type { Scouter } from "@prisma/client";
+import useIsOnline from "@/utils/useIsOnline";
 
 const Data = () => {
   const { localMatches, deleteLocalMatches } = useLocalMatchesStore();
   const [isSubmit, setIsSubmit] = useState(false);
   const [successfulSubmit, setSuccessfulSubmit] = useState(false);
 
-  const [isOnline, setIsOnline] = useState(() => {
-    if (typeof window !== "undefined") {
-      return navigator.onLine;
-    }
-    return true;
-  });
-
-  useEffect(() => {
-    // Check if the code is running in the browser
-    if (typeof window !== "undefined") {
-      setIsOnline(navigator.onLine);
-
-      const handleOnline = () => setIsOnline(true);
-      const handleOffline = () => setIsOnline(false);
-
-      window.addEventListener("online", handleOnline);
-      window.addEventListener("offline", handleOffline);
-
-      return () => {
-        window.removeEventListener("online", handleOnline);
-        window.removeEventListener("offline", handleOffline);
-      };
-    }
-  }, []);
+  const isOnline = useIsOnline();
 
   trpc.match.submitMatches.useQuery(localMatches, {
     enabled: isSubmit,
