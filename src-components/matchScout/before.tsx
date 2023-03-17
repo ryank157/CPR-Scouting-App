@@ -5,7 +5,6 @@ import type { MatchEventsState, MatchAction } from "@/utils/matchScout/events";
 interface BeforeProps {
   matchEvents: MatchEventsState;
   matchDispatch: Dispatch<MatchAction>;
-  isOnline: boolean;
 }
 
 export default function BeforeScout(props: BeforeProps) {

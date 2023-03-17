@@ -3,17 +3,33 @@ import { trpc } from "../utils/trpc";
 import Link from "next/link";
 import Button from "src-components/button";
 import userStore, { useLocalMatchesStore } from "@/utils/stores";
-import useIsOnline from "@/utils/useIsOnline";
+import isOnline from "@/utils/useIsOnline";
 
 const Data = () => {
   const { localMatches, deleteLocalMatches } = useLocalMatchesStore();
   const [isSubmit, setIsSubmit] = useState(false);
   const [successfulSubmit, setSuccessfulSubmit] = useState(false);
 
-  const isOnline = useIsOnline();
+  const [onlineStatus, setOnlineStatus] = useState(true);
+
+  useEffect(() => {
+    const checkOnlineStatus = async () => {
+      const online = await isOnline();
+      setOnlineStatus(online);
+    };
+
+    checkOnlineStatus();
+
+    // Check the online status every 10 seconds
+    const interval = setInterval(checkOnlineStatus, 10000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   trpc.match.submitMatches.useQuery(localMatches, {
-    enabled: isSubmit,
+    enabled: isSubmit && onlineStatus,
     onSuccess() {
       setIsSubmit(false);
       deleteLocalMatches();
@@ -31,7 +47,7 @@ const Data = () => {
             </Link>
           </div>
           <div className="flex items-center justify-center gap-2.5 font-bold">
-            {isOnline ? (
+            {onlineStatus ? (
               <>
                 {/* <div>Through Match: {matchNumber} </div> */}
                 <Button className="w-60">Export Data</Button>
@@ -43,7 +59,7 @@ const Data = () => {
         </div>
       </>
       <div className="flex w-full flex-col items-center justify-center px-4 py-10">
-        {localMatches.length > 0 && isOnline && (
+        {localMatches.length > 0 && onlineStatus && (
           <Button onClick={() => setIsSubmit(true)}>Submit Matches</Button>
         )}
         {localMatches.length > 0 ? (
