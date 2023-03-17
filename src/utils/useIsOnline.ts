@@ -1,14 +1,26 @@
-async function isOnline() {
-  try {
-    const response = await fetch("https://www.google.com", {
-      mode: "no-cors",
-      cache: "no-cache",
-    });
+import { useState, useEffect } from "react";
 
-    return true;
-  } catch (error) {
-    return false;
-  }
-}
+const useIsOnline = () => {
+  const [isOnline, setIsOnline] = useState(true);
 
-export default isOnline;
+  useEffect(() => {
+    if (typeof window === "undefined" || typeof window.navigator === undefined)
+      return;
+
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    setIsOnline(navigator.onLine);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
+
+  return isOnline;
+};
+
+export default useIsOnline;

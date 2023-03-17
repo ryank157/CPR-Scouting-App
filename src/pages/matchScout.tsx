@@ -15,7 +15,7 @@ import { EndgameScout } from "src-components/matchScout/endgame";
 import { ReviewScout } from "src-components/matchScout/review";
 import { scheduleStore } from "@/utils/stores";
 import { trpc } from "@/utils/trpc";
-import isOnline from "@/utils/useIsOnline";
+import useIsOnline from "@/utils/useIsOnline";
 
 export type ScoringGrid =
   | "nothing"
@@ -38,23 +38,7 @@ const MatchScout: NextPage = () => {
   });
   const [timeState, timeDispatch] = useReducer(TimeReducer, initialTimeState);
 
-  const [onlineStatus, setOnlineStatus] = useState(true);
-
-  useEffect(() => {
-    const checkOnlineStatus = async () => {
-      const online = await isOnline();
-      setOnlineStatus(online);
-    };
-
-    checkOnlineStatus();
-
-    // Check the online status every 10 seconds
-    const interval = setInterval(checkOnlineStatus, 10000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
+  const isOnline = useIsOnline();
 
   useEffect(() => {
     if (
@@ -85,7 +69,7 @@ const MatchScout: NextPage = () => {
         timeDispatch={timeDispatch}
         matchEvents={matchEvents}
         matchDispatch={matchDispatch}
-        isOnline={onlineStatus}
+        isOnline={isOnline}
       />
       {memoizedScout}
     </div>

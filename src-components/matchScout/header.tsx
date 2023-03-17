@@ -171,7 +171,7 @@ export default function ScoutHeader({
     station: m.station as number,
   };
 
-  if (navigator.onLine) {
+  if (isOnline) {
     const { error } = trpc.match.submitMatches.useQuery([dataSubmission], {
       enabled: Boolean(submitClick),
       onError(err) {
