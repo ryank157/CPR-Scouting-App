@@ -36,6 +36,20 @@ const MatchScout: NextPage = () => {
     },
   });
   const [timeState, timeDispatch] = useReducer(TimeReducer, initialTimeState);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
 
   useEffect(() => {
     if (
@@ -66,6 +80,7 @@ const MatchScout: NextPage = () => {
         timeDispatch={timeDispatch}
         matchEvents={matchEvents}
         matchDispatch={matchDispatch}
+        isOnline={isOnline}
       />
       {memoizedScout}
     </div>
@@ -77,6 +92,7 @@ const MatchScout: NextPage = () => {
         return BeforeScout({
           matchEvents,
           matchDispatch,
+          isOnline,
         });
 
       case "auto":

@@ -100,16 +100,18 @@ model RobotMatch {
   station  Int
   alliance String
 
-  startingLoc  Int?
-  mobility     String?
-  autoBalance  String?
-  fouls        String?
-  defense      String?
-  scoredPieces ScoredPiece[]
-  endRobots    Int?
-  endOrder     Int?
-  endResult    String?
-  feedback     String?
+  startingLoc    Int?
+  mobility       String?
+  autoBalance    String?
+  fouls          String?
+  defense        String?
+  scoredPieces   ScoredPiece[]
+  endingLoc      Int?
+  endBalanceTime Int?
+  endRobots      Int?
+  endOrder       Int?
+  endResult      String?
+  feedback       String?
 
   scouter Scouter[]
 

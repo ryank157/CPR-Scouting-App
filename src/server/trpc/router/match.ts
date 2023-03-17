@@ -5,68 +5,79 @@ import prisma from "../../../utils/prisma";
 import fs from "fs";
 
 export const matchRouter = router({
-  submitMatch: publicProcedure
+  submitMatches: publicProcedure
     .input(
-      z.object({
-        scouter: z.string(),
-        startingLocation: z.number().optional(),
-        mobility: z.string().optional(),
-        autoBalancing: z.string().optional(),
-        endRobots: z.number().optional(),
-        endOrder: z.number().optional(),
-        endResult: z.string().optional(),
-        fouls: z.string().array(),
-        defense: z.string().array(),
-        feedback: z.string().optional(),
-        robotId: z.number(),
-        alliance: z.string(),
-        station: z.number(),
-        matchId: z.number(),
-        scoredPieces: z
-          .object({
-            type: z.string().optional(),
-            scoredLocation: z.number().optional(),
-            cycleTime: z.number().optional(),
-            pickupLocation: z.string().optional(),
-            pickupOrientation: z.string().optional(),
-            delayed: z.string().optional(),
-          })
-          .array(),
-      })
+      z
+        .object({
+          scouter: z.string().optional(),
+          startingLocation: z.number().optional(),
+          mobility: z.string().optional(),
+          autoBalancing: z.string().optional(),
+          endgameBalancing: z.object({
+            endingLoc: z.number().optional(),
+            endBalanceTime: z.number().optional(),
+            endRobots: z.number().optional(),
+            endOrder: z.number().optional(),
+            endResult: z.string().optional(),
+          }),
+          fouls: z.string().array(),
+          defense: z.string().array(),
+          feedback: z.string().optional(),
+          robotId: z.number().optional(),
+          alliance: z.string().optional(),
+          station: z.number().optional(),
+          matchId: z.number().optional(),
+          scoredObjects: z
+            .object({
+              type: z.string().optional(),
+              scoredLocation: z.number().optional(),
+              cycleTime: z.number().optional(),
+              pickupLocation: z.string().optional(),
+              pickupOrientation: z.string().optional(),
+              delayed: z.string().optional(),
+            })
+            .array(),
+        })
+        .array()
     )
     .query(async ({ input }) => {
-      const i = input;
-      console.log(i);
-
-      const result = await prisma.robotMatch.update({
-        where: {
-          matchId_robotId: { matchId: i.matchId, robotId: i.robotId },
-        },
-        data: {
-          startingLoc: i.startingLocation,
-          mobility: i.mobility,
-          autoBalance: i.autoBalancing,
-          fouls: i.fouls.join(","),
-          defense: i.defense.join(","),
-          endRobots: i.endRobots,
-          endOrder: i.endOrder,
-          endResult: i.endResult,
-          feedback: i.feedback,
-          robotId: i.robotId,
-          station: i.station,
-          alliance: i.alliance,
-          scouter: {
-            connect: {
-              scouterId: i.scouter,
-            },
-          },
-          scoredPieces: {
-            createMany: {
-              data: i.scoredPieces,
-            },
-          },
-        },
-      });
+      const results = await Promise.all(
+        input.map(async (i) => {
+          if (i.matchId && i.robotId) {
+            return await prisma.robotMatch.update({
+              where: {
+                matchId_robotId: { matchId: i.matchId, robotId: i.robotId },
+              },
+              data: {
+                startingLoc: i.startingLocation,
+                mobility: i.mobility,
+                autoBalance: i.autoBalancing,
+                fouls: i.fouls.join(","),
+                defense: i.defense.join(","),
+                endingLoc: i.endgameBalancing.endingLoc,
+                endBalanceTime: i.endgameBalancing.endBalanceTime,
+                endRobots: i.endgameBalancing.endRobots,
+                endOrder: i.endgameBalancing.endOrder,
+                endResult: i.endgameBalancing.endResult,
+                feedback: i.feedback,
+                robotId: i.robotId,
+                station: i.station,
+                alliance: i.alliance,
+                scouter: {
+                  connect: {
+                    scouterId: i.scouter,
+                  },
+                },
+                scoredPieces: {
+                  createMany: {
+                    data: i.scoredObjects,
+                  },
+                },
+              },
+            });
+          }
+        })
+      );
 
       return "test";
     }),

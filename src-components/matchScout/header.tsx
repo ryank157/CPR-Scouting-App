@@ -2,11 +2,21 @@ import type { Dispatch } from "react";
 import { useState, useEffect } from "react";
 
 import type { TimeAction, TimeState } from "@/utils/matchScout/time";
-import type { MatchEventsState, MatchAction } from "@/utils/matchScout/events";
+import type {
+  MatchEventsState,
+  MatchAction,
+  Mobility,
+  ScoringTypes,
+  PickupLocation,
+  PickupOrientation,
+  Delayed,
+  AutoBalance,
+  Foul,
+} from "@/utils/matchScout/events";
 import Button from "src-components/button";
 import Link from "next/link";
 import { trpc } from "@/utils/trpc";
-import { userStore, scheduleStore } from "@/utils/stores";
+import { userStore, scheduleStore, useLocalMatchesStore } from "@/utils/stores";
 import type { Match } from "@/utils/stores";
 import type { Robot } from "@prisma/client";
 
@@ -15,6 +25,7 @@ interface ScoutHeaderProps {
   matchDispatch: Dispatch<MatchAction>;
   timeState: TimeState;
   timeDispatch: Dispatch<TimeAction>;
+  isOnline: boolean;
 }
 
 export default function ScoutHeader({
@@ -22,10 +33,16 @@ export default function ScoutHeader({
   matchDispatch,
   timeState,
   timeDispatch,
+  isOnline,
 }: ScoutHeaderProps) {
   const { user } = userStore();
   const { schedule } = scheduleStore();
   const { activeMatch, matchPage } = timeState;
+
+  //Match Storage
+  const { addMatch } = useLocalMatchesStore();
+
+  //Online or offline
 
   //Robot Position
   const [robotStationIndex, setRobotStationIndex] = useState(0);
@@ -118,29 +135,35 @@ export default function ScoutHeader({
   }, [matchEvents.scoredObjects.length]);
 
   const m = matchEvents;
-  const SO = m.scoredObjects.map((score) => {
-    return {
-      type: score.type as string,
-      scoredLocation: score.scoredLoc,
-      cycleTime: score.cycleTime,
-      pickupLocation: score.pickupLoc as string | undefined,
-      pickupOrientation: score.pickupOrient as string | undefined,
-      delayed: score.delayed as string | undefined,
-    };
-  });
+  const SO = m.scoredObjects
+    .map((score) => {
+      return {
+        type: score.type as ScoringTypes,
+        scoredLocation: score.scoredLoc,
+        cycleTime: score.cycleTime,
+        pickupLocation: score.pickupLoc as PickupLocation,
+        pickupOrientation: score.pickupOrient as PickupOrientation,
+        delayed: score.delayed as Delayed,
+      };
+    })
+    .filter((score) => score.scoredLocation);
 
   const dataSubmission = {
     scouter: user.scouterId,
     startingLocation: m.startingLoc,
-    mobility: m.mobility as unknown as string | undefined,
-    autoBalancing: m.autoBalancing as unknown as string | undefined,
-    endRobots: m.endgameBalancing.numberOfRobots,
-    endOrder: m.endgameBalancing.order,
-    endResult: m.endgameBalancing.result,
+    mobility: m.mobility as unknown as Mobility,
+    autoBalancing: m.autoBalancing as unknown as AutoBalance,
+    endgameBalancing: {
+      endingLoc: m.endgameBalancing.endingLoc,
+      endBalanceTime: m.endgameBalancing.endBalanceTime,
+      numberOfRobots: m.endgameBalancing.numberOfRobots,
+      order: m.endgameBalancing.order,
+      result: m.endgameBalancing.result,
+    },
     fouls: m.fouls as unknown as string[],
     defense: m.defense,
     feedback: m.feedback,
-    scoredPieces: SO,
+    scoredObjects: SO,
     //Fix this later
     matchId: m.matchId as number,
     robotId: m.robotId as number,
@@ -148,17 +171,25 @@ export default function ScoutHeader({
     station: m.station as number,
   };
 
-  const { error } = trpc.match.submitMatch.useQuery(dataSubmission, {
-    enabled: Boolean(submitClick),
-    onError(err) {
-      console.log(err);
-    },
-    onSuccess(res) {
-      setSubmitClick(false);
-      matchDispatch({ type: "RESET_MATCH" });
-      timeDispatch({ type: "END_MATCH" });
-    },
-  });
+  if (navigator.onLine) {
+    const { error } = trpc.match.submitMatches.useQuery([dataSubmission], {
+      enabled: Boolean(submitClick),
+      onError(err) {
+        console.log(err);
+      },
+      onSuccess(res) {
+        setSubmitClick(false);
+        matchDispatch({ type: "RESET_MATCH" });
+        timeDispatch({ type: "END_MATCH" });
+      },
+    });
+  } else {
+    // Store the match result locally using Zustand
+    addMatch(dataSubmission);
+    setSubmitClick(false);
+    matchDispatch({ type: "RESET_MATCH" });
+    timeDispatch({ type: "END_MATCH" });
+  }
 
   switch (matchPage) {
     case "before":

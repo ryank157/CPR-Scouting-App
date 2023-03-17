@@ -1,17 +1,17 @@
 export interface MatchEventsState {
-  startingLoc: number | undefined;
+  startingLoc?: number;
   mobility: Mobility;
   scoredObjects: ScoredObject[];
   autoBalancing: AutoBalance;
   endgameBalancing: Endgame;
-  fouls: Foul[];
+  fouls: string[];
   defense: string[];
-  feedback: string | undefined;
-  scouter: string | undefined;
-  robotId: number | undefined;
-  station: number | undefined;
-  alliance: string | undefined;
-  matchId: number | undefined;
+  feedback?: string;
+  scouter?: string;
+  robotId?: number;
+  station?: number;
+  alliance?: string;
+  matchId?: number;
 }
 
 export type Mobility = "yes" | "no" | "failed" | undefined;
@@ -40,9 +40,10 @@ export type ScoredObject = {
 };
 
 export type Endgame = {
+  endBalanceTime: number | undefined;
   endingLoc: number | undefined;
-  numberOfRobots: 1 | 2 | 3 | undefined;
-  order: 1 | 2 | 3 | undefined;
+  numberOfRobots: number | undefined;
+  order: number | undefined;
   result: "balance" | "dock" | "fail" | undefined;
 };
 
@@ -51,7 +52,7 @@ export type MatchAction =
   | { type: "SET_MOBILITY"; mobility: Mobility }
   | { type: "SET_AUTO_BALANCING"; autoBalance: AutoBalance }
   | { type: "SET_ENDGAME_BALANCING"; endgame: Endgame }
-  | { type: "FOUL_TOGGLE"; newFoul: Foul }
+  | { type: "FOUL_TOGGLE"; newFoul: string }
   | {
       type: "ADD_SCORE_DETAILS";
       newScore: ScoredObject;
@@ -89,6 +90,7 @@ export const initialMatchState: MatchEventsState = {
   ],
   autoBalancing: undefined,
   endgameBalancing: {
+    endBalanceTime: undefined,
     endingLoc: undefined,
     numberOfRobots: undefined,
     order: undefined,
@@ -327,6 +329,7 @@ export const MatchEventsReducer = (
       return {
         ...initialMatchState,
         endgameBalancing: {
+          endBalanceTime: undefined,
           endingLoc: undefined,
           numberOfRobots: undefined,
           order: undefined,

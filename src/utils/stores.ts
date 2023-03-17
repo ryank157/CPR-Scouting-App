@@ -2,6 +2,7 @@
 import type { Scouter } from "@prisma/client";
 import { create } from "zustand";
 import type { Robot } from "@prisma/client";
+import { MatchEventsState } from "./matchScout/events";
 
 type User = {
   user: Scouter;
@@ -43,3 +44,18 @@ export type Match = {
   matchNumber: number;
 };
 export default userStore;
+
+type LocalMatchesStore = {
+  localMatches: MatchEventsState[];
+  addMatch: (match: MatchEventsState) => void;
+  deleteLocalMatches: () => void;
+};
+
+export const useLocalMatchesStore = create<LocalMatchesStore>((set) => ({
+  localMatches: [],
+  addMatch: (match) =>
+    set((state) => ({
+      localMatches: [...state.localMatches, match],
+    })),
+  deleteLocalMatches: () => set(() => ({ localMatches: [] })),
+}));

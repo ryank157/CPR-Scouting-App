@@ -38,6 +38,9 @@ const Home: NextPage = () => {
             <Link href="/matchScout">
               <Button className="mt-10 w-80">Start Scouting</Button>
             </Link>
+            <Link href="/data">
+              <Button className="mt-10 w-80">Manage Data</Button>
+            </Link>
           </div>
         </div>
       </div>
