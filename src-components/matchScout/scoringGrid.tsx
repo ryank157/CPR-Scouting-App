@@ -157,10 +157,10 @@ const cellClasses = (
       }
       //Tele
       if (thisScore?.type === "tele-cone") {
-        bgImage = "bg-cone-filled";
+        bgImage = "bg-cone-filled border border-orange-400";
       }
       if (thisScore?.type === "tele-cube") {
-        bgImage = "bg-cube-filled";
+        bgImage = "bg-cube-filled border border-cpr-blue-light";
       }
       //If bottom row cone
     } else if (gridLoc > 17 && thisScore?.scoredLoc === gridLoc) {
@@ -169,7 +169,7 @@ const cellClasses = (
         bgImage = "bg-inactive-border";
         //Tele
       } else if (thisScore?.type === "tele-cone") {
-        bgImage = "bg-bottom-cone";
+        bgImage = "bg-bottom-cone border border-orange-400";
       }
       //If bottom row cube
     } else if (gridLoc > 17 && groundCubeScore?.scoredLoc === gridLoc + 1) {
@@ -178,7 +178,7 @@ const cellClasses = (
         bgImage = "bg-inactive-border";
         //Tele
       } else if (groundCubeScore?.type === "tele-cube") {
-        bgImage = "bg-bottom-cube";
+        bgImage = "bg-bottom-cube border border-cpr-blue-light";
       }
     }
     //if not scored

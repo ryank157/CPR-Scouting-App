@@ -36,19 +36,24 @@ const MatchScout: NextPage = () => {
     },
   });
   const [timeState, timeDispatch] = useReducer(TimeReducer, initialTimeState);
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [isOnline, setIsOnline] = useState(true);
 
   useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
+    // Check if the code is running in the browser
+    if (typeof window !== "undefined") {
+      setIsOnline(navigator.onLine);
 
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
+      const handleOnline = () => setIsOnline(true);
+      const handleOffline = () => setIsOnline(false);
 
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
+      window.addEventListener("online", handleOnline);
+      window.addEventListener("offline", handleOffline);
+
+      return () => {
+        window.removeEventListener("online", handleOnline);
+        window.removeEventListener("offline", handleOffline);
+      };
+    }
   }, []);
 
   useEffect(() => {
