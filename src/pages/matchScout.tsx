@@ -16,6 +16,7 @@ import { ReviewScout } from "src-components/matchScout/review";
 import { scheduleStore } from "@/utils/stores";
 import { trpc } from "@/utils/trpc";
 import useIsOnline from "@/utils/useIsOnline";
+import dynamic from "next/dynamic";
 
 export type ScoringGrid =
   | "nothing"
@@ -37,6 +38,7 @@ const MatchScout: NextPage = () => {
     },
   });
   const [timeState, timeDispatch] = useReducer(TimeReducer, initialTimeState);
+
   const isOnline = useIsOnline();
 
   useEffect(() => {
