@@ -30,7 +30,6 @@ export default function AutoScout(props: AutoProps) {
       />
     );
   }, [matchEvents.scoredObjects]);
-  console.log(matchEvents.scoredObjects);
 
   return (
     <div className="flex w-full flex-col justify-center">

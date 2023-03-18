@@ -5,7 +5,6 @@ const useIsOnline = () => {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    console.log("toggled " + isOnline);
 
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);

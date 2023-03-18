@@ -191,8 +191,6 @@ export default function ScoutHeader({
       console.log(err);
     },
     onSuccess(res) {
-      console.log(matchEvents);
-      console.log([dataSubmission]);
       setSubmitClick(false);
       matchDispatch({ type: "RESET_MATCH" });
       timeDispatch({ type: "END_MATCH" });

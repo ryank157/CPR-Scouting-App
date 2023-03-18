@@ -200,6 +200,7 @@ export const MatchEventsReducer = (
             }),
         };
       }
+
       const newestScore = state.scoredObjects[currentLength - 1] || {
         cycleTime: undefined,
         pickupLoc: undefined,

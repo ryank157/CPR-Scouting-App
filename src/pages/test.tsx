@@ -8,7 +8,6 @@ const Home: NextPage = () => {
   // const { data: two } = trpc.tba.getTBAData.useQuery();
   // const { data: two } = trpc.tba.populateMatchSchedule.useQuery();
   // const { data: data } = trpc.match.exportData.useQuery();
-  // console.log(data);
   // trpc.auth.uploadScouters.useQuery();
   // const { data: match } = trpc.test.fetchMatchData.useQuery();
   // trpc.tba.removeAllData.useQuery();

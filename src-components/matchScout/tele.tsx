@@ -176,7 +176,6 @@ export const TeleScout: React.FC<TeleProps> = (props: TeleProps) => {
                 score.type?.includes("cube")
                   ? (scoreType += "cube")
                   : (scoreType += "cone");
-                console.log(score);
                 return (
                   score.scoredLoc !== undefined && (
                     <div key={index} className="flex">
