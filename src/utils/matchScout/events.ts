@@ -134,7 +134,7 @@ export const MatchEventsReducer = (
         autoBalancing: action.autoBalance,
       };
     case "SET_ENDGAME_BALANCING":
-      const endGame = state.endgameBalancing;
+      const endGame = { ...state.endgameBalancing };
 
       endGame.endingLoc =
         action.endgame.endingLoc !== undefined
@@ -200,7 +200,6 @@ export const MatchEventsReducer = (
             }),
         };
       }
-
       const newestScore = state.scoredObjects[currentLength - 1] || {
         cycleTime: undefined,
         pickupLoc: undefined,

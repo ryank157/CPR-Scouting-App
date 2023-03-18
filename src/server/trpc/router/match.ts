@@ -23,7 +23,7 @@ export const matchRouter = router({
           fouls: z.string().array(),
           defense: z.string().array(),
           feedback: z.string().optional(),
-          robotId: z.number().optional(),
+          teamNumber: z.number().optional(),
           alliance: z.string().optional(),
           station: z.number().optional(),
           matchId: z.number().optional(),
@@ -43,10 +43,13 @@ export const matchRouter = router({
     .query(async ({ input }) => {
       const results = await Promise.all(
         input.map(async (i) => {
-          if (i.matchId && i.robotId) {
+          if (i.matchId && i.teamNumber) {
             return await prisma.robotMatch.update({
               where: {
-                matchId_robotId: { matchId: i.matchId, robotId: i.robotId },
+                matchId_teamNumber: {
+                  matchId: i.matchId,
+                  teamNumber: i.teamNumber,
+                },
               },
               data: {
                 startingLoc: i.startingLocation,

@@ -35,6 +35,7 @@ export default function ScoutHeader({
 }: ScoutHeaderProps) {
   const { activeMatch, matchPage } = timeState;
   const isOnline = useIsOnline();
+  console.log(matchEvents.scoredObjects);
 
   //Hydration
   const [user, setUser] = useState<Scouter>();
@@ -114,38 +115,38 @@ export default function ScoutHeader({
 
   //Create a useEffect that has a dependency array for when a scored piece is submitted.
   useEffect(() => {
-    console.log("use effecting");
-    const teleObjects = matchEvents.scoredObjects.filter((obj) =>
-      obj.type?.includes("tele")
-    );
+    if (timeState.matchPage === "tele") {
+      const teleObjects = matchEvents.scoredObjects.filter((obj) =>
+        obj.type?.includes("tele")
+      );
 
-    const newObjectIndex = matchEvents.scoredObjects.findIndex(
-      (obj) => obj.cycleTime === undefined && obj.type?.includes("tele")
-    );
+      //Locate the last tele object that has a scored piece without a cycle time.
+      const newObjectIndex = matchEvents.scoredObjects.findIndex(
+        (obj) => obj.cycleTime === undefined && obj.type?.includes("tele")
+      );
 
-    const alreadyScoredCycleTime = teleObjects
-      .filter((obj) => obj.cycleTime !== undefined)
-      .reduce(
-        (total, obj) => (obj.cycleTime ? total + obj.cycleTime : total),
-        0
-      ); // sum the already scored cycle times
+      //Sum the already scored pieces cycle times together.
+      const alreadyScoredCycleTime = teleObjects
+        .filter((obj) => obj.cycleTime !== undefined)
+        .reduce(
+          (total, obj) => (obj.cycleTime ? total + obj.cycleTime : total),
+          0
+        );
 
-    const cycleTime = Math.max(0, 135 - alreadyScoredCycleTime - teleTime); // calculate the cycle time
+      //calc cycle time
+      const cycleTime = Math.max(0, 135 - alreadyScoredCycleTime - teleTime);
 
-    if (newObjectIndex !== undefined) {
-      matchDispatch({
-        type: "SET_CYCLE_TIME",
-        payload: {
-          newObjectIndex: newObjectIndex,
-          cycleTime: cycleTime,
-        },
-      });
+      //Set cycle time
+      if (newObjectIndex !== undefined) {
+        matchDispatch({
+          type: "SET_CYCLE_TIME",
+          payload: {
+            newObjectIndex: newObjectIndex,
+            cycleTime: cycleTime,
+          },
+        });
+      }
     }
-
-    //Locate the last tele object that has a scored piece without a cycle time.
-    //Sum the already scored pieces cycle times together.
-    //135 - SUM - remaining match time = cycle time.
-    //Set cycle time
   }, [matchEvents.scoredObjects.length]);
 
   const m = matchEvents;
@@ -163,7 +164,7 @@ export default function ScoutHeader({
     .filter((score) => score.scoredLocation);
 
   const dataSubmission = {
-    scouter: user ? user.scouterId : "",
+    scouterChipId: user ? user.scouterId : "",
     startingLocation: m.startingLoc,
     mobility: m.mobility as unknown as Mobility,
     autoBalancing: m.autoBalancing as unknown as AutoBalance,
@@ -180,7 +181,7 @@ export default function ScoutHeader({
     scoredObjects: SO,
     //Fix this later
     matchId: m.matchId as number,
-    robotId: m.robotId as number,
+    teamNumber: m.robotId as number,
     alliance: m.alliance as string,
     station: m.station as number,
   };

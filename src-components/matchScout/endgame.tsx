@@ -17,7 +17,6 @@ export const EndgameScout: React.FC<EndgameProps> = (props: EndgameProps) => {
   const { matchEvents, matchDispatch } = props;
   const [feedback, setFeedback] = useState(matchEvents.feedback || "");
   const endLocs = [1, 2, 3, 4, 5, 6];
-
   useEffect(() => {
     window.scrollTo(0, document.body.scrollHeight);
   }, []);
@@ -39,6 +38,11 @@ export const EndgameScout: React.FC<EndgameProps> = (props: EndgameProps) => {
               : "bg-endgame-blue"
           } bg-contain bg-center bg-no-repeat`}
         >
+          {!matchEvents.endgameBalancing.endingLoc && (
+            <div className="absolute translate-x-4 translate-y-10 text-3xl font-bold">
+              Click Location to Start Timer
+            </div>
+          )}
           {endLocs.map((location, index) => {
             const position =
               index < 3
@@ -64,7 +68,9 @@ export const EndgameScout: React.FC<EndgameProps> = (props: EndgameProps) => {
                     },
                   });
                 }}
-              ></div>
+              >
+                {index}
+              </div>
             );
           })}
         </div>
