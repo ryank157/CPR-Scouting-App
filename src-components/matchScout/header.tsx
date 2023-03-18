@@ -262,7 +262,6 @@ export default function ScoutHeader({
                     thisRobot && user && matchEvents.startingLoc
                       ? timeDispatch({ type: "START_MATCH" })
                       : undefined;
-                    timeDispatch({ type: "START_MATCH" });
                   }}
                 >
                   Start

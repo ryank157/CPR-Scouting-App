@@ -62,7 +62,7 @@ export const tbaRouter = router({
   populateMatchSchedule: publicProcedure.query(async () => {
     const data: MatchType[] = await axios
       .get(
-        "https://www.thebluealliance.com/api/v3/event/2023wasno/matches/simple",
+        "https://www.thebluealliance.com/api/v3/event/2023wabon/matches/simple",
         {
           headers: {
             "X-TBA-Auth-Key": process.env.THE_BLUE_ALLIANCE,
