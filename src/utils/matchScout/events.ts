@@ -8,7 +8,7 @@ export interface MatchEventsState {
   defense: string[];
   feedback?: string;
   scouterChipId?: string;
-  robotId?: number;
+  teamNumber?: number;
   station?: number;
   alliance?: string;
   matchId?: number;
@@ -69,7 +69,7 @@ export type MatchAction =
   | {
       type: "SET_ROBOT";
       robotInfo: {
-        robotId: number;
+        teamNumber: number;
         alliance: string;
         station: number;
         matchId: number;
@@ -101,7 +101,7 @@ export const initialMatchState: MatchEventsState = {
   defense: [],
   feedback: undefined,
   scouterChipId: undefined,
-  robotId: undefined,
+  teamNumber: undefined,
   station: undefined,
   alliance: undefined,
   matchId: undefined,
@@ -358,7 +358,7 @@ export const MatchEventsReducer = (
     case "SET_ROBOT":
       return {
         ...state,
-        robotId: action.robotInfo.robotId,
+        teamNumber: action.robotInfo.teamNumber,
         station: action.robotInfo.station,
         alliance: action.robotInfo.alliance,
         matchId: action.robotInfo.matchId || undefined,

@@ -92,7 +92,7 @@ export default function ScoutHeader({
         matchDispatch({
           type: "SET_ROBOT",
           robotInfo: {
-            robotId: matchBot.robot.teamNumber,
+            teamNumber: matchBot.robot.teamNumber,
             alliance: matchBot.alliance,
             station: matchBot.station,
             matchId: currentMatch?.id as number,
@@ -180,7 +180,7 @@ export default function ScoutHeader({
     scoredObjects: SO,
     //Fix this later
     matchId: m.matchId as number,
-    teamNumber: m.robotId as number,
+    teamNumber: m.teamNumber as number,
     alliance: m.alliance as string,
     station: m.station as number,
   };

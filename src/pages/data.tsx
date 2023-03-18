@@ -52,13 +52,6 @@ const Data = () => {
     },
   });
 
-  const testMatch = {
-    matchId: 1,
-    robotId: 1000,
-    alliance: "red",
-    station: 0,
-  };
-
   return (
     <>
       <>
@@ -92,22 +85,22 @@ const Data = () => {
         {hydrateLocal.length > 0 && (
           <>
             <div className="flex w-[60%] flex-col border border-black">
-              <div className="flex items-center justify-center  text-center">
-                <div className="w-[20%] border-r py-2">Match #</div>
-                <div className="w-[40%] border-r py-2">Team #</div>
-                <div className="w-[20%] border-r py-2">Alliance</div>
-                <div className="w-[20%] border-r py-2">Station</div>
+              <div className="flex items-center justify-center  py-2 text-center">
+                <div className="w-[20%] border-r ">Match #</div>
+                <div className="w-[40%] border-r ">Team #</div>
+                <div className="w-[20%] border-r ">Alliance</div>
+                <div className="w-[20%] border-r ">Station</div>
               </div>
             </div>
             {hydrateLocal.map((match, index) => (
               <div
                 key={index}
-                className="flex w-[60%] items-center justify-center  border-t border-black text-center"
+                className="flex w-[60%] items-center justify-center  border-t border-b border-black py-2 text-center"
               >
-                <div className="w-[20%] border-r py-2">{match.matchId}</div>
-                <div className="w-[40%] border-r py-2">{match.robotId}</div>
-                <div className="w-[20%] border-r py-2">{match.alliance}</div>
-                <div className="w-[20%] border-r py-2">{match.station}</div>
+                <div className="w-[20%] border-r">{match.matchId}</div>
+                <div className="w-[40%] border-r">{match.teamNumber}</div>
+                <div className="w-[20%] border-r">{match.alliance}</div>
+                <div className="w-[20%] border-r">{match.station}</div>
               </div>
             ))}
           </>
