@@ -6,23 +6,32 @@ import { scheduleStore } from "@/utils/stores";
 import { useState, useEffect } from "react";
 import type { Match } from "@/utils/stores";
 import type { Scouter } from "@prisma/client";
+import { trpc } from "@/utils/trpc";
 
 const Schedule: NextPage = () => {
   const [user, setUser] = useState<Scouter>();
   const storeUser = userStore().user;
 
-  const [schedule, setSchedule] = useState<Match[]>([]);
-  const storeSchedule = scheduleStore().schedule;
+  const [hyrdatedSchedule, setHydratedSchedule] = useState<Match[]>([]);
+  const { schedule, setSchedule } = scheduleStore();
+  const [isRefresh, setIsRefresh] = useState(false);
 
   useEffect(() => {
     // Synchronize the state with the scheduleStore on the client-side
-    if (storeSchedule) {
-      setSchedule(storeSchedule);
+    if (schedule) {
+      setHydratedSchedule(schedule);
     }
     if (storeUser) {
       setUser(storeUser);
     }
   }, []);
+
+  trpc.tba.fetchMatchSchedule.useQuery(undefined, {
+    enabled: isRefresh,
+    onSuccess(res) {
+      setSchedule(res);
+    },
+  });
 
   return (
     <div className="flex w-full flex-col items-center">
@@ -53,8 +62,8 @@ const Schedule: NextPage = () => {
           <div className="w-[15%] border-r py-2">Blue 2</div>
           <div className="w-[15%]  py-2">Blue 3</div>
         </div>
-        {schedule &&
-          schedule.map((match, index) => {
+        {hyrdatedSchedule &&
+          hyrdatedSchedule.map((match, index) => {
             const red1 = match.robotMatchData.find(
               (robotMatch) =>
                 robotMatch.alliance === "red" && robotMatch.station === 0
@@ -146,6 +155,14 @@ const Schedule: NextPage = () => {
             );
           })}
       </div>
+      <Button
+        className="mt-10 w-60"
+        onClick={() => {
+          setIsRefresh(true);
+        }}
+      >
+        Refresh Schedule
+      </Button>
     </div>
   );
 };
