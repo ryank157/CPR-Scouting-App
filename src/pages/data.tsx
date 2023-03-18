@@ -11,6 +11,7 @@ const Data = () => {
   const [hydrateLocal, setHydrateLocal] = useState<MatchEventsState[]>([]);
   const [isSubmit, setIsSubmit] = useState(false);
   const [successfulSubmit, setSuccessfulSubmit] = useState(false);
+  const [isExport, setIsExport] = useState(false);
 
   const isOnline = useIsOnline();
 
@@ -29,6 +30,28 @@ const Data = () => {
     },
   });
 
+  trpc.match.exportData.useQuery(undefined, {
+    enabled: isExport,
+    onSuccess(res) {
+      setIsExport(false);
+
+      // Create a Blob object from the CSV string
+      const blob = new Blob([res], { type: "text/csv" });
+      // Create a temporary URL for the Blob object
+      const url = URL.createObjectURL(blob);
+      // Create a temporary link element
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "data.csv";
+      // Trigger the download by clicking the link element
+      document.body.appendChild(link);
+      link.click();
+      // Clean up the temporary URL and link element
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    },
+  });
+
   return (
     <>
       <>
@@ -42,7 +65,9 @@ const Data = () => {
             {isOnline ? (
               <>
                 {/* <div>Through Match: {matchNumber} </div> */}
-                <Button className="w-60">Export Data</Button>
+                <Button className="w-60" onClick={() => setIsExport(true)}>
+                  Export Data
+                </Button>
               </>
             ) : (
               <div>No Internet Connection</div>

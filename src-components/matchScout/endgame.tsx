@@ -38,11 +38,11 @@ export const EndgameScout: React.FC<EndgameProps> = (props: EndgameProps) => {
               : "bg-endgame-blue"
           } bg-contain bg-center bg-no-repeat`}
         >
-          {!matchEvents.endgameBalancing.endingLoc && (
+          {/* {!matchEvents.endgameBalancing.endingLoc && (
             <div className="absolute translate-x-4 translate-y-10 text-3xl font-bold">
               Click Location to Start Timer
             </div>
-          )}
+          )} */}
           {endLocs.map((location, index) => {
             const position =
               index < 3
@@ -51,7 +51,7 @@ export const EndgameScout: React.FC<EndgameProps> = (props: EndgameProps) => {
             return (
               <div
                 key={index}
-                className={`absolute h-[100px] w-[50px] cursor-pointer border-2 border-black p-2 transition-all duration-300 ease-in  ${
+                className={`absolute flex h-[100px] w-[50px] cursor-pointer items-center justify-center border-2 border-black p-2 text-xl font-medium transition-all duration-300 ease-in  ${
                   matchEvents.endgameBalancing.endingLoc === undefined
                     ? "animate-pulse " + endGameColors[0]
                     : matchEvents.endgameBalancing.endingLoc === index

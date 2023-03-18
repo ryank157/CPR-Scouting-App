@@ -35,7 +35,6 @@ export default function ScoutHeader({
 }: ScoutHeaderProps) {
   const { activeMatch, matchPage } = timeState;
   const isOnline = useIsOnline();
-  console.log(matchEvents.scoredObjects);
 
   //Hydration
   const [user, setUser] = useState<Scouter>();
@@ -161,7 +160,7 @@ export default function ScoutHeader({
         delayed: score.delayed as Delayed,
       };
     })
-    .filter((score) => score.scoredLocation);
+    .filter((score) => score.scoredLocation !== undefined);
 
   const dataSubmission = {
     scouterChipId: user ? user.scouterId : "",
@@ -192,6 +191,8 @@ export default function ScoutHeader({
       console.log(err);
     },
     onSuccess(res) {
+      console.log(matchEvents);
+      console.log([dataSubmission]);
       setSubmitClick(false);
       matchDispatch({ type: "RESET_MATCH" });
       timeDispatch({ type: "END_MATCH" });
@@ -255,14 +256,14 @@ export default function ScoutHeader({
               {!activeMatch && (
                 <Button
                   className={`${
-                    thisRobot && user && matchEvents.startingLoc
+                    thisRobot && user && matchEvents.startingLoc !== undefined
                       ? ""
                       : "w-40 bg-gray-100"
                   }`}
                   onClick={() => {
-                    // thisRobot && user.scouterId && matchEvents.startingLoc
-                    //   ? timeDispatch({ type: "START_MATCH" })
-                    //   : undefined;
+                    thisRobot && user && matchEvents.startingLoc
+                      ? timeDispatch({ type: "START_MATCH" })
+                      : undefined;
                     timeDispatch({ type: "START_MATCH" });
                   }}
                 >

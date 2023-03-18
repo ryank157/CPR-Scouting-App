@@ -109,13 +109,18 @@ export const matchRouter = router({
 
     // Create the CSV string with headers
     let csvString = csvHeaders.join(",") + "\n";
-    let cycleTime = 0;
 
     data.map((rm) => {
+      let cycleTime = 0;
       const scoredLocs = rm.scoredPieces.map((sp) => {
         cycleTime += sp.cycleTime ? sp.cycleTime : 0;
         return { loc: sp.scoredLocation, type: sp.type };
       });
+
+      const teleScores = scoredLocs.filter((score) =>
+        score.type?.includes("tele")
+      ).length;
+      const cycleAvg = cycleTime > 0 ? cycleTime / teleScores : undefined;
 
       const scores = {
         AHcone: 0,
@@ -187,9 +192,9 @@ export const matchRouter = router({
         rm.alliance + " " + rm.station,
         rm.scouter ? rm.scouter.scouterId : "C4E",
         rm.startingLoc, //start position
-        rm.mobility !== undefined ? "1" : "0",
-        rm.mobility === "Yes" ? "1" : "0",
-        rm.autoBalance !== undefined ? "1" : "0",
+        rm.mobility !== null ? "1" : "0",
+        rm.mobility === "yes" ? "1" : "0",
+        rm.autoBalance !== null ? "1" : "0",
         rm.autoBalance === "docked" ? "1" : "0",
         rm.autoBalance === "engaged" ? "1" : "0",
         scores.AHcone,
@@ -207,8 +212,7 @@ export const matchRouter = router({
         scores.TMcube,
         scores.TLcone,
         scores.TLcube,
-        cycleTime /
-          scoredLocs.filter((score) => score.type?.includes("auto")).length,
+        cycleAvg,
         "", // csvData.endResult === "Defense Satisfactory" ? "1" : "0",
         "", // csvData.endResult === "Defense Limited" ? "1" : "0",
         rm.fouls?.includes("Damage Opponent") ? "1" : "0",
@@ -221,9 +225,9 @@ export const matchRouter = router({
         rm.endingLoc, //end position
         rm.endRobots,
         rm.endOrder,
-        rm.endResult !== undefined ? "1" : "0",
+        rm.endResult !== null ? "1" : "0",
         rm.endResult === "docked" ? "1" : "0",
-        rm.endResult !== undefined ? "1" : "0",
+        rm.endResult !== null ? "1" : "0",
         rm.endResult === "engaged" ? "1" : "0",
         rm.endBalanceTime, //end balance time
       ];
@@ -231,12 +235,7 @@ export const matchRouter = router({
       // Append the values to the CSV string
       csvString += csvValues.join(",") + "\n";
     });
-
-    // Write the CSV string to a file
-    fs.writeFile("data.csv", csvString, (err) => {
-      if (err) throw err;
-      console.log("CSV file saved");
-    });
+    return csvString;
   }),
 });
 
