@@ -183,22 +183,29 @@ export const MatchEventsReducer = (
       const currentScoredLocs = state.scoredObjects.map(
         (score) => score.scoredLoc
       );
+      // Check if the scored location is a duplicate or not allowed based on doubleCheck
+      // Use doubleCheck to filter out invalid scored locations
       const hasDuplicates =
         currentScoredLocs.length !== new Set(currentScoredLocs).size;
-      if (hasDuplicates) {
-        return {
-          ...state,
-          scoredObjects: state.scoredObjects
-            .slice(0, currentLength - 1)
-            .concat({
-              cycleTime: undefined,
-              pickupLoc: undefined,
-              pickupOrient: undefined,
-              delayed: undefined,
-              type: undefined,
-              scoredLoc: undefined,
-            }),
-        };
+      if (action.newScore.scoredLoc) {
+        if (
+          !doubleCheck(action.newScore.scoredLoc, currentScoredLocs) ||
+          hasDuplicates
+        ) {
+          return {
+            ...state,
+            scoredObjects: state.scoredObjects
+              .slice(0, currentLength - 1)
+              .concat({
+                cycleTime: undefined,
+                pickupLoc: undefined,
+                pickupOrient: undefined,
+                delayed: undefined,
+                type: undefined,
+                scoredLoc: undefined,
+              }),
+          };
+        }
       }
 
       const newestScore = state.scoredObjects[currentLength - 1] || {
@@ -365,3 +372,30 @@ export const MatchEventsReducer = (
       return state;
   }
 };
+
+function doubleCheck(scoredLoc: number, currentScores: (number | undefined)[]) {
+  const doubles = [
+    [18, 19],
+    [20, 21],
+    [22, 23],
+    [24, 25],
+    [26, 27],
+    [28, 29],
+    [30, 31],
+    [32, 33],
+    [34, 35],
+  ];
+
+  if (doubles.some((pair) => pair.includes(scoredLoc))) {
+    const otherInPair = doubles
+      .find((pair) => pair.includes(scoredLoc))!
+      .find((num) => num !== scoredLoc)!;
+    if (currentScores.includes(otherInPair)) {
+      return false;
+    }
+    return true;
+  }
+  return true;
+
+  return scoredLoc;
+}

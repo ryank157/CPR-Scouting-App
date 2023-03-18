@@ -108,7 +108,7 @@ const Data = () => {
             return (
               <div
                 key={index}
-                className="flex items-center justify-center  border-t border-black text-center"
+                className="flex w-[60%] items-center justify-center  border-t border-black text-center"
               >
                 <div className="w-[20%] border-r py-2">{match.matchId}</div>
                 <div className="w-[40%] border-r py-2">{match.robotId}</div>
