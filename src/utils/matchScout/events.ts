@@ -192,18 +192,14 @@ export const MatchEventsReducer = (
           !doubleCheck(action.newScore.scoredLoc, currentScoredLocs) ||
           hasDuplicates
         ) {
+          const lastElement = state.scoredObjects[currentLength - 1];
+          const minusLoc = [
+            ...state.scoredObjects.slice(0, currentLength - 1),
+            { ...lastElement, scoredLoc: undefined },
+          ];
           return {
             ...state,
-            scoredObjects: state.scoredObjects
-              .slice(0, currentLength - 1)
-              .concat({
-                cycleTime: undefined,
-                pickupLoc: undefined,
-                pickupOrient: undefined,
-                delayed: undefined,
-                type: undefined,
-                scoredLoc: undefined,
-              }),
+            scoredObjects: minusLoc,
           };
         }
       }
