@@ -52,6 +52,13 @@ const Data = () => {
     },
   });
 
+  const testMatch = {
+    matchId: 1,
+    robotId: 1000,
+    alliance: "red",
+    station: 0,
+  };
+
   return (
     <>
       <>
@@ -77,30 +84,47 @@ const Data = () => {
       </>
       <div className="flex w-full flex-col items-center justify-center px-4 py-10">
         {hydrateLocal.length > 0 && isOnline && (
-          <Button onClick={() => setIsSubmit(true)}>Submit Matches</Button>
+          <>
+            <Button onClick={() => setIsSubmit(true)}>Submit Matches</Button>
+          </>
         )}
+
         {hydrateLocal.length > 0 ? (
           hydrateLocal.map((match, index) => {
             {
-              index === 0 && <div>Locally Stored Matches</div>;
+              index === 0 && (
+                <>
+                  <div className="flex w-[60%] flex-col border border-black">
+                    <div className="flex items-center justify-center  text-center">
+                      <div className="w-[20%] border-r py-2">Match #</div>
+                      <div className="w-[40%] border-r py-2">Team #</div>
+                      <div className="w-[20%] border-r py-2">Alliance</div>
+                      <div className="w-[20%] border-r py-2">Station</div>
+                    </div>
+                  </div>
+                </>
+              );
             }
             return (
-              <div key={index} className="">
-                <div>{match.matchId}</div>
-                <div>{match.robotId}</div>
-                <div>
-                  {match.alliance} - {match.station}
-                </div>
+              <div
+                key={index}
+                className="flex items-center justify-center  border-t border-black text-center"
+              >
+                <div className="w-[20%] border-r py-2">{match.matchId}</div>
+                <div className="w-[40%] border-r py-2">{match.robotId}</div>
+                <div className="w-[20%] border-r py-2">{match.alliance}</div>
+                <div className="w-[20%] border-r py-2">{match.station}</div>
               </div>
             );
           })
         ) : (
           <div> You have no local matches</div>
         )}
-        {successfulSubmit && (
-          <div>The matches have been successfully submitted</div>
-        )}
       </div>
+
+      {successfulSubmit && (
+        <div>The matches have been successfully submitted</div>
+      )}
     </>
   );
 };
