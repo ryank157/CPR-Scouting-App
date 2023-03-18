@@ -89,23 +89,17 @@ const Data = () => {
           </>
         )}
 
-        {hydrateLocal.length > 0 ? (
-          hydrateLocal.map((match, index) => {
-            {
-              index === 0 && (
-                <>
-                  <div className="flex w-[60%] flex-col border border-black">
-                    <div className="flex items-center justify-center  text-center">
-                      <div className="w-[20%] border-r py-2">Match #</div>
-                      <div className="w-[40%] border-r py-2">Team #</div>
-                      <div className="w-[20%] border-r py-2">Alliance</div>
-                      <div className="w-[20%] border-r py-2">Station</div>
-                    </div>
-                  </div>
-                </>
-              );
-            }
-            return (
+        {hydrateLocal.length > 0 && (
+          <>
+            <div className="flex w-[60%] flex-col border border-black">
+              <div className="flex items-center justify-center  text-center">
+                <div className="w-[20%] border-r py-2">Match #</div>
+                <div className="w-[40%] border-r py-2">Team #</div>
+                <div className="w-[20%] border-r py-2">Alliance</div>
+                <div className="w-[20%] border-r py-2">Station</div>
+              </div>
+            </div>
+            {hydrateLocal.map((match, index) => (
               <div
                 key={index}
                 className="flex w-[60%] items-center justify-center  border-t border-black text-center"
@@ -115,11 +109,10 @@ const Data = () => {
                 <div className="w-[20%] border-r py-2">{match.alliance}</div>
                 <div className="w-[20%] border-r py-2">{match.station}</div>
               </div>
-            );
-          })
-        ) : (
-          <div> You have no local matches</div>
+            ))}
+          </>
         )}
+        {hydrateLocal.length === 0 && <div>You have no Local Matches</div>}
       </div>
 
       {successfulSubmit && (
