@@ -187,6 +187,7 @@ export const MatchEventsReducer = (
       // Use doubleCheck to filter out invalid scored locations
       const hasDuplicates =
         currentScoredLocs.length !== new Set(currentScoredLocs).size;
+
       if (action.newScore.scoredLoc) {
         if (
           !doubleCheck(action.newScore.scoredLoc, currentScoredLocs) ||
@@ -382,11 +383,6 @@ function doubleCheck(scoredLoc: number, currentScores: (number | undefined)[]) {
     [34, 35],
   ];
 
-  // Check if scoredLoc already exists in the currentScores array
-  if (currentScores.includes(scoredLoc)) {
-    return false;
-  }
-
   if (doubles.some((pair) => pair.includes(scoredLoc))) {
     const otherInPair = doubles
       .find((pair) => pair.includes(scoredLoc))!
@@ -394,7 +390,9 @@ function doubleCheck(scoredLoc: number, currentScores: (number | undefined)[]) {
     if (currentScores.includes(otherInPair)) {
       return false;
     }
+
     return true;
   }
+
   return true;
 }

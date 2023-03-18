@@ -259,7 +259,7 @@ export default function ScoutHeader({
                       : "w-40 bg-gray-100"
                   }`}
                   onClick={() => {
-                    thisRobot && user && matchEvents.startingLoc
+                    thisRobot && user && matchEvents.startingLoc !== undefined
                       ? timeDispatch({ type: "START_MATCH" })
                       : undefined;
                   }}
