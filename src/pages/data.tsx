@@ -85,21 +85,21 @@ const Data = () => {
         {hydrateLocal.length > 0 && (
           <>
             <div className="flex w-[60%] flex-col border border-black">
-              <div className="flex items-center justify-center  border-b py-2 text-center">
+              <div className="flex items-center justify-center  border-b border-black text-center">
                 <div className="w-[20%] border-r ">Match #</div>
                 <div className="w-[40%] border-r ">Team #</div>
                 <div className="w-[20%] border-r ">Alliance</div>
-                <div className="w-[20%] border-r ">Station</div>
+                <div className="w-[20%]  ">Station</div>
               </div>
               {hydrateLocal.map((match, index) => (
                 <div
                   key={index}
-                  className="flex w-[60%] items-center justify-center  border-b  py-2 text-center"
+                  className="flex w-full items-center justify-center  border-b border-black py-2 text-center"
                 >
                   <div className="w-[20%] border-r">{match.matchId}</div>
                   <div className="w-[40%] border-r">{match.teamNumber}</div>
                   <div className="w-[20%] border-r">{match.alliance}</div>
-                  <div className="w-[20%] border-r">{match.station}</div>
+                  <div className="w-[20%] ">{match.station}</div>
                 </div>
               ))}
             </div>
