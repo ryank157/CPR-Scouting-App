@@ -382,6 +382,11 @@ function doubleCheck(scoredLoc: number, currentScores: (number | undefined)[]) {
     [34, 35],
   ];
 
+  // Check if scoredLoc already exists in the currentScores array
+  if (currentScores.includes(scoredLoc)) {
+    return false;
+  }
+
   if (doubles.some((pair) => pair.includes(scoredLoc))) {
     const otherInPair = doubles
       .find((pair) => pair.includes(scoredLoc))!
@@ -392,6 +397,4 @@ function doubleCheck(scoredLoc: number, currentScores: (number | undefined)[]) {
     return true;
   }
   return true;
-
-  return scoredLoc;
 }
