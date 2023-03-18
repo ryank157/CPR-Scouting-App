@@ -3,27 +3,27 @@ import { router, publicProcedure } from "../trpc";
 import prisma from "@/utils/prisma";
 
 export const tbaRouter = router({
-  getTBAData: publicProcedure.query(async () => {
-    const data = await axios
-      .get(
-        "https://www.thebluealliance.com/api/v3/event/2023wasno/teams/simple",
-        {
-          headers: {
-            "X-TBA-Auth-Key": process.env.THE_BLUE_ALLIANCE,
-          },
-        }
-      )
-      .then((res) => {
-        return res.data;
-      });
+  // getTBAData: publicProcedure.query(async () => {
+  //   const data = await axios
+  //     .get(
+  //       "https://www.thebluealliance.com/api/v3/event/2023wabon/teams/simple",
+  //       {
+  //         headers: {
+  //           "X-TBA-Auth-Key": process.env.THE_BLUE_ALLIANCE,
+  //         },
+  //       }
+  //     )
+  //     .then((res) => {
+  //       return res.data;
+  //     });
 
-    return data;
-  }),
+  //   return data;
+  // }),
 
   populateRobots: publicProcedure.query(async () => {
     const data: any[] = await axios
       .get(
-        "https://www.thebluealliance.com/api/v3/event/2023wasno/teams/simple",
+        "https://www.thebluealliance.com/api/v3/event/2023wabon/teams/simple",
         {
           headers: {
             "X-TBA-Auth-Key": process.env.THE_BLUE_ALLIANCE,
@@ -34,7 +34,6 @@ export const tbaRouter = router({
         return res.data;
       });
 
-    console.log(data);
     const eventRobots = data.map((robot) => {
       return {
         name: robot.nickname,
@@ -43,23 +42,22 @@ export const tbaRouter = router({
       };
     });
 
-    // eventRobots.forEach(async (robot) => {
-    //   await prisma.robot.create({
-    //     data: {
-    //       name: robot.name,
-    //       teamNumber: robot.number,
-    //       city: robot.city,
-    //       events: {
-    //         connect: {
-    //           id: 1, //event ID
-    //         },
-    //       },
-    //     },
-    //   });
-    // });
+    eventRobots.forEach(async (robot) => {
+      await prisma.robot.create({
+        data: {
+          name: robot.name,
+          teamNumber: robot.number,
+          city: robot.city,
+          events: {
+            connect: {
+              id: 1, //event id
+            },
+          },
+        },
+      });
+    });
 
     return eventRobots;
-    // return data;
   }),
   populateMatchSchedule: publicProcedure.query(async () => {
     const data: MatchType[] = await axios
@@ -104,6 +102,11 @@ export const tbaRouter = router({
     });
     return data;
   }),
+  // removeAllData: publicProcedure.query(async () => {
+  //   await prisma.match.deleteMany();
+  //   await prisma.robotMatch.deleteMany();
+  //   await prisma.scoredPiece.deleteMany();
+  // }),
 });
 
 type MatchType = {

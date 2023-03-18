@@ -92,13 +92,13 @@ model Match {
 }
 
 model RobotMatch {
-  id       Int    @id @default(autoincrement())
-  match    Match  @relation(fields: [matchId], references: [id])
-  matchId  Int
-  robot    Robot  @relation(fields: [robotId], references: [teamNumber])
-  robotId  Int
-  station  Int
-  alliance String
+  id         Int    @id @default(autoincrement())
+  match      Match  @relation(fields: [matchId], references: [id])
+  matchId    Int
+  robot      Robot  @relation(fields: [teamNumber], references: [teamNumber])
+  teamNumber Int
+  station    Int
+  alliance   String
 
   startingLoc    Int?
   mobility       String?
@@ -113,11 +113,13 @@ model RobotMatch {
   endResult      String?
   feedback       String?
 
-  scouter Scouter[]
+  scouter   Scouter? @relation(fields: [scouterId], references: [id])
+  scouterId Int?
 
-  @@unique([matchId, robotId])
+  @@unique([matchId, teamNumber])
   @@index([matchId])
-  @@index([robotId])
+  @@index([teamNumber])
+  @@index([scouterId])
 }
 
 model ScoredPiece {

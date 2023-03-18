@@ -12,22 +12,27 @@ type User = {
   setUsers: (dbUsers: Scouter[]) => void;
 };
 
-export const userStore = create<User>()((set) => ({
-  user: { id: 0, scouterId: "", name: "" },
-  users: [],
-  setUser: (newUser) =>
-    set((state) => ({
-      user: {
-        id: newUser.id,
-        scouterId: newUser.scouterId,
-        name: newUser.name,
-      },
-    })),
-  setUsers: (dbUsers) =>
-    set(() => ({
-      users: dbUsers,
-    })),
-}));
+export const userStore = create<User>()(
+  persist(
+    (set) => ({
+      user: { id: 0, scouterId: "", name: "" },
+      users: [],
+      setUser: (newUser) =>
+        set((state) => ({
+          user: {
+            id: newUser.id,
+            scouterId: newUser.scouterId,
+            name: newUser.name,
+          },
+        })),
+      setUsers: (dbUsers) =>
+        set(() => ({
+          users: dbUsers,
+        })),
+    }),
+    { name: "user-store", getStorage: () => localStorage }
+  )
+);
 
 type Schedule = {
   schedule: Match[];
@@ -67,11 +72,16 @@ type LocalMatchesStore = {
   deleteLocalMatches: () => void;
 };
 
-export const useLocalMatchesStore = create<LocalMatchesStore>((set) => ({
-  localMatches: [],
-  addMatch: (match) =>
-    set((state) => ({
-      localMatches: [...state.localMatches, match],
-    })),
-  deleteLocalMatches: () => set(() => ({ localMatches: [] })),
-}));
+export const useLocalMatchesStore = create<LocalMatchesStore>()(
+  persist(
+    (set) => ({
+      localMatches: [],
+      addMatch: (match) =>
+        set((state) => ({
+          localMatches: [...state.localMatches, match],
+        })),
+      deleteLocalMatches: () => set(() => ({ localMatches: [] })),
+    }),
+    { name: "localMatch-store", getStorage: () => localStorage }
+  )
+);

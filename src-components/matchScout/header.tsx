@@ -17,7 +17,7 @@ import Link from "next/link";
 import { trpc } from "@/utils/trpc";
 import { userStore, scheduleStore, useLocalMatchesStore } from "@/utils/stores";
 import type { Match } from "@/utils/stores";
-import type { Robot } from "@prisma/client";
+import type { Robot, Scouter } from "@prisma/client";
 import useIsOnline from "@/utils/useIsOnline";
 
 interface ScoutHeaderProps {
@@ -33,10 +33,25 @@ export default function ScoutHeader({
   timeState,
   timeDispatch,
 }: ScoutHeaderProps) {
-  const { user } = userStore();
-  const { schedule } = scheduleStore();
   const { activeMatch, matchPage } = timeState;
   const isOnline = useIsOnline();
+
+  //Hydration
+  const [user, setUser] = useState<Scouter>();
+  const storeUser = userStore().user;
+
+  const [schedule, setSchedule] = useState<Match[]>([]);
+  const storeSchedule = scheduleStore().schedule;
+
+  useEffect(() => {
+    // Synchronize the state with the scheduleStore on the client-side
+    if (storeSchedule) {
+      setSchedule(storeSchedule);
+    }
+    if (storeUser) {
+      setUser(storeUser);
+    }
+  }, []);
 
   //Match Storage
   const { addMatch } = useLocalMatchesStore();
@@ -92,7 +107,9 @@ export default function ScoutHeader({
 
   //Scouter
   useEffect(() => {
-    matchDispatch({ type: "SET_SCOUTER", scouterId: user.scouterId });
+    if (user) {
+      matchDispatch({ type: "SET_SCOUTER", scouterId: user.scouterId });
+    }
   }, [user]);
 
   //Create a useEffect that has a dependency array for when a scored piece is submitted.
@@ -146,7 +163,7 @@ export default function ScoutHeader({
     .filter((score) => score.scoredLocation);
 
   const dataSubmission = {
-    scouter: user.scouterId,
+    scouter: user ? user.scouterId : "",
     startingLocation: m.startingLoc,
     mobility: m.mobility as unknown as Mobility,
     autoBalancing: m.autoBalancing as unknown as AutoBalance,
@@ -231,15 +248,13 @@ export default function ScoutHeader({
             </div>
             <div className="flex gap-2.5 font-bold">
               <Link href={"/login"}>
-                <Button className="">
-                  {user.scouterId ? user.name : "Log In"}
-                </Button>
+                <Button className="">{user ? user.name : "Log In"}</Button>
               </Link>
               <Button className="">No Show</Button>
               {!activeMatch && (
                 <Button
                   className={`${
-                    thisRobot && user.scouterId && matchEvents.startingLoc
+                    thisRobot && user && matchEvents.startingLoc
                       ? ""
                       : "w-40 bg-gray-100"
                   }`}

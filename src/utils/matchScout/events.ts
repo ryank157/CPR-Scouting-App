@@ -7,11 +7,12 @@ export interface MatchEventsState {
   fouls: string[];
   defense: string[];
   feedback?: string;
-  scouter?: string;
+  scouterChipId?: string;
   robotId?: number;
   station?: number;
   alliance?: string;
   matchId?: number;
+  robotMatchId?: number;
 }
 
 export type Mobility = "yes" | "no" | "failed" | undefined;
@@ -99,7 +100,7 @@ export const initialMatchState: MatchEventsState = {
   fouls: [],
   defense: [],
   feedback: undefined,
-  scouter: undefined,
+  scouterChipId: undefined,
   robotId: undefined,
   station: undefined,
   alliance: undefined,
@@ -349,7 +350,7 @@ export const MatchEventsReducer = (
     case "SET_SCOUTER":
       return {
         ...state,
-        scouter: action.scouterId,
+        scouterChipId: action.scouterId,
       };
     case "SET_ROBOT":
       return {
@@ -364,30 +365,3 @@ export const MatchEventsReducer = (
       return state;
   }
 };
-
-function doubleCheck(scoredLoc: number, currentScores: number[]) {
-  const doubles = [
-    [18, 19],
-    [20, 21],
-    [22, 23],
-    [24, 25],
-    [26, 27],
-    [28, 29],
-    [30, 31],
-    [32, 33],
-    [34, 35],
-  ];
-
-  if (doubles.some((pair) => pair.includes(scoredLoc))) {
-    const otherInPair = doubles
-      .find((pair) => pair.includes(scoredLoc))!
-      .find((num) => num !== scoredLoc)!;
-    if (currentScores.includes(otherInPair)) {
-      return false;
-    }
-    return true;
-  }
-  return true;
-
-  return scoredLoc;
-}

@@ -1,16 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { trpc } from "../utils/trpc";
 import Link from "next/link";
 import Button from "src-components/button";
 import { useLocalMatchesStore } from "@/utils/stores";
 import useIsOnline from "@/utils/useIsOnline";
+import type { MatchEventsState } from "@/utils/matchScout/events";
 
 const Data = () => {
   const { localMatches, deleteLocalMatches } = useLocalMatchesStore();
+  const [hydrateLocal, setHydrateLocal] = useState<MatchEventsState[]>([]);
   const [isSubmit, setIsSubmit] = useState(false);
   const [successfulSubmit, setSuccessfulSubmit] = useState(false);
 
   const isOnline = useIsOnline();
+
+  useEffect(() => {
+    if (localMatches) {
+      setHydrateLocal(localMatches);
+    }
+  }, []);
 
   trpc.match.submitMatches.useQuery(localMatches, {
     enabled: isSubmit && isOnline,
@@ -43,11 +51,11 @@ const Data = () => {
         </div>
       </>
       <div className="flex w-full flex-col items-center justify-center px-4 py-10">
-        {localMatches.length > 0 && isOnline && (
+        {hydrateLocal.length > 0 && isOnline && (
           <Button onClick={() => setIsSubmit(true)}>Submit Matches</Button>
         )}
-        {localMatches.length > 0 ? (
-          localMatches.map((match, index) => {
+        {hydrateLocal.length > 0 ? (
+          hydrateLocal.map((match, index) => {
             {
               index === 0 && <div>Locally Stored Matches</div>;
             }

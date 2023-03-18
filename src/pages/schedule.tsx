@@ -5,9 +5,12 @@ import userStore from "@/utils/stores";
 import { scheduleStore } from "@/utils/stores";
 import { useState, useEffect } from "react";
 import type { Match } from "@/utils/stores";
+import type { Scouter } from "@prisma/client";
 
 const Schedule: NextPage = () => {
-  const { user } = userStore();
+  const [user, setUser] = useState<Scouter>();
+  const storeUser = userStore().user;
+
   const [schedule, setSchedule] = useState<Match[]>([]);
   const storeSchedule = scheduleStore().schedule;
 
@@ -15,6 +18,9 @@ const Schedule: NextPage = () => {
     // Synchronize the state with the scheduleStore on the client-side
     if (storeSchedule) {
       setSchedule(storeSchedule);
+    }
+    if (storeUser) {
+      setUser(storeUser);
     }
   }, []);
 
@@ -27,7 +33,7 @@ const Schedule: NextPage = () => {
           </Link>
         </div>
         <div className="flex items-center justify-center gap-2.5 font-bold">
-          {user.name ? (
+          {user && user.name ? (
             <>
               <div>Signed in as:</div>
               <Button className="w-60"> {user.name}</Button>

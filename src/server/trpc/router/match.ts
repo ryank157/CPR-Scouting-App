@@ -9,7 +9,7 @@ export const matchRouter = router({
     .input(
       z
         .object({
-          scouter: z.string().optional(),
+          scouterChipId: z.string().optional(),
           startingLocation: z.number().optional(),
           mobility: z.string().optional(),
           autoBalancing: z.string().optional(),
@@ -60,14 +60,14 @@ export const matchRouter = router({
                 endOrder: i.endgameBalancing.endOrder,
                 endResult: i.endgameBalancing.endResult,
                 feedback: i.feedback,
-                robotId: i.robotId,
                 station: i.station,
                 alliance: i.alliance,
                 scouter: {
                   connect: {
-                    scouterId: i.scouter,
+                    scouterId: i.scouterChipId,
                   },
                 },
+
                 scoredPieces: {
                   createMany: {
                     data: i.scoredObjects,
@@ -85,9 +85,16 @@ export const matchRouter = router({
   exportData: publicProcedure.query(async () => {
     const data = await prisma.robotMatch.findMany({
       where: {
-        scouter: {
-          some: {},
-        },
+        AND: [
+          {
+            scouter: {
+              id: { not: undefined },
+            },
+            match: {
+              eventId: 1,
+            },
+          },
+        ],
       },
       include: {
         scouter: true,
@@ -99,9 +106,11 @@ export const matchRouter = router({
 
     // Create the CSV string with headers
     let csvString = csvHeaders.join(",") + "\n";
+    let cycleTime = 0;
 
     data.map((rm) => {
       const scoredLocs = rm.scoredPieces.map((sp) => {
+        cycleTime += sp.cycleTime ? sp.cycleTime : 0;
         return { loc: sp.scoredLocation, type: sp.type };
       });
 
@@ -173,8 +182,8 @@ export const matchRouter = router({
         rm.robot.teamNumber,
         rm.match.matchNumber,
         rm.alliance + " " + rm.station,
-        rm.scouter[0]?.id,
-        undefined, //start position
+        rm.scouter ? rm.scouter.scouterId : "C4E",
+        rm.startingLoc, //start position
         rm.mobility !== undefined ? "1" : "0",
         rm.mobility === "Yes" ? "1" : "0",
         rm.autoBalance !== undefined ? "1" : "0",
@@ -195,7 +204,8 @@ export const matchRouter = router({
         scores.TMcube,
         scores.TLcone,
         scores.TLcube,
-        undefined, //avg Cycle
+        cycleTime /
+          scoredLocs.filter((score) => score.type?.includes("auto")).length,
         "", // csvData.endResult === "Defense Satisfactory" ? "1" : "0",
         "", // csvData.endResult === "Defense Limited" ? "1" : "0",
         rm.fouls?.includes("Damage Opponent") ? "1" : "0",
@@ -205,14 +215,14 @@ export const matchRouter = router({
         rm.fouls?.includes("Contact in Substation") ? "1" : "0",
         rm.fouls?.includes("Other Tele Fouls") ? "1" : "0",
         rm.fouls?.includes("Contact in Charge Station") ? "1" : "0",
-        undefined, //end position
+        rm.endingLoc, //end position
         rm.endRobots,
         rm.endOrder,
         rm.endResult !== undefined ? "1" : "0",
         rm.endResult === "docked" ? "1" : "0",
         rm.endResult !== undefined ? "1" : "0",
         rm.endResult === "engaged" ? "1" : "0",
-        "",
+        rm.endBalanceTime, //end balance time
       ];
 
       // Append the values to the CSV string

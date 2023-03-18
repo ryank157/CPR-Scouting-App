@@ -10,7 +10,8 @@ const Home: NextPage = () => {
   // const { data: data } = trpc.match.exportData.useQuery();
   // console.log(data);
   // trpc.auth.uploadScouters.useQuery();
-  const { data: match } = trpc.test.fetchMatchData.useQuery();
+  // const { data: match } = trpc.test.fetchMatchData.useQuery();
+  // trpc.tba.removeAllData.useQuery();
 
   return <div>Hello</div>;
 };

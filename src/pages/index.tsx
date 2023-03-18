@@ -3,7 +3,6 @@ import Head from "next/head";
 import Link from "next/link";
 
 import Button from "src-components/button";
-import { scheduleStore } from "@/utils/stores";
 
 const Home: NextPage = () => {
   return (
