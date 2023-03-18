@@ -148,7 +148,7 @@ async function assignRobotsToMatches(matchData: matchData) {
     const blueRobotMatchData = blueRobotNumbers.map(
       (blueRobotNumber, index) => ({
         matchId: dbMatch.id,
-        robotId: blueRobotNumber,
+        teamNumber: blueRobotNumber,
         alliance: "blue",
         station: index,
       })
@@ -157,7 +157,7 @@ async function assignRobotsToMatches(matchData: matchData) {
     // Construct the data for the red robots
     const redRobotMatchData = redRobotNumbers.map((redRobotNumber, index) => ({
       matchId: dbMatch.id,
-      robotId: redRobotNumber,
+      teamNumber: redRobotNumber,
       alliance: "red",
       station: index,
     }));
