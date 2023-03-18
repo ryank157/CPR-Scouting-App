@@ -226,7 +226,3 @@ function scoredType(gridLoc: number, matchPage: MatchPage): ScoringTypes {
   }
   return scoredType;
 }
-
-function scoringClick() {
-  return undefined;
-}

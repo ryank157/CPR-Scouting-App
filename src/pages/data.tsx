@@ -125,6 +125,10 @@ const Data = () => {
       {successfulSubmit && (
         <div>The matches have been successfully submitted</div>
       )}
+
+      <div className=" fixed bottom-2 right-2 opacity-0 hover:opacity-100 active:opacity-100">
+        {process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA || "No Commit"}
+      </div>
     </>
   );
 };
