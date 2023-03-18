@@ -24,7 +24,7 @@ const Schedule: NextPage = () => {
     if (storeUser) {
       setUser(storeUser);
     }
-  }, []);
+  }, [schedule]);
 
   trpc.tba.fetchMatchSchedule.useQuery(undefined, {
     enabled: isRefresh,

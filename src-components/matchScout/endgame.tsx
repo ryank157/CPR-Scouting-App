@@ -16,7 +16,8 @@ interface EndgameProps {
 export const EndgameScout: React.FC<EndgameProps> = (props: EndgameProps) => {
   const { matchEvents, matchDispatch } = props;
   const [feedback, setFeedback] = useState(matchEvents.feedback || "");
-  const endLocs = [1, 2, 3, 4, 5, 6];
+  const endLocs = [0, 1, 2, 3, 4, 5];
+  const endLocsRed = [3, 4, 5, 0, 1, 2];
   useEffect(() => {
     window.scrollTo(0, document.body.scrollHeight);
   }, []);
@@ -38,38 +39,69 @@ export const EndgameScout: React.FC<EndgameProps> = (props: EndgameProps) => {
               : "bg-endgame-blue"
           } bg-contain bg-center bg-no-repeat`}
         >
-          {/* {!matchEvents.endgameBalancing.endingLoc && (
+          {!matchEvents.endgameBalancing.endingLoc && (
             <div className="absolute translate-x-4 translate-y-10 text-3xl font-bold">
-              Click Location to Start Timer
+              {matchEvents.alliance?.includes("blue") ? (
+                <span>&larr; Community | Middle &rarr; </span>
+              ) : (
+                <span>&larr; Middle | Community &rarr; </span>
+              )}
             </div>
-          )} */}
+          )}
           {endLocs.map((location, index) => {
             const position =
               index < 3
                 ? { top: 105 + 98 * index, left: 55 }
                 : { top: 105 + 98 * (index - 3), right: 35 };
             return (
-              <div
-                key={index}
-                className={`absolute flex h-[100px] w-[50px] cursor-pointer items-center justify-center border-2 border-black p-2 text-xl font-medium transition-all duration-300 ease-in  ${
-                  matchEvents.endgameBalancing.endingLoc === undefined
-                    ? "animate-pulse " + endGameColors[0]
-                    : matchEvents.endgameBalancing.endingLoc === index
-                    ? endGameColors[1]
-                    : "opacity-50"
-                }`}
-                style={position}
-                onClick={() => {
-                  matchDispatch({
-                    type: "SET_ENDGAME_BALANCING",
-                    endgame: {
-                      ...matchEvents.endgameBalancing,
-                      endingLoc: index,
-                    },
-                  });
-                }}
-              >
-                {index}
+              <div key={index}>
+                {matchEvents.alliance?.includes("red") && (
+                  <div
+                    className={`absolute flex h-[100px] w-[50px] -translate-x-5 cursor-pointer items-center justify-center border-2 border-black p-2 text-xl font-medium transition-all duration-300 ease-in  ${
+                      matchEvents.endgameBalancing.endingLoc === undefined
+                        ? "animate-pulse " + endGameColors[0]
+                        : matchEvents.endgameBalancing.endingLoc ===
+                          endLocsRed[index]
+                        ? endGameColors[1]
+                        : "opacity-50"
+                    }`}
+                    style={position}
+                    onClick={() => {
+                      matchDispatch({
+                        type: "SET_ENDGAME_BALANCING",
+                        endgame: {
+                          ...matchEvents.endgameBalancing,
+                          endingLoc: endLocsRed[index],
+                        },
+                      });
+                    }}
+                  >
+                    {endLocsRed[index]}
+                  </div>
+                )}
+                {matchEvents.alliance?.includes("blue") && (
+                  <div
+                    className={`absolute flex h-[100px] w-[50px] cursor-pointer items-center justify-center border-2 border-black p-2 text-xl font-medium transition-all duration-300 ease-in  ${
+                      matchEvents.endgameBalancing.endingLoc === undefined
+                        ? "animate-pulse " + endGameColors[0]
+                        : matchEvents.endgameBalancing.endingLoc === index
+                        ? endGameColors[1]
+                        : "opacity-50"
+                    }`}
+                    style={position}
+                    onClick={() => {
+                      matchDispatch({
+                        type: "SET_ENDGAME_BALANCING",
+                        endgame: {
+                          ...matchEvents.endgameBalancing,
+                          endingLoc: index,
+                        },
+                      });
+                    }}
+                  >
+                    {index}
+                  </div>
+                )}
               </div>
             );
           })}

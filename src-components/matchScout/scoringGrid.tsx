@@ -160,7 +160,7 @@ const cellClasses = (
         bgImage = "bg-cone-filled border border-orange-400";
       }
       if (thisScore?.type === "tele-cube") {
-        bgImage = "bg-cube-filled border border-cpr-blue-light";
+        bgImage = "bg-cube-filled border border-blue-700";
       }
       //If bottom row cone
     } else if (gridLoc > 17 && thisScore?.scoredLoc === gridLoc) {
@@ -178,7 +178,7 @@ const cellClasses = (
         bgImage = "bg-inactive-border";
         //Tele
       } else if (groundCubeScore?.type === "tele-cube") {
-        bgImage = "bg-bottom-cube border border-cpr-blue-light";
+        bgImage = "bg-bottom-cube border border-blue-700";
       }
     }
     //if not scored
