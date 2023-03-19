@@ -111,7 +111,7 @@ model RobotMatch {
   endRobots      Int?
   endOrder       Int?
   endResult      String?
-  feedback       String?
+  feedback       String?       @mysql.MediumText
 
   scouter   Scouter? @relation(fields: [scouterId], references: [id])
   scouterId Int?
