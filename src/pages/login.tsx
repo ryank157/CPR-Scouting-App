@@ -31,7 +31,7 @@ const Login = () => {
             </Link>
           </div>
           <div className="flex items-center justify-center gap-2.5 font-bold">
-            {user.name ? (
+            {user?.name ? (
               <>
                 <div>Signed in as:</div>
                 <Button className="w-60"> {user.name}</Button>
