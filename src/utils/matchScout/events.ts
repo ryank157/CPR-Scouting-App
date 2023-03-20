@@ -13,6 +13,7 @@ export interface MatchEventsState {
   alliance?: string;
   matchId?: number;
   robotMatchId?: number;
+  deadBot?: boolean;
 }
 
 export type Mobility = "yes" | "no" | "failed" | undefined;
@@ -74,7 +75,8 @@ export type MatchAction =
         station: number;
         matchId: number;
       };
-    };
+    }
+  | { type: "SET_DEAD"; deadBot: boolean };
 
 export const initialMatchState: MatchEventsState = {
   startingLoc: undefined,
@@ -105,6 +107,7 @@ export const initialMatchState: MatchEventsState = {
   station: undefined,
   alliance: undefined,
   matchId: undefined,
+  deadBot: undefined,
 };
 
 export const MatchEventsReducer = (
@@ -363,6 +366,11 @@ export const MatchEventsReducer = (
         station: action.robotInfo.station,
         alliance: action.robotInfo.alliance,
         matchId: action.robotInfo.matchId || undefined,
+      };
+    case "SET_DEAD":
+      return {
+        ...state,
+        deadBot: action.deadBot,
       };
 
     default:

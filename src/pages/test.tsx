@@ -1,12 +1,17 @@
+import { eventStore } from "@/utils/stores";
 import { type NextPage } from "next";
 
 import { trpc } from "../utils/trpc";
 
 const Home: NextPage = () => {
+  const { currentEvent } = eventStore();
+  console.log(currentEvent);
   // const { data: session } = useSession();
-  // const { data: test } = trpc.tba.populateRobots.useQuery();
+  // const event = { eventKey: "2023wayak", eventId: 5 };
+  // const { data: test } = trpc.tba.populateRobots.useQuery(event);
+  // const { data: two } = trpc.tba.populateMatchSchedule.useQuery(event);
+
   // const { data: two } = trpc.tba.getTBAData.useQuery();
-  const { data: two } = trpc.tba.populateMatchSchedule.useQuery();
   // const { data: data } = trpc.match.exportData.useQuery();
   // trpc.auth.uploadScouters.useQuery();
   // const { data: match } = trpc.test.fetchMatchData.useQuery();

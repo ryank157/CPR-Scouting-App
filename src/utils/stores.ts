@@ -6,7 +6,7 @@ import type { MatchEventsState } from "./matchScout/events";
 import { persist } from "zustand/middleware";
 
 type User = {
-  user: Scouter;
+  user: Scouter | undefined;
   users: Scouter[];
   setUser: (user: Scouter) => void;
   setUsers: (dbUsers: Scouter[]) => void;
@@ -15,7 +15,7 @@ type User = {
 export const userStore = create<User>()(
   persist(
     (set) => ({
-      user: { id: 0, scouterId: "", name: "" },
+      user: undefined,
       users: [],
       setUser: (newUser) =>
         set((state) => ({
@@ -83,5 +83,36 @@ export const useLocalMatchesStore = create<LocalMatchesStore>()(
       deleteLocalMatches: () => set(() => ({ localMatches: [] })),
     }),
     { name: "localMatch-store", getStorage: () => localStorage }
+  )
+);
+
+export type Event = {
+  id: number;
+  name: string;
+  key: string;
+};
+
+type EventStore = {
+  events: Event[];
+  setEvents: (events: Event[]) => void;
+  currentEvent: Event | undefined;
+  setCurrentEvent: (event: Event) => void;
+};
+
+export const eventStore = create<EventStore>()(
+  persist(
+    (set) => ({
+      events: [],
+      setEvents: (newEvents) =>
+        set(() => ({
+          events: newEvents,
+        })),
+      currentEvent: undefined,
+      setCurrentEvent: (newEvent) => set(() => ({ currentEvent: newEvent })),
+    }),
+    {
+      name: "events-store",
+      getStorage: () => localStorage,
+    }
   )
 );

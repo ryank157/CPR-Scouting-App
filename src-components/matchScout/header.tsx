@@ -15,7 +15,12 @@ import type {
 import Button from "src-components/button";
 import Link from "next/link";
 import { trpc } from "@/utils/trpc";
-import { userStore, scheduleStore, useLocalMatchesStore } from "@/utils/stores";
+import {
+  userStore,
+  scheduleStore,
+  useLocalMatchesStore,
+  eventStore,
+} from "@/utils/stores";
 import type { Match } from "@/utils/stores";
 import type { Robot, Scouter } from "@prisma/client";
 import useIsOnline from "@/utils/useIsOnline";
@@ -39,6 +44,7 @@ export default function ScoutHeader({
   //Hydration
   const [user, setUser] = useState<Scouter>();
   const storeUser = userStore().user;
+  const { currentEvent } = eventStore();
 
   const [schedule, setSchedule] = useState<Match[]>([]);
   const storeSchedule = scheduleStore().schedule;
@@ -178,6 +184,7 @@ export default function ScoutHeader({
     defense: m.defense,
     feedback: m.feedback,
     scoredObjects: SO,
+    eventId: currentEvent?.id,
     //Fix this later
     matchId: m.matchId as number,
     teamNumber: m.teamNumber as number,

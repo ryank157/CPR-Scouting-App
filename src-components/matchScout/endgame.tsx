@@ -22,6 +22,7 @@ export const EndgameScout: React.FC<EndgameProps> = (props: EndgameProps) => {
     window.scrollTo(0, document.body.scrollHeight);
   }, []);
 
+  console.log(matchEvents);
   const endGameColors = matchEvents.alliance?.includes("red")
     ? ["bg-red-400", "bg-red-600"]
     : ["bg-blue-400", "bg-blue-600"];
@@ -236,6 +237,20 @@ export const EndgameScout: React.FC<EndgameProps> = (props: EndgameProps) => {
               }
             >
               Fail
+            </EndgameButton>
+          </div>
+          <div className="pt-8">
+            <EndgameButton
+              className="p-2"
+              variant={matchEvents.deadBot ? matchEvents.deadBot : false}
+              onClick={() =>
+                matchDispatch({
+                  type: "SET_DEAD",
+                  deadBot: !matchEvents.deadBot,
+                })
+              }
+            >
+              Dead Robot
             </EndgameButton>
           </div>
         </div>

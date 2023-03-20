@@ -1,10 +1,10 @@
 import { type NextPage } from "next";
 import Link from "next/link";
 import Button from "src-components/button";
-import userStore from "@/utils/stores";
+import userStore, { eventStore } from "@/utils/stores";
 import { scheduleStore } from "@/utils/stores";
 import { useState, useEffect } from "react";
-import type { Match } from "@/utils/stores";
+import type { Match, Event } from "@/utils/stores";
 import type { Scouter } from "@prisma/client";
 import { trpc } from "@/utils/trpc";
 
@@ -13,10 +13,22 @@ const Schedule: NextPage = () => {
   const storeUser = userStore().user;
 
   const [hyrdatedSchedule, setHydratedSchedule] = useState<Match[]>([]);
+  const [hydratedEvents, setHydratedEvents] = useState<Event[]>([]);
+  const [hydratedCurrentEvent, setHydratedCurrentEvent] = useState<
+    Event | undefined
+  >(undefined);
   const { schedule, setSchedule } = scheduleStore();
+  const { events, setEvents, currentEvent, setCurrentEvent } = eventStore();
   const [isRefresh, setIsRefresh] = useState(false);
+  const [isEventSelect, setIsEventSelect] = useState(false);
 
   useEffect(() => {
+    if (events) {
+      setHydratedEvents(events);
+    }
+    if (currentEvent) {
+      setHydratedCurrentEvent(currentEvent);
+    }
     // Synchronize the state with the scheduleStore on the client-side
     if (schedule) {
       setHydratedSchedule(schedule);
@@ -24,15 +36,26 @@ const Schedule: NextPage = () => {
     if (storeUser) {
       setUser(storeUser);
     }
-  }, [schedule]);
+  }, [schedule, events, currentEvent]);
 
-  trpc.tba.fetchMatchSchedule.useQuery(undefined, {
-    enabled: isRefresh,
+  trpc.match.fetchEvents.useQuery(undefined, {
+    enabled: events.length === 0 || isRefresh,
     onSuccess(res) {
-      setIsRefresh(false);
-      setSchedule(res);
+      setEvents(res);
+      // if()
     },
   });
+
+  trpc.tba.fetchMatchSchedule.useQuery(
+    { eventId: currentEvent?.id as number },
+    {
+      enabled: isRefresh && Boolean(currentEvent?.id),
+      onSuccess(res) {
+        setIsRefresh(false);
+        setSchedule(res);
+      },
+    }
+  );
 
   return (
     <div className="flex w-full flex-col items-center">
@@ -42,15 +65,36 @@ const Schedule: NextPage = () => {
             <Button className="">Back</Button>
           </Link>
         </div>
-        <div className="flex items-center justify-center gap-2.5 font-bold">
-          {user && user.name ? (
-            <>
-              <div>Signed in as:</div>
-              <Button className="w-60"> {user.name}</Button>
-            </>
-          ) : (
-            <div>Not Signed in</div>
-          )}
+        <div className="flex cursor-pointer items-center justify-center gap-2.5 rounded-md font-bold">
+          <span
+            className="relative border border-cpr-blue-dark bg-cpr-blue-light p-2"
+            onClick={() => setIsEventSelect(!isEventSelect)}
+          >
+            Event:{" "}
+            {hydratedCurrentEvent
+              ? hydratedCurrentEvent.name
+              : "select an event"}
+            {isEventSelect && (
+              <div className="absolute top-0 z-10 h-60 w-60 overflow-y-auto border border-cpr-blue-dark bg-gray-100 p-2 text-xl">
+                {events.map((event, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className="cursor-pointer border-t border-gray-500 py-2 text-center"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCurrentEvent(event);
+                        setIsRefresh(true);
+                        setIsEventSelect(false);
+                      }}
+                    >
+                      {event.name}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </span>{" "}
         </div>
       </div>
       <div className="flex w-[90%] flex-col border border-black">

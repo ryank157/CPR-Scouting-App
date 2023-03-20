@@ -20,6 +20,7 @@ export const matchRouter = router({
             order: z.number().optional(),
             result: z.string().optional(),
           }),
+          deadBot: z.boolean().optional(),
           fouls: z.string().array(),
           defense: z.string().array(),
           feedback: z.string().optional(),
@@ -27,6 +28,7 @@ export const matchRouter = router({
           alliance: z.string().optional(),
           station: z.number().optional(),
           matchId: z.number().optional(),
+          eventId: z.number().optional(),
           scoredObjects: z
             .object({
               type: z.string().optional(),
@@ -41,12 +43,14 @@ export const matchRouter = router({
         .array()
     )
     .query(async ({ input }) => {
+      console.log(input);
       const results = await Promise.all(
         input.map(async (i) => {
-          if (i.matchId && i.teamNumber) {
+          if (i.matchId && i.teamNumber && i.eventId) {
             return await prisma.robotMatch.update({
               where: {
-                matchId_teamNumber: {
+                matchId_teamNumber_eventId: {
+                  eventId: i.eventId,
                   matchId: i.matchId,
                   teamNumber: i.teamNumber,
                 },
@@ -65,6 +69,7 @@ export const matchRouter = router({
                 feedback: i.feedback,
                 station: i.station,
                 alliance: i.alliance,
+                deadBot: i.deadBot,
                 scouter: {
                   connect: {
                     scouterId: i.scouterChipId,
@@ -229,13 +234,76 @@ export const matchRouter = router({
         rm.endResult === "docked" ? "1" : "0",
         rm.endResult !== null ? "1" : "0",
         rm.endResult === "engaged" ? "1" : "0",
-        rm.endBalanceTime, //end balance time
+        rm.endBalanceTime, //end balance time,
+        rm.deadBot === true ? "1" : "0",
       ];
 
       // Append the values to the CSV string
       csvString += csvValues.join(",") + "\n";
     });
     return csvString;
+  }),
+  //Create this command
+  exportPieceData: publicProcedure.query(async () => {
+    const data = await prisma.robotMatch.findMany({
+      where: {
+        AND: [
+          {
+            scouter: {
+              id: { not: undefined },
+            },
+          },
+        ],
+      },
+      include: {
+        scoredPieces: true,
+        robot: true,
+        match: true,
+        event: true,
+      },
+    });
+
+    // Define the CSV headers for the ScoredPiecesData
+    const csvHeaders = [
+      "Event",
+      "Match Number",
+      "Team Number",
+      "Type",
+      "Scored Location",
+      "Cycle Time",
+      "Pickup Location",
+      "Pickup Orientation",
+      "Delayed",
+    ];
+
+    // Create the CSV string with headers
+    let csvString = csvHeaders.join(",") + "\n";
+
+    data.map((rm) => {
+      rm.scoredPieces.map((sp) => {
+        // All the column values
+        const csvValues = [
+          rm.event.name,
+          rm.match.matchNumber,
+          rm.robot.teamNumber,
+          sp.type,
+          sp.scoredLocation,
+          sp.cycleTime,
+          sp.pickupLocation,
+          sp.pickupOrientation,
+          sp.delayed,
+        ];
+
+        // Append the values to the CSV string
+        csvString += csvValues.join(",") + "\n";
+      });
+    });
+    return csvString;
+  }),
+  fetchEvents: publicProcedure.query(async () => {
+    const events = await prisma.event.findMany();
+
+    return events;
   }),
 });
 
@@ -283,4 +351,5 @@ const csvHeaders = [
   "EG-EngageAttempt",
   "EG-EngageSucceed",
   "EG-BalanceTime",
+  "Dead Robot",
 ];

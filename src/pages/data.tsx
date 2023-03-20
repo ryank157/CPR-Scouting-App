@@ -2,16 +2,18 @@ import { useState, useEffect } from "react";
 import { trpc } from "../utils/trpc";
 import Link from "next/link";
 import Button from "src-components/button";
-import { useLocalMatchesStore } from "@/utils/stores";
+import { eventStore, useLocalMatchesStore } from "@/utils/stores";
 import useIsOnline from "@/utils/useIsOnline";
 import type { MatchEventsState } from "@/utils/matchScout/events";
 
 const Data = () => {
   const { localMatches, deleteLocalMatches } = useLocalMatchesStore();
+
   const [hydrateLocal, setHydrateLocal] = useState<MatchEventsState[]>([]);
   const [isSubmit, setIsSubmit] = useState(false);
   const [successfulSubmit, setSuccessfulSubmit] = useState(false);
-  const [isExport, setIsExport] = useState(false);
+  const [isAllExport, setIsAllExport] = useState(false);
+  const [isPieceExport, setIsPieceExport] = useState(false);
 
   const isOnline = useIsOnline();
 
@@ -31,9 +33,9 @@ const Data = () => {
   });
 
   trpc.match.exportData.useQuery(undefined, {
-    enabled: isExport,
+    enabled: isAllExport,
     onSuccess(res) {
-      setIsExport(false);
+      setIsAllExport(false);
 
       // Create a Blob object from the CSV string
       const blob = new Blob([res], { type: "text/csv" });
@@ -43,6 +45,28 @@ const Data = () => {
       const link = document.createElement("a");
       link.href = url;
       link.download = "data.csv";
+      // Trigger the download by clicking the link element
+      document.body.appendChild(link);
+      link.click();
+      // Clean up the temporary URL and link element
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    },
+  });
+
+  trpc.match.exportPieceData.useQuery(undefined, {
+    enabled: isPieceExport,
+    onSuccess(res) {
+      setIsPieceExport(false);
+
+      // Create a Blob object from the CSV string
+      const blob = new Blob([res], { type: "text/csv" });
+      // Create a temporary URL for the Blob object
+      const url = URL.createObjectURL(blob);
+      // Create a temporary link element
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "pieceData.csv";
       // Trigger the download by clicking the link element
       document.body.appendChild(link);
       link.click();
@@ -65,8 +89,16 @@ const Data = () => {
             {isOnline ? (
               <>
                 {/* <div>Through Match: {matchNumber} </div> */}
-                <Button className="w-60" onClick={() => setIsExport(true)}>
+                <Button className="w-60" onClick={() => setIsAllExport(true)}>
                   Export Data
+                </Button>
+                <Button
+                  className="w-60"
+                  onClick={() => {
+                    setIsPieceExport(true);
+                  }}
+                >
+                  Export Piece Data
                 </Button>
               </>
             ) : (
