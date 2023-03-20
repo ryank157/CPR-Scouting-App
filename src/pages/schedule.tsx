@@ -75,7 +75,7 @@ const Schedule: NextPage = () => {
               ? hydratedCurrentEvent.name
               : "select an event"}
             {isEventSelect && (
-              <div className="absolute top-0 z-10 h-60 w-60 overflow-y-auto border border-cpr-blue-dark bg-gray-100 p-2 text-xl">
+              <div className="absolute top-0 z-10 h-60 w-60 -translate-x-24 overflow-y-auto border border-cpr-blue-dark bg-gray-100 p-2 text-xl">
                 {events.map((event, index) => {
                   return (
                     <div
