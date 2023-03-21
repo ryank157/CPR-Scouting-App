@@ -98,9 +98,6 @@ export const matchRouter = router({
             scouter: {
               id: { not: undefined },
             },
-            match: {
-              eventId: 1,
-            },
           },
         ],
       },
@@ -109,6 +106,7 @@ export const matchRouter = router({
         scoredPieces: true,
         robot: true,
         match: true,
+        event: true,
       },
     });
 
@@ -192,6 +190,7 @@ export const matchRouter = router({
 
       //All the column values woohoo
       const csvValues = [
+        rm.event.name,
         rm.robot.teamNumber,
         rm.match.matchNumber,
         rm.alliance + " " + rm.station,
@@ -236,6 +235,7 @@ export const matchRouter = router({
         rm.endResult === "engaged" ? "1" : "0",
         rm.endBalanceTime, //end balance time,
         rm.deadBot === true ? "1" : "0",
+        rm.feedback,
       ];
 
       // Append the values to the CSV string
@@ -308,6 +308,7 @@ export const matchRouter = router({
 });
 
 const csvHeaders = [
+  "Event",
   "INFO-TeamNumber",
   "INFO-Match Number",
   "INFO-Alliance",
@@ -352,4 +353,5 @@ const csvHeaders = [
   "EG-EngageSucceed",
   "EG-BalanceTime",
   "Dead Robot",
+  "Feedback",
 ];
