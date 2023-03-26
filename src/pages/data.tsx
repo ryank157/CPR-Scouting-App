@@ -137,6 +137,9 @@ const Data = () => {
                 );
               })}
             </div>
+            <Button onClick={() => deleteLocalMatches()}>
+              Delete Local Matches
+            </Button>
           </>
         )}
         {hydrateLocal.length === 0 && <div>You have no Local Matches</div>}
