@@ -121,13 +121,13 @@ export default function ScoutHeader({
   //Create a useEffect that has a dependency array for when a scored piece is submitted.
   useEffect(() => {
     if (timeState.matchPage === "tele") {
-      const teleObjects = matchEvents.scoredObjects.filter((obj) =>
-        obj.type?.includes("tele")
+      const teleObjects = matchEvents.scoredObjects.filter(
+        (obj) => !obj.type?.includes("auto")
       );
 
       //Locate the last tele object that has a scored piece without a cycle time.
       const newObjectIndex = matchEvents.scoredObjects.findIndex(
-        (obj) => obj.cycleTime === undefined && obj.type?.includes("tele")
+        (obj) => obj.cycleTime === undefined && !obj.type?.includes("auto")
       );
 
       //Sum the already scored pieces cycle times together.

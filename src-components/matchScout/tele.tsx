@@ -39,12 +39,12 @@ export const TeleScout: React.FC<TeleProps> = (props: TeleProps) => {
   }, [matchEvents.scoredObjects]);
 
   return (
-    <div className="flex w-full flex-col justify-center">
+    <div className=" flex w-full flex-col justify-center">
       {memoizedScoringGrid}
 
-      <div className="mt-4 flex h-full w-full justify-center gap-[10px] pb-3">
+      <div className=" -mt-4 flex h-full w-full justify-center gap-[10px] pb-3">
         <div className="flex flex-col">
-          <div className="mb-1.25 text-center text-xl font-semibold">
+          <div className="mb-1.25 pl-20 text-start text-xl font-semibold">
             Current Cycle
           </div>
           <div className="flex">
@@ -164,27 +164,28 @@ export const TeleScout: React.FC<TeleProps> = (props: TeleProps) => {
           </div>
           <div className="h-[200px] overflow-auto  border-2 border-inactive-border">
             <div className="flex h-[48px] items-center justify-center border-b border-inactive-border text-center text-xl">
-              <div className="w-1/4">#</div>
-              <div className="w-1/4">Time</div>
-              <div className="w-1/4">Piece</div>
-              <div className="w-1/4">Edit</div>
+              <div className="w-1/3">#</div>
+              <div className="w-1/3">Time</div>
+              <div className="w-1/3">Piece</div>
+              {/* <div className="w-1/4">Edit</div> */}
             </div>
             <div className="flex h-[148px] flex-col text-center ">
               {matchEvents.scoredObjects.map((score, index) => {
                 let scoreType = "";
                 score.type?.includes("auto") ? (scoreType += "a") : "";
-                score.type?.includes("cube")
-                  ? (scoreType += "cube")
-                  : (scoreType += "cone");
+                score.type?.includes("cube") ? (scoreType += "cube") : "";
+                score.type?.includes("cone") ? (scoreType += "cone") : "";
+                score.type?.includes("dropped") ? (scoreType += "drop") : "";
+                score.type?.includes("launched") ? (scoreType += "launch") : "";
                 return (
                   score.scoredLoc !== undefined && (
                     <div key={index} className="flex">
-                      <div className="w-1/4">{index + 1}</div>
-                      <div className="w-1/4">
+                      <div className="w-1/3">{index + 1}</div>
+                      <div className="w-1/3">
                         {score.type?.includes("auto") ? " " : score.cycleTime}
                       </div>
-                      <div className="w-1/4">{scoreType}</div>
-                      <div className="w-1/4">N/A</div>
+                      <div className="w-1/3">{scoreType}</div>
+                      {/* <div className="w-1/4">N/A</div> */}
                     </div>
                   )
                 );

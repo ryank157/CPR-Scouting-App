@@ -43,51 +43,95 @@ export const matchRouter = router({
         .array()
     )
     .query(async ({ input }) => {
-      console.log(input);
       const results = await Promise.all(
         input.map(async (i) => {
           if (i.matchId && i.teamNumber && i.eventId) {
-            return await prisma.robotMatch.update({
-              where: {
-                matchId_teamNumber_eventId: {
-                  eventId: i.eventId,
-                  matchId: i.matchId,
-                  teamNumber: i.teamNumber,
-                },
+            const robotMatchWhere = {
+              matchId_teamNumber_eventId: {
+                eventId: i.eventId,
+                matchId: i.matchId,
+                teamNumber: i.teamNumber,
               },
-              data: {
-                startingLoc: i.startingLocation,
-                mobility: i.mobility,
-                autoBalance: i.autoBalancing,
-                fouls: i.fouls.join(","),
-                defense: i.defense.join(","),
-                endingLoc: i.endgameBalancing.endingLoc,
-                endBalanceTime: i.endgameBalancing.endBalanceTime,
-                endRobots: i.endgameBalancing.numberOfRobots,
-                endOrder: i.endgameBalancing.order,
-                endResult: i.endgameBalancing.result,
-                feedback: i.feedback,
-                station: i.station,
-                alliance: i.alliance,
-                deadBot: i.deadBot,
-                scouter: {
-                  connect: {
-                    scouterId: i.scouterChipId,
-                  },
-                },
+            };
 
-                scoredPieces: {
-                  createMany: {
-                    data: i.scoredObjects,
+            const robotMatch = await prisma.robotMatch.findUnique({
+              where: robotMatchWhere,
+            });
+
+            if (robotMatch?.scouterId) {
+              return await prisma.$transaction([
+                prisma.scoredPiece.deleteMany({
+                  where: {
+                    robotMatchId: robotMatch.id,
+                  },
+                }),
+                prisma.robotMatch.update({
+                  where: robotMatchWhere,
+                  data: {
+                    startingLoc: i.startingLocation,
+                    mobility: i.mobility,
+                    autoBalance: i.autoBalancing,
+                    fouls: i.fouls.join(","),
+                    defense: i.defense.join(","),
+                    endingLoc: i.endgameBalancing.endingLoc,
+                    endBalanceTime: i.endgameBalancing.endBalanceTime,
+                    endRobots: i.endgameBalancing.numberOfRobots,
+                    endOrder: i.endgameBalancing.order,
+                    endResult: i.endgameBalancing.result,
+                    feedback: i.feedback,
+                    station: i.station,
+                    alliance: i.alliance,
+                    deadBot: i.deadBot,
+                    scouter: {
+                      connect: {
+                        scouterId: i.scouterChipId,
+                      },
+                    },
+                    scoredPieces: {
+                      createMany: {
+                        data: i.scoredObjects,
+                      },
+                    },
+                  },
+                }),
+              ]);
+            } else {
+              const updated = await prisma.robotMatch.update({
+                where: robotMatchWhere,
+                data: {
+                  startingLoc: i.startingLocation,
+                  mobility: i.mobility,
+                  autoBalance: i.autoBalancing,
+                  fouls: i.fouls.join(","),
+                  defense: i.defense.join(","),
+                  endingLoc: i.endgameBalancing.endingLoc,
+                  endBalanceTime: i.endgameBalancing.endBalanceTime,
+                  endRobots: i.endgameBalancing.numberOfRobots,
+                  endOrder: i.endgameBalancing.order,
+                  endResult: i.endgameBalancing.result,
+                  feedback: i.feedback,
+                  station: i.station,
+                  alliance: i.alliance,
+                  deadBot: i.deadBot,
+                  scouter: {
+                    connect: {
+                      scouterId: i.scouterChipId,
+                    },
+                  },
+                  scoredPieces: {
+                    createMany: {
+                      data: i.scoredObjects,
+                    },
                   },
                 },
-              },
-            });
+              });
+              return updated;
+            }
           }
         })
       );
 
-      return "test";
+      return "successful submit";
     }),
 
   exportData: publicProcedure.query(async () => {

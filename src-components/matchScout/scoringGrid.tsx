@@ -32,79 +32,119 @@ export default function ScoringGrid({
   const { matchPage } = timeState;
 
   return (
-    <div className="relative flex flex-wrap justify-center">
-      <div className="flex w-15 items-center justify-center">
-        <div className="-rotate-90 transform whitespace-nowrap text-3xl">
-          Feeder Station
+    <div className="flex flex-col">
+      <div className="relative flex flex-wrap justify-center">
+        <div className="flex w-15 items-center justify-center">
+          <div className="-rotate-90 transform whitespace-nowrap text-3xl">
+            Feeder Station
+          </div>
+        </div>
+        <div className="flex flex-col">
+          {grid.map((row, rowIndex) => (
+            <div key={rowIndex + 100} className="flex gap-[2px] pb-[2px]">
+              {row.map((cell, cellIndex) => {
+                if (rowIndex === 0 || rowIndex === 1) {
+                  const gridLoc = rowIndex * 9 + cellIndex;
+                  return (
+                    <div
+                      key={gridLoc}
+                      className={cellClasses(gridLoc, scoredObjects, matchPage)}
+                      onClick={() => {
+                        matchDispatch({
+                          type: "ADD_SCORE_DETAILS",
+                          newScore: {
+                            ...cSO,
+                            type: scoredType(gridLoc, matchPage),
+                            scoredLoc: gridLoc,
+                          },
+                        });
+                      }}
+                    ></div>
+                  );
+                } else {
+                  const gridLoc = rowIndex * 9 + cellIndex * 2;
+                  const diagSlots = [gridLoc, gridLoc + 1];
+                  return (
+                    <div
+                      key={gridLoc + 1000}
+                      className={`${cellClasses(
+                        gridLoc,
+                        scoredObjects,
+                        matchPage
+                      )} relative overflow-hidden `}
+                    >
+                      <div className="absolute top-1/2 left-1/2 grid h-[150px] w-[150px] -translate-x-1/2 -translate-y-1/2 rotate-45 transform grid-cols-2 grid-rows-1">
+                        {diagSlots.map((slotLoc) => {
+                          return (
+                            <div
+                              key={slotLoc}
+                              className=""
+                              onClick={
+                                () => {
+                                  matchDispatch({
+                                    type: "ADD_SCORE_DETAILS",
+                                    newScore: {
+                                      ...cSO,
+                                      type: scoredType(slotLoc, matchPage),
+                                      scoredLoc: slotLoc,
+                                    },
+                                  });
+                                }
+                                //If not scored already do add score details
+                              }
+                            ></div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                }
+              })}
+            </div>
+          ))}
+        </div>
+        <div className="flex w-15 items-center justify-center">
+          <div className="rotate-90 transform whitespace-nowrap text-3xl">
+            Void
+          </div>
         </div>
       </div>
-      <div className="flex flex-col">
-        {grid.map((row, rowIndex) => (
-          <div key={rowIndex + 100} className="flex gap-[2px] pb-[2px]">
-            {row.map((cell, cellIndex) => {
-              if (rowIndex === 0 || rowIndex === 1) {
-                const gridLoc = rowIndex * 9 + cellIndex;
-                return (
-                  <div
-                    key={gridLoc}
-                    className={cellClasses(gridLoc, scoredObjects, matchPage)}
-                    onClick={() => {
-                      matchDispatch({
-                        type: "ADD_SCORE_DETAILS",
-                        newScore: {
-                          ...cSO,
-                          type: scoredType(gridLoc, matchPage),
-                          scoredLoc: gridLoc,
-                        },
-                      });
-                    }}
-                  ></div>
-                );
-              } else {
-                const gridLoc = rowIndex * 9 + cellIndex * 2;
-                const diagSlots = [gridLoc, gridLoc + 1];
-                return (
-                  <div
-                    key={gridLoc + 1000}
-                    className={`${cellClasses(
-                      gridLoc,
-                      scoredObjects,
-                      matchPage
-                    )} relative overflow-hidden `}
-                  >
-                    <div className="absolute top-1/2 left-1/2 grid h-[150px] w-[150px] -translate-x-1/2 -translate-y-1/2 rotate-45 transform grid-cols-2 grid-rows-1">
-                      {diagSlots.map((slotLoc) => {
-                        return (
-                          <div
-                            key={slotLoc}
-                            className=""
-                            onClick={
-                              () => {
-                                matchDispatch({
-                                  type: "ADD_SCORE_DETAILS",
-                                  newScore: {
-                                    ...cSO,
-                                    type: scoredType(slotLoc, matchPage),
-                                    scoredLoc: slotLoc,
-                                  },
-                                });
-                              }
-                              //If not scored already do add score details
-                            }
-                          ></div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              }
-            })}
-          </div>
-        ))}
-      </div>
-      <div className="flex w-15 items-center justify-center">
-        <div className="rotate-90 transform whitespace-nowrap text-3xl">
-          Void
+      <div className="flex justify-center gap-4 pt-2">
+        <div
+          className="z-10 cursor-pointer rounded-xl border border-inactive-border bg-inactive-bg px-4 py-1  active:bg-cpr-blue-light"
+          onClick={() => {
+            const droppedCount = matchEvents.scoredObjects.filter((score) =>
+              score.type?.includes("dropped")
+            ).length;
+            matchDispatch({
+              type: "ADD_SCORE_DETAILS",
+              newScore: {
+                ...cSO,
+                type: matchPage === "auto" ? "auto-dropped" : "dropped",
+                scoredLoc: 50 + droppedCount,
+              },
+            });
+          }}
+        >
+          Dropped
+        </div>
+        <div
+          className="z-10 cursor-pointer rounded-xl border border-inactive-border bg-inactive-bg px-4 py-1  active:bg-cpr-blue-light"
+          onClick={() => {
+            const launchedCount = matchEvents.scoredObjects.filter((score) =>
+              score.type?.includes("launched")
+            ).length;
+            matchDispatch({
+              type: "ADD_SCORE_DETAILS",
+              newScore: {
+                ...cSO,
+                type: matchPage === "auto" ? "auto-launched" : "launched",
+                scoredLoc: 100 + launchedCount,
+              },
+            });
+          }}
+        >
+          Launched
         </div>
       </div>
     </div>

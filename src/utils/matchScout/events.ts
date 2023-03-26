@@ -22,6 +22,10 @@ export type ScoringTypes =
   | "auto-cube"
   | "tele-cone"
   | "tele-cube"
+  | "auto-dropped"
+  | "auto-launched"
+  | "dropped"
+  | "launched"
   | undefined;
 export type PickupLocation = "feeder" | "middle" | "community" | undefined;
 export type PickupOrientation = "side" | "upright" | "cube" | undefined;
@@ -306,7 +310,6 @@ export const MatchEventsReducer = (
           };
         }
       }
-
     case "EDIT_SCORE":
       //some code
 
