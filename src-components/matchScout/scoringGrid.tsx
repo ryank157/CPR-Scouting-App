@@ -1,6 +1,5 @@
 import type { ScoringGrid } from "@/pages/matchScout";
 import type { Dispatch } from "react";
-import { useState, useEffect } from "react";
 import type { MatchPage, TimeAction, TimeState } from "@/utils/matchScout/time";
 
 import type {
@@ -111,11 +110,12 @@ export default function ScoringGrid({
       </div>
       <div className="flex justify-center gap-4 pt-2">
         <div
-          className="z-10 cursor-pointer rounded-xl border border-inactive-border bg-inactive-bg px-4 py-1  active:bg-cpr-blue-light"
+          className={`z-10 cursor-pointer rounded-xl border border-inactive-border  px-4 py-1  duration-[200ms] active:bg-cpr-blue-dark`}
           onClick={() => {
             const droppedCount = matchEvents.scoredObjects.filter((score) =>
               score.type?.includes("dropped")
             ).length;
+
             matchDispatch({
               type: "ADD_SCORE_DETAILS",
               newScore: {
@@ -129,11 +129,12 @@ export default function ScoringGrid({
           Dropped
         </div>
         <div
-          className="z-10 cursor-pointer rounded-xl border border-inactive-border bg-inactive-bg px-4 py-1  active:bg-cpr-blue-light"
+          className={`z-10 cursor-pointer rounded-xl border border-inactive-border  px-4 py-1  duration-[200ms] active:bg-cpr-blue-dark`}
           onClick={() => {
             const launchedCount = matchEvents.scoredObjects.filter((score) =>
               score.type?.includes("launched")
             ).length;
+
             matchDispatch({
               type: "ADD_SCORE_DETAILS",
               newScore: {
