@@ -279,7 +279,7 @@ export const matchRouter = router({
         rm.endResult === "engaged" ? "1" : "0",
         rm.endBalanceTime, //end balance time,
         rm.deadBot === true ? "1" : "0",
-        rm.feedback,
+        // rm.feedback,
       ];
 
       // Append the values to the CSV string
@@ -397,5 +397,5 @@ const csvHeaders = [
   "EG-EngageSucceed",
   "EG-BalanceTime",
   "Dead Robot",
-  "Feedback",
+  // "Feedback",
 ];

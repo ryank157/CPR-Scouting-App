@@ -5,9 +5,9 @@ import { trpc } from "../utils/trpc";
 
 const Home: NextPage = () => {
   const { currentEvent } = eventStore();
-  console.log(currentEvent);
+  // console.log(currentEvent);
   // const { data: session } = useSession();
-  // const event = { eventKey: "2023wayak", eventId: 5 };
+  // const event = { eventKey: "2023waahs", eventId: 8 };
   // const { data: test } = trpc.tba.populateRobots.useQuery(event);
   // const { data: two } = trpc.tba.populateMatchSchedule.useQuery(event);
 
