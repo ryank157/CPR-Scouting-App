@@ -35,7 +35,7 @@ export default function ScoringGrid({
       <div className="relative flex flex-wrap justify-center">
         <div className="flex w-15 items-center justify-center">
           <div className="-rotate-90 transform whitespace-nowrap text-3xl">
-            Feeder Station
+            {matchEvents.alliance === "red" ? "Feeder Station" : "Void"}
           </div>
         </div>
         <div className="flex flex-col">
@@ -104,7 +104,7 @@ export default function ScoringGrid({
         </div>
         <div className="flex w-15 items-center justify-center">
           <div className="rotate-90 transform whitespace-nowrap text-3xl">
-            Void
+            {matchEvents.alliance === "red" ? "Void" : "Feeder Station"}
           </div>
         </div>
       </div>

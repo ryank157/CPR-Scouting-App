@@ -42,7 +42,7 @@ export const EndgameScout: React.FC<EndgameProps> = (props: EndgameProps) => {
         >
           {!matchEvents.endgameBalancing.endingLoc && (
             <div className="absolute translate-x-4 translate-y-10 text-3xl font-bold">
-              {matchEvents.alliance?.includes("blue") ? (
+              {matchEvents.alliance?.includes("red") ? (
                 <span>&larr; Community | Middle &rarr; </span>
               ) : (
                 <span>&larr; Middle | Community &rarr; </span>

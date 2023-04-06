@@ -257,7 +257,7 @@ export default function ScoutHeader({
               <Link href={"/login"}>
                 <Button className="">{user ? user.name : "Log In"}</Button>
               </Link>
-              <Button className="">No Show</Button>
+              {/* <Button className="">No Show</Button> */}
               {!activeMatch && (
                 <Button
                   className={`${
