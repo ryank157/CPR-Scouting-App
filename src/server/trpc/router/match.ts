@@ -184,7 +184,7 @@ export const matchRouter = router({
         TLcube: 0,
       };
       scoredLocs.map((sl) => {
-        if (sl.loc && sl.type) {
+        if (sl.loc !== null && sl.type) {
           if (sl.loc <= 8) {
             if (sl.type.includes("auto")) {
               if (sl.type.includes("cone")) {
