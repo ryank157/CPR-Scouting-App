@@ -108,7 +108,7 @@ export default function ScoringGrid({
           </div>
         </div>
       </div>
-      <div className="flex justify-center gap-4 pt-2">
+      {/* <div className="flex justify-center gap-4 pt-2">
         <div
           className={`z-10 cursor-pointer rounded-xl border border-inactive-border  px-4 py-1  duration-[200ms] active:bg-cpr-blue-dark`}
           onClick={() => {
@@ -147,7 +147,7 @@ export default function ScoringGrid({
         >
           Launched
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
