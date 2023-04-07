@@ -49,14 +49,22 @@ export default function ScoringGrid({
                       key={gridLoc}
                       className={cellClasses(gridLoc, scoredObjects, matchPage)}
                       onClick={() => {
-                        matchDispatch({
-                          type: "ADD_SCORE_DETAILS",
-                          newScore: {
-                            ...cSO,
-                            type: scoredType(gridLoc, matchPage),
-                            scoredLoc: gridLoc,
-                          },
+                        let duplicate = false;
+                        matchEvents.scoredObjects.forEach((score) => {
+                          if (score.scoredLoc === gridLoc) {
+                            duplicate = true;
+                          }
                         });
+                        if (!duplicate) {
+                          matchDispatch({
+                            type: "ADD_SCORE_DETAILS",
+                            newScore: {
+                              ...cSO,
+                              type: scoredType(gridLoc, matchPage),
+                              scoredLoc: gridLoc,
+                            },
+                          });
+                        }
                       }}
                     ></div>
                   );
@@ -78,8 +86,15 @@ export default function ScoringGrid({
                             <div
                               key={slotLoc}
                               className=""
-                              onClick={
-                                () => {
+                              onClick={() => {
+                                //If not scored already do add score details
+                                let duplicate = false;
+                                matchEvents.scoredObjects.forEach((score) => {
+                                  if (score.scoredLoc === slotLoc) {
+                                    duplicate = true;
+                                  }
+                                });
+                                if (!duplicate) {
                                   matchDispatch({
                                     type: "ADD_SCORE_DETAILS",
                                     newScore: {
@@ -89,8 +104,7 @@ export default function ScoringGrid({
                                     },
                                   });
                                 }
-                                //If not scored already do add score details
-                              }
+                              }}
                             ></div>
                           );
                         })}
@@ -108,46 +122,6 @@ export default function ScoringGrid({
           </div>
         </div>
       </div>
-      {/* <div className="flex justify-center gap-4 pt-2">
-        <div
-          className={`z-10 cursor-pointer rounded-xl border border-inactive-border  px-4 py-1  duration-[200ms] active:bg-cpr-blue-dark`}
-          onClick={() => {
-            const droppedCount = matchEvents.scoredObjects.filter((score) =>
-              score.type?.includes("dropped")
-            ).length;
-
-            matchDispatch({
-              type: "ADD_SCORE_DETAILS",
-              newScore: {
-                ...cSO,
-                type: matchPage === "auto" ? "auto-dropped" : "dropped",
-                scoredLoc: 50 + droppedCount,
-              },
-            });
-          }}
-        >
-          Dropped
-        </div>
-        <div
-          className={`z-10 cursor-pointer rounded-xl border border-inactive-border  px-4 py-1  duration-[200ms] active:bg-cpr-blue-dark`}
-          onClick={() => {
-            const launchedCount = matchEvents.scoredObjects.filter((score) =>
-              score.type?.includes("launched")
-            ).length;
-
-            matchDispatch({
-              type: "ADD_SCORE_DETAILS",
-              newScore: {
-                ...cSO,
-                type: matchPage === "auto" ? "auto-launched" : "launched",
-                scoredLoc: 100 + launchedCount,
-              },
-            });
-          }}
-        >
-          Launched
-        </div>
-      </div> */}
     </div>
   );
 }

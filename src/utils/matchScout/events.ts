@@ -183,29 +183,31 @@ export const MatchEventsReducer = (
     case "ADD_SCORE_DETAILS":
       //Add Check for only unique scores. Or no double scores on bottom level
 
+      console.log("scoring piece");
+      console.log(action.newScore);
       const currentLength = state.scoredObjects.length;
 
       // Only allow unique scores
-      const currentScoredLocs = state.scoredObjects.map(
-        (score) => score.scoredLoc
-      );
+      // const currentScoredLocs = state.scoredObjects.map(
+      //   (score) => score.scoredLoc
+      // );
 
-      // Check if the scored location is a duplicate or not allowed based on doubleCheck
-      // Use doubleCheck to filter out invalid scored locations
-      if (action.newScore.scoredLoc) {
-        const hasDuplicates =
-          currentScoredLocs.length !== new Set(currentScoredLocs).size;
-        if (
-          !doubleCheck(action.newScore.scoredLoc, currentScoredLocs) ||
-          hasDuplicates
-        ) {
-          const minusLoc = [...state.scoredObjects.slice(0, currentLength - 1)];
-          return {
-            ...state,
-            scoredObjects: minusLoc,
-          };
-        }
-      }
+      // // Check if the scored location is a duplicate or not allowed based on doubleCheck
+      // // Use doubleCheck to filter out invalid scored locations
+      // if (action.newScore.scoredLoc) {
+      //   const hasDuplicates =
+      //     currentScoredLocs.length !== new Set(currentScoredLocs).size;
+      //   if (
+      //     !doubleCheck(action.newScore.scoredLoc, currentScoredLocs) ||
+      //     hasDuplicates
+      //   ) {
+      //     const minusLoc = [...state.scoredObjects.slice(0, currentLength - 1)];
+      //     return {
+      //       ...state,
+      //       scoredObjects: minusLoc,
+      //     };
+      //   }
+      // }
 
       const newestScore = state.scoredObjects[currentLength - 1] || {
         cycleTime: undefined,
