@@ -19,10 +19,6 @@ export const TeleScout: React.FC<TeleProps> = (props: TeleProps) => {
     matchEvents.scoredObjects[matchEvents.scoredObjects.length - 1]
   );
 
-  useEffect(() => {
-    window.scrollTo(0, document.body.scrollHeight);
-  }, []);
-
   const memoizedScoringGrid = useMemo(() => {
     return (
       <ScoringGrid

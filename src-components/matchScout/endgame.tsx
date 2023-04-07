@@ -18,9 +18,6 @@ export const EndgameScout: React.FC<EndgameProps> = (props: EndgameProps) => {
   const [feedback, setFeedback] = useState(matchEvents.feedback || "");
   const endLocs = [0, 1, 2, 3, 4, 5];
   const endLocsRed = [3, 4, 5, 0, 1, 2];
-  useEffect(() => {
-    window.scrollTo(0, document.body.scrollHeight);
-  }, []);
 
   console.log(matchEvents);
   const endGameColors = matchEvents.alliance?.includes("red")
