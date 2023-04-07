@@ -181,7 +181,6 @@ export const MatchEventsReducer = (
         };
       }
     case "ADD_SCORE_DETAILS":
-      //TODO Need to rework the grid display so that it colors data based on matchEvents scoring array
       //Add Check for only unique scores. Or no double scores on bottom level
 
       const currentLength = state.scoredObjects.length;
@@ -190,21 +189,17 @@ export const MatchEventsReducer = (
       const currentScoredLocs = state.scoredObjects.map(
         (score) => score.scoredLoc
       );
+
       // Check if the scored location is a duplicate or not allowed based on doubleCheck
       // Use doubleCheck to filter out invalid scored locations
-      const hasDuplicates =
-        currentScoredLocs.length !== new Set(currentScoredLocs).size;
-
       if (action.newScore.scoredLoc) {
+        const hasDuplicates =
+          currentScoredLocs.length !== new Set(currentScoredLocs).size;
         if (
           !doubleCheck(action.newScore.scoredLoc, currentScoredLocs) ||
           hasDuplicates
         ) {
-          const lastElement = state.scoredObjects[currentLength - 1];
-          const minusLoc = [
-            ...state.scoredObjects.slice(0, currentLength - 1),
-            { ...lastElement, scoredLoc: undefined },
-          ];
+          const minusLoc = [...state.scoredObjects.slice(0, currentLength - 1)];
           return {
             ...state,
             scoredObjects: minusLoc,
